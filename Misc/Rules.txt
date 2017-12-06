@@ -1,0 +1,22 @@
+Rules:
+
+// Result text format: Json dictionary style string, e.g. "{"path" : #path#, ... }"
+
+// Actual rules (formalize later)
+start: #section# #path# #background# #music#
+music**: TBD (something ambient?)
+section: #section_length# #angles# #cam_speed (always relative to length)#
+path: #path_color# #path_glow# #path_terrain# ##
+background: #[color:#ground_color#][terrain:#ground_terrain#][glow:#ground_glow#]ground# #sky# #items#
+ground: 
+sky: #sky_color# #sky_gradient# #sky_glow# #sky_terrain (should include clouds sometimes!)# #weather_effects#
+sky_gradient: no_gradient, gradient second color: #second_sky_color (second color to gradient to)#
+weather_effects**: #weather_intensity# #weather_type# #weather_color#
+weather_type**: hail, rain, dust?, TBD
+
+TODO:
+* Color of some item should be determined along with other items' colors - they affect each other (same for glow)
+* Should there be some general ground terrain and sky terrain? Same for anything else that could be generalized
+* Angles - generate options during runtime: limit according to previous section
+* Anything marked with "**" is for version 2, or after POC (a.k.a extras). Do NOT worry about these now, 
+  but try and keep things modular for easy future integration.
