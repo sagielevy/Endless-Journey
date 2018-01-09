@@ -3,20 +3,69 @@ Rules:
 // Result text format: Json dictionary style string, e.g. "{"path" : #path#, ... }"
 
 // Actual rules (formalize later)
-start: #section# #path# #background# #music#
+start: #color_scheme#**** #[length:#section_length#]section# #background# #music#
 music**: TBD (something ambient?)
-section: #section_length# #angles# #cam_speed (always relative to length)#
-path: #path_color# #path_glow# #path_terrain# ##
-background: #[color:#ground_color#][terrain:#ground_terrain#][glow:#ground_glow#]ground# #sky# #items#
-ground: 
-sky: #sky_color# #sky_gradient# #sky_glow# #sky_terrain (should include clouds sometimes!)# #weather_effects#
-sky_gradient: no_gradient, gradient second color: #second_sky_color (second color to gradient to)#
+section: length #[length:length]path# #[length:length]cam_speed (always relative to length)# (OR Calculate length vs angle to avoid seeing sections being deleted)
+path: #path_color# #path_glow# #path_angles# #path_terrain# (Think of whether to limit height of path or make path over any background terrain)
+background: #[color:#ground_color#****][terrain:#ground_terrain#][glow:#ground_glow#]ground# #sky# #items# (should items be here??)
+ground: #[item_color:#color# item_texture:#item_texture# item_glow:#glow#]items# #[item_color:#color# item_texture:#item_texture# item_glow:#glow#]items# (left and right items share some values e.g. color, glow, etc.) #color# #terrain# #glow#
+items: FILL TYPES, NUMBER, ETC.
+sky: #[gradient_first_color:#color#]sky_gradient# #sky_glow# #sky_terrain (should include clouds sometimes!)# #weather_effects#
+sky_gradient: no_gradient, gradient_second_color: #sky_color (second color to gradient to - should be affected by first?)#
+sky_color: color_idx=****
+color_scheme: [0 - LAST_COLOR_SCHEME_IDX] (randomly select index for a scheme)
+glow: random(0-1)
+section_length: [X1 - X2] (X1: minimum section length, X2: maximum section length)
+cam_speed: [S1 - S2] (S1, S2, some values in range (0-1)
+angles: ***
+path_color: color_idx=****
+path_glow: #glow#
+path_terrain: (Sets of predefined terrain or use Perlin noise to generate? If predefined, how to interpolate during transitions)
 weather_effects**: #weather_intensity# #weather_type# #weather_color#
 weather_type**: hail, rain, dust?, TBD
 
-TODO:
-* Color of some item should be determined along with other items' colors - they affect each other (same for glow)
-* Should there be some general ground terrain and sky terrain? Same for anything else that could be generalized
-* Angles - generate options during runtime: limit according to previous section
-* Anything marked with "**" is for version 2, or after POC (a.k.a extras). Do NOT worry about these now, 
+LEGEND:
+** Anything marked with "**" is for version 2, or after POC (a.k.a extras). Do NOT worry about these now, 
   but try and keep things modular for easy future integration.
+  
+*** path_angles can be implemented in the following method: first decide on number of angle points [1 - X]. Then randomize (x,y) cords for each angle point. 
+	x in the range of [0 - section_length], y in the range of [1,-1]. Each angle is calculated by angle[i+2] = (points[i+1].y - points[i].y) / 2, 
+	and the actual change of angle is interpolated linearly over points[i+1].x - points[i].x. 
+	The range of angles is [-Theta - Theta]. Theta is defined such that including player's FOV and ability to turn head left & right, they could never pass -+90 deg (look backwards). 
+
+	The last point will ALWAYS have its y = 0. (Simply ignore y value for last point). This way there will be no special cases 
+	where at the beginning of a new section the game's north is not the player's north and the player can look backwards.
+
+	OR IF COULD WORK TRY THIS:
+	After each section save the angle resulting from (points[size-1].y - points[0].y). This is the angle the player actually rotated
+	throughout the section. Set that as the new offset and allow Theta angle turns from there?
+	
+**** Initially generate a valid index for a color scheme and send it to other non-terminals. 
+	 Each color using non-terminal should have a predefined index value for a color from the palette. 
+	 E.g. sky always uses color no. 3 from the palette (this way the palette index itself is not needed for generating the sky non-terminal!)
+	 Fix all color uses in this language.
+
+TODO:
+* Animate animal movement?
+* Make/find a script for animating camera movement for walking (up-down movement) for first person.
+* Color of some item should be determined along with other items' colors - they affect each other (same for glow) DONE
+* Should there be some general ground terrain and sky terrain? Same for anything else that could be generalized (Perlin Noise)
+* Angles - generate options during runtime: limit according to previous section
+* Use Dor's color generator to predefine multiple color schemes (thousands!)? (Just sets of colors) And pick one at random for each sentence? Sounds like the best option for now.
+	http://paletton.com/#uid=1000u0kllllaFw0g0qFqFg0w0aF     - allows to export!
+	https://coolors.co/fcaa67-b0413e-ffffc7-473335-847577        - great colors!
+	https://lifehacker.com/color-palette-fx-finds-a-whopping-18-color-palette-for-1783440516    - some more :)
+
+Add features to Tracery:
+Discrete range (whole numbers) "[X1 - X2]" X2 >= X1
+Weights (instead of writing same word multiple times): "X*WORD" X > 0, X is a natural number
+Continuous range (regular random function): "random(X2 - X1) + X1" X2 >= X1
+
+Descisions:
+* Use a single continuous terrain texture (with perlin noise) randomized at start. Use a different sentence for that maybe?
+
+Unity Packages:
+https://www.assetstore.unity3d.com/en/#!/content/96175 (Low Poly birds - 5$)
+https://www.assetstore.unity3d.com/en/#!/content/63714 (General objects - Free)
+https://www.assetstore.unity3d.com/en/#!/content/58821 (More general objects - Free)
+https://www.assetstore.unity3d.com/en/#!/content/61217 (Day/Sunset skies - Free)
