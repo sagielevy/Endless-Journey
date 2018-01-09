@@ -46,6 +46,7 @@ LEGEND:
 	 Fix all color uses in this language.
 
 TODO:
+* MAKE THE FORMAL CFG BEFORE IMPLEMENTING ANYTHING ELSE! THIS IS NEEDED FOR THE GENERATOR CORE TEAM TOO!
 * Animate animal movement?
 * Make/find a script for animating camera movement for walking (up-down movement) for first person.
 * Color of some item should be determined along with other items' colors - they affect each other (same for glow) DONE
