@@ -2,7 +2,10 @@
 	Properties {
 		testTexture("Texture", 2D) = "white"{}
 		testScale("Scale", Float) = 1
-
+		
+		// Sagie additions, to make it look more dreamy
+		_Glossiness ("Smoothness", Range(0,1)) = 0.5
+		_Metallic ("Metallic", Range(0,1)) = 0.0
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -30,6 +33,9 @@
 
 		sampler2D testTexture;
 		float testScale;
+
+		half _Glossiness;
+		half _Metallic;
 
 		UNITY_DECLARE_TEX2DARRAY(baseTextures);
 
@@ -59,12 +65,17 @@
 				float drawStrength = inverseLerp(-baseBlends[i]/2 - epsilon, baseBlends[i]/2, heightPercent - baseStartHeights[i]);
 
 				float3 baseColour = baseColours[i] * baseColourStrength[i];
-				float3 textureColour = triplanar(IN.worldPos, baseTextureScales[i], blendAxes, i) * (1-baseColourStrength[i]);
+				
+				// Sagie: Where we're going, we ain't gonna need no textures no moe
+				//float3 textureColour = triplanar(IN.worldPos, baseTextureScales[i], blendAxes, i) * (1-baseColourStrength[i]);
 
-				o.Albedo = o.Albedo * (1-drawStrength) + (baseColour+textureColour) * drawStrength;
+				//o.Albedo = o.Albedo * (1-drawStrength) + (baseColour+textureColour) * drawStrength;
+				o.Albedo = o.Albedo * (1-drawStrength) + baseColour * drawStrength;
 			}
 
-		
+			// Metallic and smoothness come from slider variables
+			o.Metallic = _Metallic;
+			o.Smoothness = _Glossiness;
 		}
 
 

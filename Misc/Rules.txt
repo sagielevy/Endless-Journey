@@ -51,7 +51,6 @@ TODO:
 * Make/find a script for animating camera movement for walking (up-down movement) for first person.
 * Color of some item should be determined along with other items' colors - they affect each other (same for glow) DONE
 * Should there be some general ground terrain and sky terrain? Same for anything else that could be generalized (Perlin Noise)
-* Angles - generate options during runtime: limit according to previous section
 * Use Dor's color generator to predefine multiple color schemes (thousands!)? (Just sets of colors) And pick one at random for each sentence? Sounds like the best option for now.
 	http://paletton.com/#uid=1000u0kllllaFw0g0qFqFg0w0aF     - allows to export!
 	https://coolors.co/fcaa67-b0413e-ffffc7-473335-847577        - great colors!
