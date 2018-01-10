@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CFGGeneratorCore.Generator
+namespace CFGGeneratorCoreDll.Generator
 {
     /// <summary>
     /// Generate sentences and enqueue them in an async queue by request

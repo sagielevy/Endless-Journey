@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CFGGeneratorCore.Tracery
+namespace CFGGeneratorCoreDll.Tracery
 {
     /// <summary>
     /// Singleton class that handles Tracery engine and generates CFG sentences
@@ -12,7 +12,7 @@ namespace CFGGeneratorCore.Tracery
         private static TraceryHandler Instance;
         private string cfgJson;
 
-        private Tracery() { }
+        private TraceryHandler() { }
 
         // Singleton method. Maybe discard singleton and make it a normal class?
         public static TraceryHandler GetInstance()

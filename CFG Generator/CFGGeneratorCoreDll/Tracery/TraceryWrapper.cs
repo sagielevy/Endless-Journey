@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CFGGeneratorCore.Tracery
+namespace CFGGeneratorCoreDll.Tracery
 {
     /// <summary>
     /// Wrap tracery js function calls
