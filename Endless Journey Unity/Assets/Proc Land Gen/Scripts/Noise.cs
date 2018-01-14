@@ -5,6 +5,8 @@ public static class Noise {
 
 	public enum NormalizeMode {Local, Global};
 
+    // SAGIE:
+    // Change the logic here such that the random noise would make for a more realistic terrain!
 	public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, NoiseSettings settings, Vector2 sampleCentre) {
 		float[,] noiseMap = new float[mapWidth,mapHeight];
 

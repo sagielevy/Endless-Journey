@@ -54,7 +54,7 @@ Shader "CubedParadox/Simple Gradient Sky" {
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
 ////// Lighting:
 ////// Emissive:
-                float3 node_2737 = lerp(_SkyColor.rgb, _HorizonColor.rgb, pow((1.0 - max(0,dot(viewDirection, float3(0,-1,0)))),8.0)); // Sky
+                float3 node_2737 = lerp(_SkyColor.rgb, _HorizonColor.rgb, pow((1.0 - max(0, dot(viewDirection, float3(0,-1,0)) - _HorizonLevel)),8.0)); // Sky
                 float3 emissive = node_2737;
                 float3 finalColor = emissive;
                 return fixed4(finalColor,1);
