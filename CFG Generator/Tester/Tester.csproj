@@ -48,5 +48,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CFGGeneratorCoreDll\CFGGeneratorCoreDll.csproj">
+      <Project>{A950D241-75F0-4E27-9263-0137661A301E}</Project>
+      <Name>CFGGeneratorCoreDll</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
