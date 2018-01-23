@@ -9,7 +9,7 @@ section: length #[length:length]path# #[length:length]cam_speed (always relative
 path: #path_color# #path_glow# #path_angles# #path_terrain# (Think of whether to limit height of path or make path over any background terrain)
 background: #[color:#ground_color#****][terrain:#ground_terrain#][glow:#ground_glow#]ground# #sky# #items# (should items be here??)
 ground: #[item_color:#color# item_texture:#item_texture# item_glow:#glow#]items# #[item_color:#color# item_texture:#item_texture# item_glow:#glow#]items# (left and right items share some values e.g. color, glow, etc.) #color# #terrain# #glow#
-items: FILL TYPES, NUMBER, ETC.
+items*****: 
 sky: #[gradient_first_color:#color#]sky_gradient# #sky_glow# #sky_terrain (should include clouds sometimes!)# #weather_effects#
 sky_gradient: no_gradient, gradient_second_color: #sky_color (second color to gradient to - should be affected by first?)#
 sky_color: color_idx=****
@@ -44,6 +44,11 @@ LEGEND:
 	 Each color using non-terminal should have a predefined index value for a color from the palette. 
 	 E.g. sky always uses color no. 3 from the palette (this way the palette index itself is not needed for generating the sky non-terminal!)
 	 Fix all color uses in this language.
+
+***** Items breaks down the following way: A number for each type to be generated is selected, then positions are defined (must verify that they do not collide??).
+	  For each item, a 2D coordinate is chosen (on the XZ plane. Y will be determined by the height map for the XZ position).
+	  According to the Y value and the thresholds defined in the terrain generator (on the unity side) a sub-type will be chosen for the item type according to its Y position
+	  (e.g. low Y value under a threshold will be a bush while a higher Y value will be a tree).
 
 TODO:
 * MAKE THE FORMAL CFG BEFORE IMPLEMENTING ANYTHING ELSE! THIS IS NEEDED FOR THE GENERATOR CORE TEAM TOO!

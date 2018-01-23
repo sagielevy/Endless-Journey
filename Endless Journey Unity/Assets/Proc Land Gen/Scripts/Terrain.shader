@@ -13,7 +13,7 @@
 		
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Standard fullforwardshadows
+		#pragma surface surf Standard fullforwardshadows //vertex:vert (might be more efficient)
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
@@ -48,13 +48,24 @@
 			return saturate((value-a)/(b-a));
 		}
 
-		float3 triplanar(float3 worldPos, float scale, float3 blendAxes, int textureIndex) {
-			float3 scaledWorldPos = worldPos / scale;
-			float3 xProjection = UNITY_SAMPLE_TEX2DARRAY(baseTextures, float3(scaledWorldPos.y, scaledWorldPos.z, textureIndex)) * blendAxes.x;
-			float3 yProjection = UNITY_SAMPLE_TEX2DARRAY(baseTextures, float3(scaledWorldPos.x, scaledWorldPos.z, textureIndex)) * blendAxes.y;
-			float3 zProjection = UNITY_SAMPLE_TEX2DARRAY(baseTextures, float3(scaledWorldPos.x, scaledWorldPos.y, textureIndex)) * blendAxes.z;
-			return xProjection + yProjection + zProjection;
-		}
+		 //struct Input {
+         //    float2 uv_MainTex;
+         //    float3 vertexColor; // Vertex color stored here by vert() method
+         //};
+
+         //void vert (inout appdata_full v, out Input o)
+         //{
+         //    UNITY_INITIALIZE_OUTPUT(Input,o);
+         //    o.vertexColor = v.color; // Save the Vertex Color in the Input for the surf() method
+         //}
+
+//		float3 triplanar(float3 worldPos, float scale, float3 blendAxes, int textureIndex) {
+//			float3 scaledWorldPos = worldPos / scale;
+//			float3 xProjection = UNITY_SAMPLE_TEX2DARRAY(baseTextures, float3(scaledWorldPos.y, scaledWorldPos.z, textureIndex)) * blendAxes.x;
+//			float3 yProjection = UNITY_SAMPLE_TEX2DARRAY(baseTextures, float3(scaledWorldPos.x, scaledWorldPos.z, textureIndex)) * blendAxes.y;
+//			float3 zProjection = UNITY_SAMPLE_TEX2DARRAY(baseTextures, float3(scaledWorldPos.x, scaledWorldPos.y, textureIndex)) * blendAxes.z;
+//			return xProjection + yProjection + zProjection;
+//		}
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			float heightPercent = inverseLerp(minHeight,maxHeight, IN.worldPos.y);
