@@ -6,14 +6,16 @@
 		// Sagie additions, to make it look more dreamy
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
+		_WaterAlpha ("WAlpha", Range(0,1)) = 0.7
 	}
 	SubShader {
-		Tags { "RenderType"="Opaque" }
+		// TODO Verify that this is not too expensive
+		Tags {"RenderType"="Transparent" } // { "RenderType"="Opaque" }
 		LOD 200
 		
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Standard fullforwardshadows //vertex:vert (might be more efficient)
+		#pragma surface surf Standard fullforwardshadows alpha:fade //vertex:vert (might be more efficient)
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
@@ -36,6 +38,7 @@
 
 		half _Glossiness;
 		half _Metallic;
+		half _WaterAlpha;
 
 		UNITY_DECLARE_TEX2DARRAY(baseTextures);
 
@@ -71,6 +74,13 @@
 			float heightPercent = inverseLerp(minHeight,maxHeight, IN.worldPos.y);
 			float3 blendAxes = abs(IN.worldNormal);
 			blendAxes /= blendAxes.x + blendAxes.y + blendAxes.z;
+
+			o.Alpha = 1;
+
+			// Change alpha value for water (must have at least two layers!)
+			if (layerCount > 2 && baseStartHeights[1] - heightPercent > 0) {
+				o.Alpha = _WaterAlpha;
+			}
 
 			for (int i = 0; i < layerCount; i ++) {
 				float drawStrength = inverseLerp(-baseBlends[i]/2 - epsilon, baseBlends[i]/2, heightPercent - baseStartHeights[i]);

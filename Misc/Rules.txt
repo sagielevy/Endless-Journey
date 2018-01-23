@@ -62,9 +62,9 @@ TODO:
 	https://lifehacker.com/color-palette-fx-finds-a-whopping-18-color-palette-for-1783440516    - some more :)
 
 Add features to Tracery:
-Discrete range (whole numbers) "[X1 - X2]" X2 >= X1
-Weights (instead of writing same word multiple times): "X*WORD" X > 0, X is a natural number
-Continuous range (regular random function): "random(X2 - X1) + X1" X2 >= X1
+Discrete range (whole numbers) "#discrete(X1 - X2)#" X2 >= X1
+Weights (instead of writing same word multiple times): "#X*WORD#" X > 0, X is a natural number
+Continuous range (regular random function): "#random(X2 - X1) + X1#" X2 >= X1
 
 Descisions:
 * Use a single continuous terrain texture (with perlin noise) randomized at start. Use a different sentence for that maybe?
