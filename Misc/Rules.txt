@@ -49,6 +49,8 @@ LEGEND:
 	  For each item, a 2D coordinate is chosen (on the XZ plane. Y will be determined by the height map for the XZ position).
 	  According to the Y value and the thresholds defined in the terrain generator (on the unity side) a sub-type will be chosen for the item type according to its Y position
 	  (e.g. low Y value under a threshold will be a bush while a higher Y value will be a tree).
+	  Breakdown of type hierarchy: MainType [clouds, plants, animals, etc.], SubType [bush, tree, grass for plants for example], 
+								   ActualPrefab [bush1, bush2... bushN - N bush prefabs to choose from. Select index]
 
 TODO:
 * MAKE THE FORMAL CFG BEFORE IMPLEMENTING ANYTHING ELSE! THIS IS NEEDED FOR THE GENERATOR CORE TEAM TOO!

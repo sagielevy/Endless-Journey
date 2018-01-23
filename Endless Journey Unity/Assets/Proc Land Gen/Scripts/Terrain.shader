@@ -78,7 +78,7 @@
 			o.Alpha = 1;
 
 			// Change alpha value for water (must have at least two layers!)
-			if (layerCount > 2 && baseStartHeights[1] - heightPercent > 0) {
+			if (layerCount > 2 && baseStartHeights[1] > heightPercent) {
 				o.Alpha = _WaterAlpha;
 			}
 
