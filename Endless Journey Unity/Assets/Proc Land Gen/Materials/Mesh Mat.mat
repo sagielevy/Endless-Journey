@@ -78,6 +78,7 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _WaterAlpha: 0.8
     - _ZWrite: 1
     - testScale: 10.56
     - testTextureScale: 1
