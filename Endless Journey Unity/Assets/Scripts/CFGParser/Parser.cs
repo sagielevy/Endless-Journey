@@ -20,7 +20,7 @@ namespace Assets.Scripts.CFGParser
         public void Start()
         {
             // Init stuff
-            cFGGenerator = new AsyncCFGGenerator("CFG" + Path.DirectorySeparatorChar + "Test");
+            cFGGenerator = new AsyncCFGGenerator("CFG" + Path.DirectorySeparatorChar + "EndlessJourneyCFG");
 
             // Show the sentence
             Debug.Log(cFGGenerator.GetSentenceDebug());
