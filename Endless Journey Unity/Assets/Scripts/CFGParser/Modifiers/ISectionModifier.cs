@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    public interface ISectionModifier<T> where T : ISectionData
+    public interface ISectionModifier<T> where T : ISentenceData
     {
         // TODO Think of how to pass data to the modifier so it'll modify according to it - both CFG sentence and
         // Unity objects to modify!

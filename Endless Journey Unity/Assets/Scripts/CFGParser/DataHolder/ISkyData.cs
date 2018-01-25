@@ -5,9 +5,11 @@ using System.Text;
 
 namespace Assets.Scripts.CFGParser.DataHolder
 {
-    public interface ISkyData : ISectionData
+    public interface ISkyData : ISentenceData
     {
         string ColorSky();
         string ColorHorizon();
+
+        bool IsSkyGradient();
     }
 }

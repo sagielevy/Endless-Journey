@@ -65,9 +65,10 @@ TODO:
 	https://lifehacker.com/color-palette-fx-finds-a-whopping-18-color-palette-for-1783440516    - some more :)
 
 Add features to Tracery:
-Discrete range (whole numbers) "#discrete(X1-X2)#" X2 >= X1
-Weights (instead of writing same word multiple times): "#X*WORD#" X > 0, X is a natural number
-Continuous range (regular random function): "#random(X2-X1)#" X2 >= X1 float value between X1 and X2
+Discrete range (whole numbers) "#discrete X1~X2#" X2 >= X1
+Weights [NOT NEEDED RIGHT NOW]  (instead of writing same word multiple times): "#X*WORD#" X > 0, X is a natural number. Multiplies everything (except for X*) inside #...# 
+Repeat "#repeat X <someString>#": X is a natural number. Repeats value inside <> X times.
+Continuous range (regular random function): "#random X2~X1#" X2 >= X1 float value between X1 and X2
 
 Descisions:
 * Use a single continuous terrain texture (with perlin noise) randomized at start. Use a different sentence for that maybe?
@@ -77,3 +78,6 @@ https://www.assetstore.unity3d.com/en/#!/content/96175 (Low Poly birds - 5$)
 https://www.assetstore.unity3d.com/en/#!/content/63714 (General objects - Free)
 https://www.assetstore.unity3d.com/en/#!/content/58821 (More general objects - Free)
 https://www.assetstore.unity3d.com/en/#!/content/61217 (Day/Sunset skies - Free)
+
+
+  "sky_gradient": [ "sky_gradient;#7*no_gradient#", "sky_gradient;#3*gradient#" ], // STATIC! NO WEIGHTS PARSING NEEDED

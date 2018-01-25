@@ -1,7 +1,9 @@
-﻿using System;
+﻿using SimpleJSON;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Assets.Scripts.CFGParser.DataHolder
 {
@@ -13,26 +15,117 @@ namespace Assets.Scripts.CFGParser.DataHolder
         GroundColor,
         ItemColor1,
         ItemColor2
+        // Clouds are always white - affected by sky & horizon colors
     }
 
-    public class SentenceDataHolder : ISkyData // Implement each section component here
+    // Implement each section component here
+    public class SentenceDataHolder : ISkyData, IAnimalsData, ICloudsData, IGroundData, IMusicData, IPathData,
+                                      IPlantsData, ISectionData
     {
-        private string orgSentence;
+        const char colorDelimiter = ' ';
+        const string colon = ";;;";
+        const string arrayBracketOpen = "@!!";
+        const string arrayBracketClose = "!!@";
+        const string musicToken = "music";
+        const string plantsToken = "plants";
+        const string animalsToken = "animals";
+        const string cloudsToken = "clouds";
+        const string metallicToken = "metallic";
+        const string smoothnessToken = "smoothness";
+        const string pathGlowToken = "path_glow";
+        const string colorSchemeToken = "color_scheme";
+        const string skyGradientToken = "sky_gradient";
+        const string skyGradientTrue = "sky_gradient";
+        const string anglesToken = "angles";
+        const string angleXToken = "angle_x";
+        const string angleZToken = "angle_z";
+        const string itemXPercentToken = "item_x";
+        const string itemZPercentToken = "item_z";
+        const string plantSubtypeToken = "plant_subtype";
+        const string cloudSubtypeToken = "cloud_subtype";
+        const string animalSubtypeToken = "animal_subtype";
+        const string sectionLengthToken = "section_length";
 
+        private string orgSentence;
+        JSONNode root;
+       
         public SentenceDataHolder(string cfgSentence)
         {
-            // TODO parse sentence here into components. No need to convert them aside from int/float/string?
-            orgSentence = cfgSentence;
+            // Manually remove , before }
+            orgSentence = cfgSentence.Replace(",}", "}").Replace(colon, ":").
+                                      Replace(arrayBracketOpen, "[").Replace(arrayBracketClose, "]");
+            Debug.Log(orgSentence);
+
+            root = JSON.Parse(orgSentence);
+        }
+
+        public Item[] Animals()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Item[] Clouds()
+        {
+            throw new NotImplementedException();
         }
 
         public string ColorHorizon()
         {
-            throw new NotImplementedException();
+            return root[colorSchemeToken].ToString().Split(colorDelimiter)[(int)ColorIndicies.HorizonColor];
         }
 
         public string ColorSky()
         {
+            return root[colorSchemeToken].ToString().Split(colorDelimiter)[(int)ColorIndicies.SkyColor];
+        }
+
+        public bool IsSkyGradient()
+        {
+            return root[skyGradientToken].ToString() == skyGradientTrue;
+        }
+
+        public float Metallic()
+        {
+            return float.Parse(root[metallicToken].ToString());
+        }
+
+        public int MusicIndex()
+        {
+            return int.Parse(root[musicToken].ToString());
+        }
+
+        public float PathGlow()
+        {
+            return float.Parse(root[pathGlowToken].ToString());
+        }
+
+        public Item[] Plants()
+        {
             throw new NotImplementedException();
+        }
+
+        public float[,] SectionAngles()
+        {
+            int length = root[anglesToken].Children.Count();
+            float[,] result = new float[2, length];
+
+            for (int i = 0; i < length; i++)
+            {
+                result[0,i] = float.Parse(root[anglesToken][angleXToken][i].ToString());
+                result[1, i] = float.Parse(root[anglesToken][angleZToken][i].ToString());
+            }
+
+            return result;
+        }
+
+        public int SectionLength()
+        {
+            return int.Parse(root[sectionLengthToken].ToString());
+        }
+
+        public float Smoothness()
+        {
+            return float.Parse(root[smoothnessToken].ToString());
         }
 
         public override string ToString()

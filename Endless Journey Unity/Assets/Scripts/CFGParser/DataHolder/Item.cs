@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Assets.Scripts.CFGParser.DataHolder
 {
-    public interface ISectionData : ISentenceData
+    public struct Item
     {
-        int SectionLength();
-        float[,] SectionAngles();
+        float pos_x_percent, pos_z_percent;
+        int subtypeIndex;
     }
 }

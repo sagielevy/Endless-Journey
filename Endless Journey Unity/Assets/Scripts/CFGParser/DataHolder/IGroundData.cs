@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Assets.Scripts.CFGParser.DataHolder
 {
-    public interface ISectionData : ISentenceData
+    public interface IGroundData : ISentenceData
     {
-        int SectionLength();
-        float[,] SectionAngles();
+        float Metallic();
+        float Smoothness();
     }
 }

@@ -5,9 +5,8 @@ using System.Text;
 
 namespace Assets.Scripts.CFGParser.DataHolder
 {
-    public interface ISectionData : ISentenceData
+    public interface IMusicData : ISentenceData
     {
-        int SectionLength();
-        float[,] SectionAngles();
+        int MusicIndex();
     }
 }

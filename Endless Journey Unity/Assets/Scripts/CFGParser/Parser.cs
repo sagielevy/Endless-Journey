@@ -14,7 +14,7 @@ namespace Assets.Scripts.CFGParser
         // or have another class do it. Either way make interface getters just like the sentence data ones.
         // Send to modifiers
         SentenceDataHolder sentenceDataHolder;
-        List<ISectionModifier<ISectionData>> modifiers;
+        List<ISectionModifier<ISentenceData>> modifiers;
         AsyncCFGGenerator cFGGenerator;
 
         public void Start()
