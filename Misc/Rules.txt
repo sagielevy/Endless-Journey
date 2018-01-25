@@ -4,7 +4,7 @@ Rules:
 
 // Actual rules (formalize later)
 start: #color_scheme#**** #[length:#section_length#]section# #background# #music#
-music**: TBD (something ambient?)
+music**: [0 - LAST_MUSIC_FILE_IDX]
 section: length #[length:length]path# #[length:length]cam_speed (always relative to length)# (OR Calculate length vs angle to avoid seeing sections being deleted)
 path: #path_color# #path_glow# #path_angles# #path_terrain# (Think of whether to limit height of path or make path over any background terrain)
 background: #[color:#ground_color#****][terrain:#ground_terrain#][glow:#ground_glow#]ground# #sky# #items# (should items be here??)

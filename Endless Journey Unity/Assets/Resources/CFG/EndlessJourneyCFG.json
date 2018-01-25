@@ -1,4 +1,4 @@
 {
-	"start": [],
-	
+	"start": ["#[length:#section_length#]section# #background# #music#"],
+	"music": ["0 - 5"]
 }
