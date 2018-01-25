@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace Scripts.Tracery.Generator
 {
@@ -10,35 +11,59 @@ namespace Scripts.Tracery.Generator
     /// </summary>
     public class AsyncCFGGenerator
     {
-        private const int SentencesCapacity = 100; // Make this configurable?
+        private const int LIST_CAP = 30;
 
         // How many sentences to generate to randomly select from for each round
-        private const int NumOfSentencesPerRun = 20;
+        private const int NUM_OF_SENTENCES_PER_RUN = 20;
 
         private TraceryHandler handler;
+        private MyList<SentenceDataHolder> list;
 
         public AsyncCFGGenerator(string cfgPath)
         {
             handler = new TraceryHandler();
             handler.LoadCFG(cfgPath);
+            list = new MyList<SentenceDataHolder>();
+
+            // Generate the initial sentences.
+            for (int i = 0; i < LIST_CAP; i++)
+            {
+                EnqueueNewSentence();
+            }
+        }
+
+        public SentenceDataHolder GetSentenceDebug()
+        {
+            return new SentenceDataHolder(handler.GenerateSentence());
         }
 
         public SentenceDataHolder GetSentence()
         {
-            string strSentence = handler.GenerateSentence();
-            SentenceDataHolder result = new SentenceDataHolder(strSentence);
-            return result;
+            Thread t = new Thread(EnqueueNewSentence);
+            t.Start();
+            return list.Dequeue();
         }
-
-        // TODO Make singleton?
-        // TODO Use some async queue data structure and generate sentences into it.
-        // TODO THIS IS VERY IMPORTANT! Think of how to implement some callback that will generate a new sentence once 
-        //      a sentence has been removed from the queue by the user of this generator. Also, make sure the inital generation
-        //      fills up the queue to the limit of the capacity constant.
 
         private void EnqueueNewSentence()
         {
-            throw new NotImplementedException();
+            SentenceDataHolder lastSentence = list.Last;
+
+            Sentence[] sentences = new Sentence[NUM_OF_SENTENCES_PER_RUN];
+            for (int i = 0; i < sentences.Length; i++)
+            {
+                SentenceDataHolder sentenceData = GenerateNewSentence();
+                float weight = CalcDistance(lastSentence, sentenceData);
+                Sentence s = new Sentence();
+                s.Weight = weight;
+                s.SentenceData = sentenceData;
+                sentences[i] = s;
+            }
+
+            // Sort the sentences by weight
+            Array.Sort(sentences);
+
+            // The first element should have the minimal distance
+            list.Enqueue(sentences[0].SentenceData);
         }
 
         /// <summary>
@@ -47,30 +72,34 @@ namespace Scripts.Tracery.Generator
         /// <returns></returns>
         private SentenceDataHolder GenerateNewSentence()
         {
-            throw new NotImplementedException();
+            string strSentence = handler.GenerateSentence();
+            return new SentenceDataHolder(strSentence);
         }
 
-        /// <summary>
-        /// Evaluate weight based on how similar both sentences are.
-        /// The closer they are, the larger the weight of the current sentence
-        /// </summary>
-        /// <param name="original"></param>
-        /// <param name="current"></param>
-        /// <returns></returns>
-        private Sentence EvaluateWeightForSentence(string original, string current)
+        private float CalcDistance(SentenceDataHolder orig, SentenceDataHolder toCompare)
         {
-            throw new NotImplementedException();
-        }
-
-        private string RandomlySelectNextSentence(Sentence[] sentences)
-        {
-            throw new NotImplementedException();
+            return 5;
         }
     }
 
-    struct Sentence
+    public struct Sentence : IComparable
     {
-        string SentenceData;
-        float Weight;
+        public SentenceDataHolder SentenceData;
+        public float Weight;
+
+        public int CompareTo(object obj)
+        {
+            Sentence s = (Sentence)obj;
+            float distance = Weight - s.Weight;
+            if(distance > 0)
+            {
+                return 1;
+            }
+            else if(distance < 0)
+            {
+                return -1;
+            }
+            return 0;
+        }
     }
 }
