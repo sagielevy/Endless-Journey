@@ -23,7 +23,7 @@ namespace Assets.Scripts.CFGParser
             cFGGenerator = new AsyncCFGGenerator("CFG" + Path.DirectorySeparatorChar + "Test");
 
             // Show the sentence
-            Debug.Log(cFGGenerator.GetSentence());
+            Debug.Log(cFGGenerator.GetSentenceDebug());
         }
 
         public void Update()

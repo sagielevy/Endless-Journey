@@ -5,6 +5,16 @@ using System.Text;
 
 namespace Assets.Scripts.CFGParser.DataHolder
 {
+    public enum ColorIndicies
+    {
+        SkyColor = 0,
+        HorizonColor,
+        // PathColor,
+        GroundColor,
+        ItemColor1,
+        ItemColor2
+    }
+
     public class SentenceDataHolder : ISkyData // Implement each section component here
     {
         private string orgSentence;
