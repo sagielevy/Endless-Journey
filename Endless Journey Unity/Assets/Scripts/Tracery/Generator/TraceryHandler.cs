@@ -11,21 +11,18 @@ namespace Scripts.Tracery.Generator
     /// </summary>
     public class TraceryHandler
     {
-        const string CFG_NAME = "CFG/EndlessJourneyCFG";
         const string CFG_TRUNK = "#start#";
-        private static TraceryHandler Instance;
-        private string cfgJson;
+        private Grammar grammar;
 
         public void LoadCFG(string cfgFilepath)
         {
-            TextAsset jsonFile = Resources.Load(CFG_NAME) as TextAsset; 
-            Grammar grammar = Grammar.LoadFromJSON(jsonFile);
-            this.cfgJson = grammar.Flatten(CFG_TRUNK);
+            TextAsset jsonFile = Resources.Load(cfgFilepath) as TextAsset; 
+            this.grammar = Grammar.LoadFromJSON(jsonFile);
         }
 
         public string GenerateSentence()
         {
-            throw new NotImplementedException();
+            return this.grammar.Flatten(CFG_TRUNK);
         }
     }
 }
