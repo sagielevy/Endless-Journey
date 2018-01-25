@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Tracery;
+using UnityEngine;
 
 namespace Scripts.Tracery.Generator
 {
@@ -9,25 +11,16 @@ namespace Scripts.Tracery.Generator
     /// </summary>
     public class TraceryHandler
     {
+        const string CFG_NAME = "CFG/EndlessJourneyCFG";
+        const string CFG_TRUNK = "#start#";
         private static TraceryHandler Instance;
         private string cfgJson;
 
-        private TraceryHandler() { }
-
-        // Singleton method. Maybe discard singleton and make it a normal class?
-        public static TraceryHandler GetInstance()
-        {
-            if (Instance == null)
-            {
-                Instance = new TraceryHandler();
-            }
-
-            return Instance;
-        }
-
         public void LoadCFG(string cfgFilepath)
         {
-            throw new NotImplementedException();
+            TextAsset jsonFile = Resources.Load(CFG_NAME) as TextAsset; 
+            Grammar grammar = Grammar.LoadFromJSON(jsonFile);
+            this.cfgJson = grammar.Flatten(CFG_TRUNK);
         }
 
         public string GenerateSentence()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.CFGParser.DataHolder;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -13,14 +14,27 @@ namespace Scripts.Tracery.Generator
 
         // How many sentences to generate to randomly select from for each round
         private const int NumOfSentencesPerRun = 20;
-        
+
+        private TraceryHandler handler;
+
+        public AsyncCFGGenerator(string cfgPath)
+        {
+            handler = new TraceryHandler();
+            handler.LoadCFG(cfgPath);
+        }
+
+        public string GetSentence()
+        {
+            throw new NotImplementedException();
+        }
+
         // TODO Make singleton?
         // TODO Use some async queue data structure and generate sentences into it.
         // TODO THIS IS VERY IMPORTANT! Think of how to implement some callback that will generate a new sentence once 
         //      a sentence has been removed from the queue by the user of this generator. Also, make sure the inital generation
         //      fills up the queue to the limit of the capacity constant.
 
-        public void EnqueueNewSentence()
+        private void EnqueueNewSentence()
         {
             throw new NotImplementedException();
         }
@@ -29,7 +43,7 @@ namespace Scripts.Tracery.Generator
         /// Generate a new sentence based on given CFG
         /// </summary>
         /// <returns></returns>
-        private string GenerateNewSentence()
+        private SentenceDataHolder GenerateNewSentence()
         {
             throw new NotImplementedException();
         }
