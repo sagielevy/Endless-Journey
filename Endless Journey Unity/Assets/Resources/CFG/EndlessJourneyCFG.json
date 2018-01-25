@@ -1,6 +1,6 @@
 {
   "start": [ "{#section_length# #section# #background# #music#}" ],
-  "music": [ "\"music\";;;"#discrete 0~LAST_MUSIC_IDX#" ],
+  "music": [ "\"music\";;;#discrete 0~LAST_MUSIC_IDX#" ],
   "section": [ "\"angles\";;;{#[num_angles:#discrete 1~8#]angles#} #path#" ],
   "path": [ "\"path_glow\";;;#path_glow#" ],
   "background": [ "#ground# #[num_plants:#discrete 0~40#][num_animals:#discrete 0~8#][num_clouds:#discrete 0~10#]items#" ],
