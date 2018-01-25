@@ -52,7 +52,7 @@ namespace Scripts.Tracery.Generator
         }
     }
 
-    class Sentence
+    struct Sentence
     {
         string SentenceData;
         float Weight;

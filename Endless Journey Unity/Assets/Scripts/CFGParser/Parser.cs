@@ -20,6 +20,11 @@ namespace Assets.Scripts.CFGParser
             
         }
 
+        public void Update()
+        {
+
+        }
+
         // TODO Think of a way to free items created previously
     }
 }
