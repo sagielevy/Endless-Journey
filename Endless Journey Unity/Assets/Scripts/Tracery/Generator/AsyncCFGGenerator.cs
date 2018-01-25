@@ -23,9 +23,11 @@ namespace Scripts.Tracery.Generator
             handler.LoadCFG(cfgPath);
         }
 
-        public string GetSentence()
+        public SentenceDataHolder GetSentence()
         {
-            throw new NotImplementedException();
+            string strSentence = handler.GenerateSentence();
+            SentenceDataHolder result = new SentenceDataHolder(strSentence);
+            return result;
         }
 
         // TODO Make singleton?
