@@ -5,7 +5,7 @@
   "path": [ "\"path_glow\";;;#path_glow#" ],
   "background": [ "#ground# #[num_plants:#discrete 0~40#][num_animals:#discrete 0~8#][num_clouds:#discrete 0~10#]items#" ],
   "ground": [ "#metallic# #smoothness#" ],
-  "items": [ "\"plants\";;;{#repeat num_plants <#item_pos#, #plant_subtype#,>#}, animals;;;#repeat num_animals <#item_pos# #animal_subtype#># clouds;;;#repeat num_clouds <#item_pos# #cloud_subtype#>#" ],
+  "items": [ "\"plants\";;;{<num_plants #item_pos#, #plant_subtype#,>#}, animals;;;<num_animals #item_pos# #animal_subtype#># clouds;;;<num_clouds #item_pos# #cloud_subtype#>#" ],
   "item_pos": [ "\"item_x\";;;#random 0~1# \"item_z\";;;#random 0~1#" ],
   "plant_subtype": [ "\"plant_subtype\";;;#discrete 0~1#" ],
   "animal_subtype": [ "\"animal_subtype\";;;#discrete 0~1#" ],
@@ -16,6 +16,6 @@
   "smoothness": [ "\"smoothness\";;;#random 0~0.7#" ],
   "glow": [ "\"glow\";;;#random 0~1#" ],
   "section_length": [ "\"section_length\";;;#discrete 700~2000#" ],
-  "angles": [ "\"angles_x\";;;@!!#repeat num_angles <#random 0~1#,>#!!@, \"angles_z\";;;@!!#repeat num_angles <#random 0~1#,>#!!@" ],
+  "angles": [ "\"angles_x\";;;@!!<num_angles #random 0~1#,>#!!@, \"angles_z\";;;@!!<num_angles #random 0~1#,>#!!@" ],
   "path_glow": [ "#glow#" ]
 }

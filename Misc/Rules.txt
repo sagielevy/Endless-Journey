@@ -67,7 +67,7 @@ TODO:
 Add features to Tracery:
 Discrete range (whole numbers) "#discrete X1~X2#" X2 >= X1
 Weights [NOT NEEDED RIGHT NOW]  (instead of writing same word multiple times): "#X*WORD#" X > 0, X is a natural number. Multiplies everything (except for X*) inside #...# 
-Repeat "#repeat X <someString>#": X is a natural number. Repeats value inside <> X times.
+Repeat "<X #someString#>": X is a natural number. Repeats value inside <> X times.
 Continuous range (regular random function): "#random X2~X1#" X2 >= X1 float value between X1 and X2
 
 Descisions:
