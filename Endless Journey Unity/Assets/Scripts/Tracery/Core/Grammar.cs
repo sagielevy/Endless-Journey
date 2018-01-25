@@ -102,6 +102,23 @@ namespace Tracery
 
 		private Stack<TraceryNode[]> GetRulesStack(string key)
 		{
+            if(key.StartsWith("random"))
+            {
+                Stack<TraceryNode[]> s = new Stack<TraceryNode[]>();
+                TraceryNode[] array = new TraceryNode[1];
+                array[0] = new RandomNode(key);
+                s.Push(array);
+                return s;
+            }
+            if(key.StartsWith("discrete"))
+            {
+                Stack<TraceryNode[]> s = new Stack<TraceryNode[]>();
+                TraceryNode[] array = new TraceryNode[1];
+                array[0] = new DiscreteNode(key);
+                s.Push(array);
+                return s;
+            }
+
 			Stack<TraceryNode[]> stack;
 			if (!symbols.TryGetValue(key, out stack))
 			{

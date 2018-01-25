@@ -18,6 +18,11 @@ namespace Assets.Scripts.CFGParser.DataHolder
         {
             get
             {
+                if(collection.Count == 0)
+                {
+                    return default(T);
+                }
+
                 return collection.Last.Value;
             }
         }

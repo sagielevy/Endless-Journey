@@ -93,7 +93,7 @@ namespace Tracery
 			}
 
 			string[] parts = builder.ToString().Split(new char[]{':'}, 2);
-			Assert.AreEqual(parts.Length, 2); // TODO allow function actions
+            Assert.AreEqual(parts.Length, 2, "builder: " + builder); // TODO allow function actions
 			string key = parts[0];
 			NodeAction action;
 			if (parts[1] == "POP")
@@ -202,9 +202,10 @@ namespace Tracery
 			// parse the contents of the tag into a TagNode
 			// TODO allow modifiers to take parameters
 			string tagContent = builder.ToString();
-			string[] parts = tagContent.Split('.');
-			Assert.IsTrue(parts.Length > 0);
-			string key = parts[0];
+            string[] parts = { tagContent };
+            //string[] parts = tagContent.Split('.');
+            //Assert.IsTrue(parts.Length > 0);
+            string key = parts[0];
 			string[] modifiers = parts.Skip(1).ToArray();
 			return new TagNode(key, modifiers, preActions.ToArray(), PopContext());
 		}
