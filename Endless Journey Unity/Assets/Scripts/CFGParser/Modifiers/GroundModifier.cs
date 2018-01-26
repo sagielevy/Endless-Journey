@@ -6,10 +6,12 @@ using System.Text;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    class GroundModifier : IWorldModifier<IGroundData>
+    public class GroundModifier : IWorldModifier//<IGroundData>
     {
-        public void ModifySection(IGroundData data)
+        public void ModifySection(ISentenceData data)
         {
+            var groundData = data as IGroundData;
+
             throw new NotImplementedException();
         }
     }

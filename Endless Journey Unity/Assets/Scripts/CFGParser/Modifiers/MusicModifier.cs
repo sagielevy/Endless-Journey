@@ -6,10 +6,11 @@ using System.Text;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    class MusicModifier : IWorldModifier<IMusicData>
+    class MusicModifier : IWorldModifier//<IMusicData>
     {
-        public void ModifySection(IMusicData data)
+        public void ModifySection(ISentenceData data)
         {
+            var musicData = data as IMusicData;
             throw new NotImplementedException();
         }
     }

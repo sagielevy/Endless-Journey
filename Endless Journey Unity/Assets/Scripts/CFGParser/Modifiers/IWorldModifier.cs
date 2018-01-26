@@ -7,10 +7,8 @@ using UnityEngine;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    public interface IWorldModifier<T> where T : ISentenceData
+    public interface IWorldModifier//<T> where T : ISentenceData
     {
-        // TODO Think of how to pass data to the modifier so it'll modify according to it - both CFG sentence and
-        // Unity objects to modify!
-        void ModifySection(T data);
+        void ModifySection(ISentenceData data);
     }
 }

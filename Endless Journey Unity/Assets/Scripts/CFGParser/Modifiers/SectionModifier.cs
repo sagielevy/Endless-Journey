@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    public class SectionModifier : IWorldModifier<ISectionData>
+    public class SectionModifier : IWorldModifier//<ISectionData>
     {
         Vector3 initialPosition;
         Transform player;
@@ -20,9 +20,9 @@ namespace Assets.Scripts.CFGParser.Modifiers
             this.data = data;
         }
 
-        public void ModifySection(ISectionData data)
+        public void ModifySection(ISentenceData data)
         {
-            
+            var sectionData = data as ISectionData;
         }
 
         public bool IsSectionComplete()

@@ -14,7 +14,7 @@ namespace Assets.Scripts.CFGParser
         // or have another class do it. Either way make interface getters just like the sentence data ones.
         // Send to modifiers
         SentenceDataHolder sentenceDataHolder;
-        List<IWorldModifier<ISentenceData>> modifiers;
+        List<IWorldModifier> modifiers;
         SectionModifier sectionModifier;
         AsyncCFGGenerator cFGGenerator;
         string[] colorPalettes;
@@ -29,14 +29,15 @@ namespace Assets.Scripts.CFGParser
 
             colorPalettes = Resources.Load<TextAsset>("Color Palettes" + Path.DirectorySeparatorChar + "Palettes").text.Split('\n');
             cFGGenerator = new AsyncCFGGenerator("CFG" + Path.DirectorySeparatorChar + "EndlessJourneyCFG", colorPalettes);
-            modifiers = new List<IWorldModifier<ISentenceData>>();
+            modifiers = new List<IWorldModifier>();
+            sentenceDataHolder = cFGGenerator.GetSentence(); // Load first sentence
 
-            modifiers.Add(new SkyModifier(SkyMat))
+            modifiers.Add(new SkyModifier(SkyMat));
         }
 
         public void Update()
         {
-            
+            modifiers[0].ModifySection(sentenceDataHolder);
         }
 
         // TODO Think of a way to free items created previously

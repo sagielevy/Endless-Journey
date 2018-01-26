@@ -8,13 +8,15 @@ using Assets.Scripts.CFGParser;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    public class SkyModifier : IWorldModifier<ISkyData>
+    public class SkyModifier : IWorldModifier//<ISkyData>
     {
         const string SkyColorId = "_SkyColor";
         const string HorizonColorId = "_HorizonColor";
+        const float speed = 0.2f;
         Material skyMaterial;
         Color orgSkyColor, orgHorizonColor;
         float startTime;
+        
 
         public SkyModifier(Material skyMaterial)
         {
@@ -25,23 +27,25 @@ namespace Assets.Scripts.CFGParser.Modifiers
         }
 
         // TODO When modifying, change both the values of the skybox material AND the environment lighting gradient colors!
-        public void ModifySection(ISkyData data)
+        public void ModifySection(ISentenceData data)
         {
+            var skyData = data as ISkyData;
+
             // Interpolate colors!
             // Interpolate Environment settings as well
-            var newSkyColor = Color.Lerp(orgSkyColor, Extensions.FromText(data.ColorSky()), Time.time - startTime);
+            var newSkyColor = Color.Lerp(orgSkyColor, Extensions.FromText(skyData.ColorSky()), Time.time - startTime);
             skyMaterial.SetColor(SkyColorId, newSkyColor);
             RenderSettings.ambientSkyColor = newSkyColor;
 
             // Change horizon to new horizon color
-            if (data.IsSkyGradient())
+            if (skyData.IsSkyGradient())
             {
-                var newHorizonColor = Color.Lerp(orgHorizonColor, Extensions.FromText(data.ColorHorizon()), Time.time - startTime);
+                var newHorizonColor = Color.Lerp(orgHorizonColor, Extensions.FromText(skyData.ColorHorizon()), speed * (Time.time - startTime));
                 RenderSettings.ambientEquatorColor = newHorizonColor;
                 skyMaterial.SetColor(HorizonColorId, newHorizonColor);
             } else
             {
-                var newHorizonColor = Color.Lerp(orgHorizonColor, Extensions.FromText(data.ColorSky()), Time.time - startTime);
+                var newHorizonColor = Color.Lerp(orgHorizonColor, Extensions.FromText(skyData.ColorSky()), speed * (Time.time - startTime));
                 
                 // Change horizon to sky color
                 RenderSettings.ambientEquatorColor = newHorizonColor;

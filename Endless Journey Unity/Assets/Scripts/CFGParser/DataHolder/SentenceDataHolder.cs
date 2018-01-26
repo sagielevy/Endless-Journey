@@ -79,21 +79,21 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
         public string ColorScheme()
         {
-            return  colorPalettes[int.Parse(root[colorSchemeToken].ToString())];
+            return  colorPalettes[int.Parse(root[colorSchemeToken].Value)];
         }
 
         public string ColorHorizon()
         {
-            return colorPalettes[int.Parse(root[colorSchemeToken].ToString())].Split(colorDelimiter)[(int)ColorIndicies.HorizonColor];
+            return colorPalettes[int.Parse(root[colorSchemeToken].Value)].Split(colorDelimiter)[(int)ColorIndicies.HorizonColor];
         }
 
         public string ColorSky()
         {
-            return colorPalettes[int.Parse(root[colorSchemeToken].ToString())].Split(colorDelimiter)[(int)ColorIndicies.SkyColor];
+            return colorPalettes[int.Parse(root[colorSchemeToken].Value)].Split(colorDelimiter)[(int)ColorIndicies.SkyColor];
         }
         public string GroundColor1()
         {
-            return colorPalettes[int.Parse(root[colorSchemeToken].ToString())].Split(colorDelimiter)[(int)ColorIndicies.GroundColor1];
+            return colorPalettes[int.Parse(root[colorSchemeToken].Value)].Split(colorDelimiter)[(int)ColorIndicies.GroundColor1];
         }
 
         public string GroundColor2()
@@ -118,17 +118,17 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
         public float Metallic()
         {
-            return float.Parse(root[metallicToken].ToString());
+            return float.Parse(root[metallicToken].Value);
         }
 
         public int MusicIndex()
         {
-            return int.Parse(root[musicToken].ToString());
+            return int.Parse(root[musicToken].Value);
         }
 
         public float PathGlow()
         {
-            return float.Parse(root[pathGlowToken].ToString());
+            return float.Parse(root[pathGlowToken].Value);
         }
 
         public float[,] SectionAngles()
@@ -138,8 +138,8 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
             for (int i = 0; i < length; i++)
             {
-                result[0,i] = float.Parse(root[anglesToken][i][angleXToken].ToString());
-                result[1, i] = float.Parse(root[anglesToken][i][angleZToken].ToString());
+                result[0,i] = float.Parse(root[anglesToken][i][angleXToken].Value);
+                result[1, i] = float.Parse(root[anglesToken][i][angleZToken].Value);
             }
 
             return result;
@@ -147,12 +147,12 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
         public int SectionLength()
         {
-            return int.Parse(root[sectionLengthToken].ToString());
+            return int.Parse(root[sectionLengthToken].Value);
         }
 
         public float Smoothness()
         {
-            return float.Parse(root[smoothnessToken].ToString());
+            return float.Parse(root[smoothnessToken].Value);
         }
 
         public override string ToString()
@@ -167,9 +167,9 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
             for (int i = 0; i < length; i++)
             {
-                result[i] = new Item(float.Parse(root[itemTypeToken][i][itemXPercentToken].ToString()),
-                                     float.Parse(root[itemTypeToken][i][itemZPercentToken].ToString()),
-                                     int.Parse(root[itemTypeToken][i][itemSubtypeToken].ToString()));
+                result[i] = new Item(float.Parse(root[itemTypeToken][i][itemXPercentToken].Value),
+                                     float.Parse(root[itemTypeToken][i][itemZPercentToken].Value),
+                                     int.Parse(root[itemTypeToken][i][itemSubtypeToken].Value));
             }
 
             return result;

@@ -6,10 +6,11 @@ using System.Text;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    class CloudModifier : IWorldModifier<ICloudsData>
+    class CloudModifier : IWorldModifier//<ICloudsData>
     {
-        public void ModifySection(ICloudsData data)
+        public void ModifySection(ISentenceData data)
         {
+            var cloudData = data as ICloudsData;
             throw new NotImplementedException();
         }
     }

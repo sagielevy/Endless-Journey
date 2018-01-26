@@ -6,10 +6,11 @@ using System.Text;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    class AnimalModifier : IWorldModifier<IAnimalsData>
+    class AnimalModifier : IWorldModifier//<IAnimalsData>
     {
-        public void ModifySection(IAnimalsData data)
+        public void ModifySection(ISentenceData data)
         {
+            var animalData = data as IAnimalsData;
             throw new NotImplementedException();
         }
     }
