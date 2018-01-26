@@ -111,6 +111,16 @@ namespace Assets.Scripts.CFGParser.DataHolder
             return colorPalettes[int.Parse(root[colorSchemeToken].Value)].Split(colorDelimiter)[(int)ColorIndicies.GroundColor3];
         }
 
+        public string[] GroundColors()
+        {
+            // MAGIC NUMBERS YAY YAY YAY
+            string[] result = new string[3];
+            result[0] = GroundColor1();
+            result[1] = GroundColor2();
+            result[2] = GroundColor3();
+            return result;
+        }
+
         public bool IsSkyGradient()
         {
             return root[skyGradientToken].ToString() == skyGradientTrue;
