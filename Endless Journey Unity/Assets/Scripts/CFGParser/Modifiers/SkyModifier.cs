@@ -12,7 +12,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
     {
         const string SkyColorId = "_SkyColor";
         const string HorizonColorId = "_HorizonColor";
-        const float speed = 0.2f;
+        const float speed = 0.08f;
         Material skyMaterial;
         Color orgSkyColor, orgHorizonColor;
         float startTime;

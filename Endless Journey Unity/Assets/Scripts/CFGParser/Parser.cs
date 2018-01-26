@@ -18,6 +18,7 @@ namespace Assets.Scripts.CFGParser
         SectionModifier sectionModifier;
         AsyncCFGGenerator cFGGenerator;
         string[] colorPalettes;
+        GameObject originalModels;
 
         // Unity objects from scene
         Material SkyMat;
@@ -30,14 +31,24 @@ namespace Assets.Scripts.CFGParser
             colorPalettes = Resources.Load<TextAsset>("Color Palettes" + Path.DirectorySeparatorChar + "Palettes").text.Split('\n');
             cFGGenerator = new AsyncCFGGenerator("CFG" + Path.DirectorySeparatorChar + "EndlessJourneyCFG", colorPalettes);
             modifiers = new List<IWorldModifier>();
+            originalModels = GameObject.Find("OriginalModels");
+
             sentenceDataHolder = cFGGenerator.GetSentence(); // Load first sentence
 
-            modifiers.Add(new SkyModifier(SkyMat));
+            CreateNewModifiers();
         }
 
         public void Update()
         {
             modifiers[0].ModifySection(sentenceDataHolder);
+        }
+
+        private void CreateNewModifiers()
+        {
+            // Clear Previous modifiers
+            modifiers.Clear();
+
+            modifiers.Add(new SkyModifier(SkyMat));
         }
 
         // TODO Think of a way to free items created previously
