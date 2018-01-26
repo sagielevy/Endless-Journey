@@ -74,6 +74,11 @@ namespace Assets.Scripts.CFGParser.DataHolder
             return Items(plantsToken, plantsSubtypeToken);
         }
 
+        public string ColorScheme()
+        {
+            return root[colorSchemeToken].ToString();
+        }
+
         public string ColorHorizon()
         {
             return root[colorSchemeToken].ToString().Split(colorDelimiter)[(int)ColorIndicies.HorizonColor];
