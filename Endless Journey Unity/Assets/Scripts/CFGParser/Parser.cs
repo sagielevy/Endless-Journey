@@ -17,11 +17,21 @@ namespace Assets.Scripts.CFGParser
         List<IWorldModifier<ISentenceData>> modifiers;
         SectionModifier sectionModifier;
         AsyncCFGGenerator cFGGenerator;
+        string[] colorPalettes;
+
+        // Unity objects from scene
+        Material SkyMat;
 
         public void Start()
         {
             // Init stuff
-            cFGGenerator = new AsyncCFGGenerator("CFG" + Path.DirectorySeparatorChar + "EndlessJourneyCFG");
+            SkyMat = RenderSettings.skybox;
+
+            colorPalettes = Resources.Load<TextAsset>("Color Palettes" + Path.DirectorySeparatorChar + "Palettes").text.Split('\n');
+            cFGGenerator = new AsyncCFGGenerator("CFG" + Path.DirectorySeparatorChar + "EndlessJourneyCFG", colorPalettes);
+            modifiers = new List<IWorldModifier<ISentenceData>>();
+
+            modifiers.Add(new SkyModifier(SkyMat))
         }
 
         public void Update()

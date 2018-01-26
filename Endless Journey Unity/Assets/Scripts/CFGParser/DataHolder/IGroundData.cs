@@ -9,5 +9,10 @@ namespace Assets.Scripts.CFGParser.DataHolder
     {
         float Metallic();
         float Smoothness();
+
+        string GroundColor1();
+        string GroundColor2();
+        string GroundColor3();
+        string GroundColor4();
     }
 }

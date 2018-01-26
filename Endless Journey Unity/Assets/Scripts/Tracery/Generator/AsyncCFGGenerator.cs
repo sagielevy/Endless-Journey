@@ -18,9 +18,11 @@ namespace Scripts.Tracery.Generator
 
         private TraceryHandler handler;
         private MyList<SentenceDataHolder> list;
+        string[] colorPalettes;
 
-        public AsyncCFGGenerator(string cfgPath)
+        public AsyncCFGGenerator(string cfgPath, string[] colorPalettes)
         {
+            this.colorPalettes = colorPalettes;
             handler = new TraceryHandler();
             handler.LoadCFG(cfgPath);
             list = new MyList<SentenceDataHolder>();
@@ -34,7 +36,7 @@ namespace Scripts.Tracery.Generator
 
         public SentenceDataHolder GetSentenceDebug()
         {
-            return new SentenceDataHolder(handler.GenerateSentence());
+            return new SentenceDataHolder(handler.GenerateSentence(), colorPalettes);
         }
 
         public SentenceDataHolder GetSentence()
@@ -73,7 +75,7 @@ namespace Scripts.Tracery.Generator
         private SentenceDataHolder GenerateNewSentence()
         {
             string strSentence = handler.GenerateSentence();
-            return new SentenceDataHolder(strSentence);
+            return new SentenceDataHolder(strSentence, colorPalettes);
         }
 
         private float CalcDistance(SentenceDataHolder orig, SentenceDataHolder toCompare)

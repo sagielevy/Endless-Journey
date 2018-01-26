@@ -1,6 +1,7 @@
 ﻿using SimpleJSON;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
         SkyColor = 0,
         HorizonColor,
         // PathColor,
-        GroundColor,
+        GroundColor1,
         ItemColor1,
         ItemColor2
         // Clouds are always white - affected by sky & horizon colors
@@ -47,17 +48,18 @@ namespace Assets.Scripts.CFGParser.DataHolder
         const string sectionLengthToken = "section_length";
 
         private string orgSentence;
+        string[] colorPalettes;
         JSONNode root;
-       
-        public SentenceDataHolder(string cfgSentence)
+        
+        public SentenceDataHolder(string cfgSentence, string[] colorPalettes)
         {
+            this.colorPalettes = colorPalettes;
+
             // Manually remove , before }
             orgSentence = cfgSentence.Replace(",}", "}").Replace(colon, ":").
                                       Replace(arrayBracketOpen, "[").Replace(arrayBracketClose, "]").Replace(",]", "]");
             //Debug.Log(orgSentence);
             root = JSON.Parse(orgSentence);
-
-            Debug.Log("Color: " + ColorScheme());
         }
 
         public Item[] Animals()
@@ -77,17 +79,36 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
         public string ColorScheme()
         {
-            return root[colorSchemeToken].ToString();
+            return  colorPalettes[int.Parse(root[colorSchemeToken].ToString())];
         }
 
         public string ColorHorizon()
         {
-            return root[colorSchemeToken].ToString().Split(colorDelimiter)[(int)ColorIndicies.HorizonColor];
+            return colorPalettes[int.Parse(root[colorSchemeToken].ToString())].Split(colorDelimiter)[(int)ColorIndicies.HorizonColor];
         }
 
         public string ColorSky()
         {
-            return root[colorSchemeToken].ToString().Split(colorDelimiter)[(int)ColorIndicies.SkyColor];
+            return colorPalettes[int.Parse(root[colorSchemeToken].ToString())].Split(colorDelimiter)[(int)ColorIndicies.SkyColor];
+        }
+        public string GroundColor1()
+        {
+            return colorPalettes[int.Parse(root[colorSchemeToken].ToString())].Split(colorDelimiter)[(int)ColorIndicies.GroundColor1];
+        }
+
+        public string GroundColor2()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GroundColor3()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GroundColor4()
+        {
+            throw new NotImplementedException();
         }
 
         public bool IsSkyGradient()
