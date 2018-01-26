@@ -21,5 +21,5 @@
   "section_length": [ "\"section_length\";;;#discrete 700~2000#" ],
   "angles": [ "@!!<#num_angles# {\"angles_x\";;;#random 0~1#, \"angles_z\";;;#random 0~1#},>!!@" ],
   "path_glow": [ "#glow#" ],
-  "start": [ "{#section_length#, #section#, #background#, #music#}" ]
+  "start": [ "{#section_length#, #color_scheme#, #section#, #background#, #music#}" ]
 }

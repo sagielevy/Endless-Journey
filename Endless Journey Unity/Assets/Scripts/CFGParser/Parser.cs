@@ -15,6 +15,7 @@ namespace Assets.Scripts.CFGParser
         // Send to modifiers
         SentenceDataHolder sentenceDataHolder;
         List<IWorldModifier<ISentenceData>> modifiers;
+        SectionModifier sectionModifier;
         AsyncCFGGenerator cFGGenerator;
 
         public void Start()
@@ -25,7 +26,7 @@ namespace Assets.Scripts.CFGParser
 
         public void Update()
         {
-
+            
         }
 
         // TODO Think of a way to free items created previously
