@@ -17,6 +17,7 @@ namespace Assets.Scripts.CFGParser
         AsyncCFGGenerator cFGGenerator;
         string[] colorPalettes;
         GameObject originalModels;
+        GameObject musicAudioSources;
 
         // Unity objects from scene
         Material SkyMat;
@@ -30,6 +31,7 @@ namespace Assets.Scripts.CFGParser
             cFGGenerator = new AsyncCFGGenerator("CFG" + Path.DirectorySeparatorChar + "EndlessJourneyCFG", colorPalettes);
             modifiers = new List<IWorldModifier>();
             originalModels = GameObject.Find("OriginalModels");
+            musicAudioSources = GameObject.Find("Music");
 
             sentenceDataHolder = cFGGenerator.GetSentence(); // Load first sentence
 
@@ -66,6 +68,7 @@ namespace Assets.Scripts.CFGParser
             modifiers.Add(new SkyModifier(SkyMat));
             modifiers.Add(new GroundModifier(GetComponent<TerrainGenerator>().textureSettings, GetComponent<TerrainGenerator>().mapMaterial));
             modifiers.Add(new PlantsModifier(sentenceDataHolder, originalModels, GetComponent<TerrainGenerator>().viewer));
+            modifiers.Add(new MusicModifier(musicAudioSources));
         }
     }
 }

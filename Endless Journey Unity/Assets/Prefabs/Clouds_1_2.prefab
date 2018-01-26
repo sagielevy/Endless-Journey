@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4771246760575900}
   - component: {fileID: 33181631291562836}
   - component: {fileID: 23263927131459132}
+  - component: {fileID: 64501345740491940}
   m_Layer: 0
   m_Name: Clouds_1_2
   m_TagString: Untagged
@@ -34,9 +35,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1632606724927636}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -28, y: 42.620995, z: -2.5261688}
-  m_LocalScale: {x: 348.76404, y: 348.76404, z: 348.76404}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.012578621, y: -0.0041650417, z: 0.012444079}
+  m_LocalScale: {x: 3.4876404, y: 3.4876404, z: 3.4876404}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -47,7 +48,7 @@ MeshRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1632606724927636}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -81,4 +82,18 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1632606724927636}
+  m_Mesh: {fileID: 4300062, guid: fb28ffb8fb1bb4244a84396610e8d8dd, type: 3}
+--- !u!64 &64501345740491940
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1632606724927636}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300062, guid: fb28ffb8fb1bb4244a84396610e8d8dd, type: 3}

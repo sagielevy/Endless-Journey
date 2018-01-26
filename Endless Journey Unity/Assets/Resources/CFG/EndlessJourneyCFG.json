@@ -18,7 +18,7 @@
   "metallic": [ "\"metallic\";;;#random 0~0.8#" ],
   "smoothness": [ "\"smoothness\";;;#random 0~0.7#" ],
   "glow": [ "#random 0~1#" ],
-  "section_length": [ "\"section_length\";;;#discrete 700~2000#" ],
+  "section_length": [ "\"section_length\";;;#discrete 100~200#" ],
   "angles": [ "@!!<#num_angles# {\"angles_x\";;;#random 0~1#, \"angles_z\";;;#random 0~1#},>!!@" ],
   "path_glow": [ "#glow#" ],
   "start": [ "{#section_length#, #color_scheme#, #section#, #background#, #music#}" ]

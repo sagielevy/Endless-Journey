@@ -35,8 +35,9 @@ namespace Assets.Scripts.CFGParser.Modifiers
 
                 foreach (var plant in plantData.Plants())
                 {
-                    actualPosX = plant.pos_x_percent * sectionData.SectionLength();
-                    actualPosZ = plant.pos_z_percent * sectionData.SectionLength();
+                    // Origin center of section
+                    actualPosX = plant.pos_x_percent * sectionData.SectionLength() / 2;
+                    actualPosZ = plant.pos_z_percent * sectionData.SectionLength() / 2;
 
                     // FOR DEBUG
                     int subSubType = random.Next(1, maxes[plant.subtypeIndex - 1]);
