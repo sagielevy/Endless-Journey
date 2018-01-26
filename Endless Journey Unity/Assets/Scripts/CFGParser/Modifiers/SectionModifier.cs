@@ -6,10 +6,9 @@ using System.Text;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    public class SkyModifier : IWorldModifier<ISkyData>
+    public class SectionModifier : IWorldModifier<ISectionData>
     {
-        // TODO When modifying, change both the values of the skybox material AND the environment lighting gradient colors!
-        public void ModifySection(ISkyData data)
+        public void ModifySection(ISectionData data)
         {
             throw new NotImplementedException();
         }

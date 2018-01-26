@@ -14,16 +14,13 @@ namespace Assets.Scripts.CFGParser
         // or have another class do it. Either way make interface getters just like the sentence data ones.
         // Send to modifiers
         SentenceDataHolder sentenceDataHolder;
-        List<ISectionModifier<ISentenceData>> modifiers;
+        List<IWorldModifier<ISentenceData>> modifiers;
         AsyncCFGGenerator cFGGenerator;
 
         public void Start()
         {
             // Init stuff
             cFGGenerator = new AsyncCFGGenerator("CFG" + Path.DirectorySeparatorChar + "EndlessJourneyCFG");
-
-            // Show the sentence
-            Debug.Log(cFGGenerator.GetSentenceDebug());
         }
 
         public void Update()

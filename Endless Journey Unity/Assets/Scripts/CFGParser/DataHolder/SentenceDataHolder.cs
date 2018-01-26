@@ -53,8 +53,8 @@ namespace Assets.Scripts.CFGParser.DataHolder
         {
             // Manually remove , before }
             orgSentence = cfgSentence.Replace(",}", "}").Replace(colon, ":").
-                                      Replace(arrayBracketOpen, "[").Replace(arrayBracketClose, "]");
-            Debug.Log(orgSentence);
+                                      Replace(arrayBracketOpen, "[").Replace(arrayBracketClose, "]").Replace(",]", "]");
+            //Debug.Log(orgSentence);
 
             root = JSON.Parse(orgSentence);
         }
@@ -111,8 +111,8 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
             for (int i = 0; i < length; i++)
             {
-                result[0,i] = float.Parse(root[anglesToken][angleXToken][i].ToString());
-                result[1, i] = float.Parse(root[anglesToken][angleZToken][i].ToString());
+                result[0,i] = float.Parse(root[anglesToken][i][angleXToken].ToString());
+                result[1, i] = float.Parse(root[anglesToken][i][angleZToken].ToString());
             }
 
             return result;

@@ -1,11 +1,14 @@
 {
-  "start": [ "{#section_length# #section# #background# #music#}" ],
+  "num_angles": [ "#discrete 1~8#" ],
+  "num_plants": [ "#discrete 0~40#" ],
+  "num_animals": [ "#discrete 0~8#" ],
+  "num_clouds": [ "#discrete 0~10#" ],
   "music": [ "\"music\";;;#discrete 0~10#" ],
-  "section": [ "\"angles\";;;{#[num_angles:#discrete 1~8#]angles#} #path#" ],
+  "section": [ "\"angles\";;;#angles#, #path#" ],
   "path": [ "\"path_glow\";;;#path_glow#" ],
-  "background": [ "#ground# #[num_plants:#discrete 0~40#][num_animals:#discrete 0~8#][num_clouds:#discrete 0~10#]items#" ],
-  "ground": [ "#metallic# #smoothness#" ],
-  "items": [ "\"plants\";;;{<#num_plants# {#item_pos#, #plant_subtype#},>}, animals;;;<#num_animals# {#item_pos#, #animal_subtype#},> clouds;;;<#num_clouds# {#item_pos#, #cloud_subtype#>}," ],
+  "background": [ "#ground#, #items#" ],
+  "ground": [ "#metallic#, #smoothness#" ],
+  "items": [ "\"plants\";;;@!!<#num_plants# {#item_pos#, #plant_subtype#},>!!@, \"animals\";;;@!!<#num_animals# {#item_pos#, #animal_subtype#},>!!@, \"clouds\";;;@!!<#num_clouds# {#item_pos#, #cloud_subtype#},>!!@" ],
   "item_pos": [ "\"item_x\";;;#random 0~1#, \"item_z\";;;#random 0~1#" ],
   "plant_subtype": [ "\"plant_subtype\";;;#discrete 0~1#" ],
   "animal_subtype": [ "\"animal_subtype\";;;#discrete 0~1#" ],
@@ -14,8 +17,9 @@
   "color_scheme": [ "\"color_scheme\";;;#discrete 0~1716#" ],
   "metallic": [ "\"metallic\";;;#random 0~0.8#" ],
   "smoothness": [ "\"smoothness\";;;#random 0~0.7#" ],
-  "glow": [ "\"glow\";;;#random 0~1#" ],
+  "glow": [ "#random 0~1#" ],
   "section_length": [ "\"section_length\";;;#discrete 700~2000#" ],
-  "angles": [ "\"angles_x\";;;@!!<#num_angles# #random 0~1#,>!!@, \"angles_z\";;;@!!<#num_angles# #random 0~1#,>!!@" ],
-  "path_glow": [ "#glow#" ]
+  "angles": [ "@!!<#num_angles# {\"angles_x\";;;#random 0~1#, \"angles_z\";;;#random 0~1#},>!!@" ],
+  "path_glow": [ "#glow#" ],
+  "start": [ "{#section_length#, #section#, #background#, #music#}" ]
 }

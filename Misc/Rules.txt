@@ -81,3 +81,9 @@ https://www.assetstore.unity3d.com/en/#!/content/61217 (Day/Sunset skies - Free)
 
 
   "sky_gradient": [ "sky_gradient;#7*no_gradient#", "sky_gradient;#3*gradient#" ], // STATIC! NO WEIGHTS PARSING NEEDED
+  
+
+  "section": [ "\"angles\";;;{#[num_angles:#discrete 1~8#]angles#} #path#" ],
+  "background": [ "#ground# #[num_plants:#discrete 0~40#][num_animals:#discrete 0~8#][num_clouds:#discrete 0~10#]items#" ],
+  "items": [ "\"plants\";;;{<#num_plants# {#item_pos#, #plant_subtype#},>}, animals;;;<#num_animals# {#item_pos#, #animal_subtype#},> clouds;;;<#num_clouds# {#item_pos#, #cloud_subtype#>}," ],
+  "angles": [ "\"angles_x\";;;@!!<#num_angles# #random 0~1#,>!!@, \"angles_z\";;;@!!<#num_angles# #random 0~1#,>!!@" ],
