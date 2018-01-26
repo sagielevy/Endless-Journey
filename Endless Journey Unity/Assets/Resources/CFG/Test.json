@@ -3,6 +3,7 @@
 ,	"animal": ["unicorn","raven","sparrow","scorpion","coyote","eagle","owl","lizard","zebra","duck","kitten"]
 ,	"mood": ["vexed","indignant","impassioned","wistful","astute","courteous"]
 ,	"story": ["#hero# traveled with her pet #heroPet#.  #hero# was never #mood#, for the #heroPet# was always too #mood#."]
-,	"start": ["#[hero:#name#][heroPet:#animal#]story# random=#random 0.1~3.3# discrete=#discrete 0~3405# concat*3=5<something,>" ]
-
+,	"num": ["#discrete 0~40#"]
+,	"start": ["#[hero:#name#][heroPet:#animal#]story# random=#random 0.1~3.3# discrete=#discrete 0~3405# repeat*2=#tester# some more stuff at the end" ]
+,	"tester": ["<#num# herro,>"]
 }

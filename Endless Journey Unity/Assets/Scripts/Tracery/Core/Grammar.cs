@@ -27,8 +27,8 @@ namespace Tracery
 			}
 
 			Grammar grammar = new Grammar();
-
-			foreach (KeyValuePair<string,JSONNode> pair in root)
+            Tracery.g_Grammar = grammar;
+            foreach (KeyValuePair<string,JSONNode> pair in root)
 			{
 				JSONArray val = pair.Value.AsArray;
 				if (val == null)
@@ -46,7 +46,8 @@ namespace Tracery
 
 		public static Grammar LoadFromJSON(TextAsset jsonFile)
 		{
-			return LoadFromJSON(jsonFile.text);
+			Grammar result = LoadFromJSON(jsonFile.text);
+            return result;
 		}
 
 		public void AddModifiers(IDictionary<string,Func<string,string>> modifiers)
@@ -102,7 +103,8 @@ namespace Tracery
 
 		private Stack<TraceryNode[]> GetRulesStack(string key)
 		{
-            if(key.StartsWith("random"))
+            // TODO: Put this magic values (random, repeat and discreate), as constants somewhere
+            if (key.StartsWith("random"))
             {
                 Stack<TraceryNode[]> s = new Stack<TraceryNode[]>();
                 TraceryNode[] array = new TraceryNode[1];

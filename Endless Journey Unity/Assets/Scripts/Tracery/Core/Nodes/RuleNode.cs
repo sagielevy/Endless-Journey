@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Tracery
 {
@@ -11,7 +12,12 @@ namespace Tracery
 			this.sections = sections;
 		}
 
-		public override string Flatten(Grammar grammar)
+        public override object Clone()
+        {
+            return new RuleNode(sections, Raw);
+        }
+
+        public override string Flatten(Grammar grammar)
 		{
 			StringBuilder builder = new StringBuilder();
 			foreach (TraceryNode section in sections)

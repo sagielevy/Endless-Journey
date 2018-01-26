@@ -28,15 +28,48 @@ namespace Tracery
 			{
 				switch (CurrentChar())
 				{
-				case '[':
-					nodes.Add(ParseAction());
-					break;
-				case '#':
-					nodes.Add(ParseTag());
-					break;
-				default:
-					nodes.Add(ParsePlaintext());
-					break;
+                    case '<':
+                        Advance();
+                        int startIndex = rawRule.IndexOf(' ', pos);
+                        int endIndex = rawRule.IndexOf('>', pos);
+                        string strCount = rawRule.Substring(pos, startIndex - pos);
+                        int count;
+                        bool parseSuccess = int.TryParse(strCount, out count);
+
+                        if (!parseSuccess)
+                        {
+                            string newCount = Tracery.g_Grammar.Flatten(strCount);
+                            count = int.Parse(newCount);
+                        }
+
+                        // Skip the space
+                        startIndex += 1;
+                        string sub = rawRule.Substring(startIndex, endIndex - startIndex);
+                        Parser repeatParser = new Parser(sub);
+                        TraceryNode toRepeat = repeatParser.Parse();
+                        for (int i = 0; i < count; i++)
+                        {
+                            nodes.Add((TraceryNode)toRepeat.Clone());
+                        }
+                        bool reached = false;
+                        while (!reached)
+                        {
+                            if(CurrentChar() == '>')
+                            {
+                                reached = true;
+                            }
+                            Advance();
+                        }
+                        break;
+				    case '[':
+					    nodes.Add(ParseAction());
+					    break;
+				    case '#':
+					    nodes.Add(ParseTag());
+					    break;
+				    default:
+					    nodes.Add(ParsePlaintext());
+					    break;
 				}
 			}
 
@@ -136,7 +169,7 @@ namespace Tracery
 						escapeNext = true;
 						Advance();
 					}
-					else if (current == '#' || current == '[')
+					else if (current == '<' || current == '#' || current == '[')
 					{
 						break; // unescaped special char – end current plaintext section
 					}

@@ -13,7 +13,12 @@ namespace Tracery
 			this.key = key;
 		}
 
-		public override string Flatten(Grammar grammar)
+        public override object Clone()
+        {
+            return new RandomNode(key);
+        }
+
+        public override string Flatten(Grammar grammar)
 		{
             string range = this.key.Substring("random".Length);
             string[] splitted = range.Split('~');

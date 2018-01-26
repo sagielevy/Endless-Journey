@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace Tracery
 {
@@ -20,7 +21,12 @@ namespace Tracery
 				.ToArray();
 		}
 
-		public override string Flatten(Grammar grammar)
+        public override object Clone()
+        {
+            return new TagNode(key, modifiers, preActions, base.Raw);
+        }
+
+        public override string Flatten(Grammar grammar)
 		{
 			foreach (NodeAction preAction in preActions)
 			{

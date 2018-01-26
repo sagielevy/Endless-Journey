@@ -1,4 +1,6 @@
-﻿namespace Tracery
+﻿using System;
+
+namespace Tracery
 {
 	public class PlaintextNode : TraceryNode
 	{
@@ -9,7 +11,12 @@
 			this.text = text;
 		}
 
-		public override string Flatten(Grammar grammar)
+        public override object Clone()
+        {
+            return new PlaintextNode(text, Raw);
+        }
+
+        public override string Flatten(Grammar grammar)
 		{
 			return text;
 		}
