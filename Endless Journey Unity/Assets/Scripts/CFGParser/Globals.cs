@@ -9,5 +9,6 @@ namespace Assets.Scripts.CFGParser
     {
         // Can turn 60 degrees to each side
         public static float theta = 60;
+        public static float speedChange = 0.01f;
     }
 }

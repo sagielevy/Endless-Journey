@@ -12,7 +12,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
     {
         const string SkyColorId = "_SkyColor";
         const string HorizonColorId = "_HorizonColor";
-        const float speed = 0.08f;
+        //const float speed = 0.08f;
         Material skyMaterial;
         Color orgSkyColor, orgHorizonColor;
         float startTime;
@@ -40,12 +40,12 @@ namespace Assets.Scripts.CFGParser.Modifiers
             // Change horizon to new horizon color
             if (skyData.IsSkyGradient())
             {
-                var newHorizonColor = Color.Lerp(orgHorizonColor, Extensions.FromText(skyData.ColorHorizon()), speed * (Time.time - startTime));
+                var newHorizonColor = Color.Lerp(orgHorizonColor, Extensions.FromText(skyData.ColorHorizon()), Globals.speedChange * (Time.time - startTime));
                 RenderSettings.ambientEquatorColor = newHorizonColor;
                 skyMaterial.SetColor(HorizonColorId, newHorizonColor);
             } else
             {
-                var newHorizonColor = Color.Lerp(orgHorizonColor, Extensions.FromText(skyData.ColorSky()), speed * (Time.time - startTime));
+                var newHorizonColor = Color.Lerp(orgHorizonColor, Extensions.FromText(skyData.ColorSky()), Globals.speedChange * (Time.time - startTime));
                 
                 // Change horizon to sky color
                 RenderSettings.ambientEquatorColor = newHorizonColor;

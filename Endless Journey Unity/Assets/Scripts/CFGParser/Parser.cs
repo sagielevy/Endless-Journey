@@ -8,11 +8,9 @@ using UnityEngine;
 
 namespace Assets.Scripts.CFGParser
 {
+    [RequireComponent(typeof(TerrainGenerator))]
     public class Parser : MonoBehaviour
     {
-        public TextureData textureSettings;
-        public Material mapMaterial;
-
         SentenceDataHolder sentenceDataHolder;
         List<IWorldModifier> modifiers;
         SectionModifier sectionModifier;
@@ -47,7 +45,8 @@ namespace Assets.Scripts.CFGParser
                 {
                     modifier.ModifySection(sentenceDataHolder);
                 }
-            } else
+            }
+            else
             {
                 // New section!
                 sentenceDataHolder = cFGGenerator.GetSentence();
@@ -65,7 +64,8 @@ namespace Assets.Scripts.CFGParser
             modifiers.Clear();
 
             modifiers.Add(new SkyModifier(SkyMat));
-            modifiers.Add(new GroundModifier(textureSettings, mapMaterial));
+            modifiers.Add(new GroundModifier(GetComponent<TerrainGenerator>().textureSettings, GetComponent<TerrainGenerator>().mapMaterial));
+            modifiers.Add(new PlantsModifier(sentenceDataHolder, originalModels, GetComponent<TerrainGenerator>().viewer));
         }
     }
 }

@@ -9,11 +9,14 @@ namespace Assets.Scripts.CFGParser.Modifiers
 {
     public class GroundModifier : IWorldModifier//<IGroundData>
     {
+        const string Glossiness = "_Glossiness";
+        const string Metallic = "_Metallic";
         const int MaxLayers = 3;
         private TextureData textureData;
         private Material groundMaterial;
-        const float speed = 0.08f;
+        //const float speed = 0.08f;
         Color[] orgLayerColors;
+        float orgGlosiness, orgMetallic;
         float startTime;
 
         public GroundModifier(TextureData textureData, Material groundMaterial)
@@ -28,6 +31,9 @@ namespace Assets.Scripts.CFGParser.Modifiers
             {
                 orgLayerColors[i] = textureData.layers[i].tint;
             }
+
+            orgGlosiness = groundMaterial.GetFloat(Glossiness);
+            orgMetallic = groundMaterial.GetFloat(Metallic);
         }
 
         public void ModifySection(ISentenceData data)
@@ -38,12 +44,16 @@ namespace Assets.Scripts.CFGParser.Modifiers
             // Change each layer color
             for (int i = 0; i < MaxLayers; i++)
             {
-                var currColor = Color.Lerp(orgLayerColors[i], Extensions.FromText(groundColors[i]), speed * (Time.time - startTime));
+                var currColor = Color.Lerp(orgLayerColors[i], Extensions.FromText(groundColors[i]), Globals.speedChange * (Time.time - startTime));
                 textureData.layers[i].tint = currColor;
             }
 
-            // Apply changes
+            // Apply color changes
             textureData.ApplyToMaterial(groundMaterial);
+
+            // Change glossiness and metallic
+            groundMaterial.SetFloat(Glossiness, Mathf.Lerp(orgGlosiness, groundData.Smoothness(), Globals.speedChange * (Time.time - startTime)));
+            groundMaterial.SetFloat(Glossiness, Mathf.Lerp(orgMetallic, groundData.Metallic(), Globals.speedChange * (Time.time - startTime)));
         }
     }
 }
