@@ -10,9 +10,9 @@ namespace Assets.Scripts.CFGParser
 {
     public class Parser : MonoBehaviour
     {
-        // TODO either make this class a MonoBehaviour and reference all the required components in the scene
-        // or have another class do it. Either way make interface getters just like the sentence data ones.
-        // Send to modifiers
+        public TextureData textureSettings;
+        public Material mapMaterial;
+
         SentenceDataHolder sentenceDataHolder;
         List<IWorldModifier> modifiers;
         SectionModifier sectionModifier;
@@ -40,17 +40,32 @@ namespace Assets.Scripts.CFGParser
 
         public void Update()
         {
-            modifiers[0].ModifySection(sentenceDataHolder);
+            if (!sectionModifier.IsSectionComplete())
+            {
+                // Run each modifier once per frame
+                foreach (var modifier in modifiers)
+                {
+                    modifier.ModifySection(sentenceDataHolder);
+                }
+            } else
+            {
+                // New section!
+                sentenceDataHolder = cFGGenerator.GetSentence();
+                CreateNewModifiers();
+            }
         }
 
         private void CreateNewModifiers()
         {
+            // TODO Think of a way to free items created previously
+
+            sectionModifier = new SectionModifier(Camera.main.transform.position, Camera.main.transform, sentenceDataHolder);
+
             // Clear Previous modifiers
             modifiers.Clear();
 
             modifiers.Add(new SkyModifier(SkyMat));
+            modifiers.Add(new GroundModifier(textureSettings, mapMaterial));
         }
-
-        // TODO Think of a way to free items created previously
     }
 }
