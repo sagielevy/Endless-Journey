@@ -41,7 +41,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
         const string angleZToken = "angle_z";
         const string itemXPercentToken = "item_x";
         const string itemZPercentToken = "item_z";
-        const string plantSubtypeToken = "plant_subtype";
+        const string plantsSubtypeToken = "plant_subtype";
         const string cloudSubtypeToken = "cloud_subtype";
         const string animalSubtypeToken = "animal_subtype";
         const string sectionLengthToken = "section_length";
@@ -61,12 +61,17 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
         public Item[] Animals()
         {
-            throw new NotImplementedException();
+            return Items(animalsToken, animalSubtypeToken);
         }
 
         public Item[] Clouds()
         {
-            throw new NotImplementedException();
+            return Items(cloudsToken, cloudSubtypeToken);
+        }
+
+        public Item[] Plants()
+        {
+            return Items(plantsToken, plantsSubtypeToken);
         }
 
         public string ColorHorizon()
@@ -99,11 +104,6 @@ namespace Assets.Scripts.CFGParser.DataHolder
             return float.Parse(root[pathGlowToken].ToString());
         }
 
-        public Item[] Plants()
-        {
-            throw new NotImplementedException();
-        }
-
         public float[,] SectionAngles()
         {
             int length = root[anglesToken].Children.Count();
@@ -131,6 +131,21 @@ namespace Assets.Scripts.CFGParser.DataHolder
         public override string ToString()
         {
             return orgSentence;
+        }
+
+        private Item[] Items(string itemTypeToken, string itemSubtypeToken)
+        {
+            int length = root[itemTypeToken].Children.Count();
+            Item[] result = new Item[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = new Item(float.Parse(root[itemTypeToken][i][itemXPercentToken].ToString()),
+                                     float.Parse(root[itemTypeToken][i][itemZPercentToken].ToString()),
+                                     int.Parse(root[itemTypeToken][i][itemSubtypeToken].ToString()));
+            }
+
+            return result;
         }
     }
 }
