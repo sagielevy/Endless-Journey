@@ -74,5 +74,5 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _HorizonColor: {r: 0.5528501, g: 0.60886776, b: 0.54721916, a: 1}
-    - _SkyColor: {r: 0.88235295, g: 0.6901961, b: 0.49411765, a: 1}
+    - _HorizonColor: {r: 0.31664315, g: 0.32892296, b: 0.28852358, a: 1}
+    - _SkyColor: {r: 0.22352941, g: 0.4509804, b: 0.40392157, a: 1}

@@ -33,19 +33,19 @@ namespace Assets.Scripts.CFGParser.Modifiers
 
             // Interpolate colors!
             // Interpolate Environment settings as well
-            var newSkyColor = Color.Lerp(orgSkyColor, Extensions.FromText(skyData.ColorSky()), Time.time - startTime);
+            var newSkyColor = Color.Lerp(orgSkyColor, Helpers.FromText(skyData.ColorSky()), Time.time - startTime);
             skyMaterial.SetColor(SkyColorId, newSkyColor);
             RenderSettings.ambientSkyColor = newSkyColor;
 
             // Change horizon to new horizon color
             if (skyData.IsSkyGradient())
             {
-                var newHorizonColor = Color.Lerp(orgHorizonColor, Extensions.FromText(skyData.ColorHorizon()), Globals.speedChange * (Time.time - startTime));
+                var newHorizonColor = Color.Lerp(orgHorizonColor, Helpers.FromText(skyData.ColorHorizon()), Globals.speedChange * (Time.time - startTime));
                 RenderSettings.ambientEquatorColor = newHorizonColor;
                 skyMaterial.SetColor(HorizonColorId, newHorizonColor);
             } else
             {
-                var newHorizonColor = Color.Lerp(orgHorizonColor, Extensions.FromText(skyData.ColorSky()), Globals.speedChange * (Time.time - startTime));
+                var newHorizonColor = Color.Lerp(orgHorizonColor, Helpers.FromText(skyData.ColorSky()), Globals.speedChange * (Time.time - startTime));
                 
                 // Change horizon to sky color
                 RenderSettings.ambientEquatorColor = newHorizonColor;

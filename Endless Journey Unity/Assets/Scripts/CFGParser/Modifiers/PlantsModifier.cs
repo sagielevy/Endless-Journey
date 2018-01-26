@@ -10,16 +10,16 @@ namespace Assets.Scripts.CFGParser.Modifiers
     public class PlantsModifier : IWorldModifier//<IPlantsData>
     {
         private ISectionData sectionData;
-        //private float[,] heightMap;
         private GameObject originalModels;
+        private TerrainGenerator terrainChunksParent;
         private bool hasRun;
-        private Transform parent;
 
-        public PlantsModifier(ISectionData sectionData, GameObject originalModels, Transform parent)
+        public PlantsModifier(ISectionData sectionData, GameObject originalModels,
+                              TerrainGenerator terrainChunksParent)
         {
             this.sectionData = sectionData;
             this.originalModels = originalModels;
-            this.parent = parent;
+            this.terrainChunksParent = terrainChunksParent;
             hasRun = false;
         }
 
@@ -31,7 +31,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 var plantData = data as IPlantsData;
                 float actualPosX, actualPosZ;
 
-                int[] maxes = new int[] { 10, 8, 4 };
+                int[] maxes = new int[] { 9, 8, 4 };
 
                 foreach (var plant in plantData.Plants())
                 {
@@ -43,14 +43,13 @@ namespace Assets.Scripts.CFGParser.Modifiers
                     int subSubType = random.Next(1, maxes[plant.subtypeIndex - 1]);
                     var plantName = "Plants_" + plant.subtypeIndex + "_" + subSubType;
                     var newPlant = GameObject.Instantiate(originalModels.transform.Find(plantName));
-                    newPlant.parent = parent;
 
-                    // Set normal Y value!
-                    newPlant.localPosition = new Vector3(actualPosX, 70f, actualPosZ);
+                    // Set chunk parent
+                    var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
+                    chunk.AddItem(newPlant);
 
-                    // Enable stuff!!
-                    newPlant.GetComponent<Rigidbody>().useGravity = true;
-                    newPlant.GetComponent<MeshRenderer>().enabled = true;
+                    // Set current item position to X, Y = 100, Z
+                    newPlant.position = new Vector3(actualPosX, Globals.maxHeight, actualPosZ);
                 }
             }
         }

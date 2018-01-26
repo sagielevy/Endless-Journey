@@ -67,7 +67,9 @@ namespace Assets.Scripts.CFGParser
 
             modifiers.Add(new SkyModifier(SkyMat));
             modifiers.Add(new GroundModifier(GetComponent<TerrainGenerator>().textureSettings, GetComponent<TerrainGenerator>().mapMaterial));
-            modifiers.Add(new PlantsModifier(sentenceDataHolder, originalModels, GetComponent<TerrainGenerator>().viewer));
+            modifiers.Add(new PlantsModifier(sentenceDataHolder, originalModels, 
+                            GetComponent<TerrainGenerator>()));
+            modifiers.Add(new CloudModifier(sentenceDataHolder, originalModels, GetComponent<TerrainGenerator>()));
             modifiers.Add(new MusicModifier(musicAudioSources));
         }
     }

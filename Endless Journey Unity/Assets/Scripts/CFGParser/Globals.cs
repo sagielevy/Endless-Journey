@@ -8,7 +8,10 @@ namespace Assets.Scripts.CFGParser
     public static class Globals
     {
         // Can turn 60 degrees to each side
-        public static float theta = 60;
-        public static float speedChange = 0.01f;
+        public static readonly float theta = 50;
+        public static readonly float speedChange = 0.01f;
+        public static readonly float maxHeight = 100f; // TODO this is a guess!
+        public static readonly float cloudHeight = 50f; // TODO this is a bad solution
+        public static readonly float cloudSeperateMul = 2.5f;
     }
 }

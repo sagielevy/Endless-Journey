@@ -7,7 +7,6 @@ public class TerrainGenerator : MonoBehaviour {
 	const float viewerMoveThresholdForChunkUpdate = 25f;
 	const float sqrViewerMoveThresholdForChunkUpdate = viewerMoveThresholdForChunkUpdate * viewerMoveThresholdForChunkUpdate;
 
-
 	public int colliderLODIndex;
 	public LODInfo[] detailLevels;
 
@@ -26,6 +25,14 @@ public class TerrainGenerator : MonoBehaviour {
 
 	Dictionary<Vector2, TerrainChunk> terrainChunkDictionary = new Dictionary<Vector2, TerrainChunk>();
 	List<TerrainChunk> visibleTerrainChunks = new List<TerrainChunk>();
+
+    public TerrainChunk[] GetTerrainChunks()
+    {
+        TerrainChunk[] chunks = new TerrainChunk[terrainChunkDictionary.Count];
+        terrainChunkDictionary.Values.CopyTo(chunks, 0);
+
+        return chunks;
+    }
 
 	void Start() {
 

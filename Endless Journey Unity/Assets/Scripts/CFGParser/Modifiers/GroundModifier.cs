@@ -44,7 +44,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
             // Change each layer color
             for (int i = 0; i < MaxLayers; i++)
             {
-                var currColor = Color.Lerp(orgLayerColors[i], Extensions.FromText(groundColors[i]), Globals.speedChange * (Time.time - startTime));
+                var currColor = Color.Lerp(orgLayerColors[i], Helpers.FromText(groundColors[i]), Globals.speedChange * (Time.time - startTime));
                 textureData.layers[i].tint = currColor;
             }
 

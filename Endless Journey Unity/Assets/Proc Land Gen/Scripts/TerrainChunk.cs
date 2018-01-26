@@ -1,24 +1,32 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.CFGParser;
+using UnityEngine;
 
 public class TerrainChunk {
 	
 	const float colliderGenerationDistanceThreshold = 5;
 	public event System.Action<TerrainChunk, bool> onVisibilityChanged;
 	public Vector2 coord;
-	 
-	GameObject meshObject;
-	Vector2 sampleCentre;
+	public Vector2 sampleCentre { get; private set; }
+    public MeshFilter meshFilter { get; private set; }
+
+    public void AddItem(Transform item)
+    {
+        item.parent = meshFilter.gameObject.transform;
+    }
+
+    HeightMap heightMap;
+    GameObject meshObject;
 	Bounds bounds;
 
 	MeshRenderer meshRenderer;
-	MeshFilter meshFilter;
+	
 	MeshCollider meshCollider;
 
 	LODInfo[] detailLevels;
 	LODMesh[] lodMeshes;
 	int colliderLODIndex;
 
-	HeightMap heightMap;
+	
 	bool heightMapReceived;
 	int previousLODIndex = -1;
 	bool hasSetCollider;
@@ -112,8 +120,30 @@ public class TerrainChunk {
 					}
 				}
 
+                // GROUNDED ITEMS
+                // Set our items' Y position and display them
+                foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
+                {
+                    var transform = item.transform;
 
-			}
+                    // Find nearest vertex to this chunk
+                    var nearestVertex = Helpers.NearestVertexTo(meshFilter, transform.position);
+
+                    transform.position = new Vector3(transform.position.x, nearestVertex.y, transform.position.z);
+
+                    // Enable the item. Shit.
+                    item.GetComponent<MeshRenderer>().enabled = true;
+                }
+
+                // AIRBORNE ITEMS
+                foreach (var item in meshFilter.GetComponentsInChildren<AirborneItemComponent>())
+                {
+                    var transform = item.transform;
+
+                    // Enable the item. Shit.
+                    item.GetComponent<MeshRenderer>().enabled = true;
+                }
+            }
 
 			if (wasVisible != visible) {
 				
