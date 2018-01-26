@@ -142,7 +142,7 @@ public class TerrainChunk {
 				}
 			}
 		}
-	}
+    }
 
 	public void SetVisible(bool visible) {
 		meshObject.SetActive (visible);
