@@ -55,8 +55,9 @@ namespace Assets.Scripts.CFGParser.DataHolder
             orgSentence = cfgSentence.Replace(",}", "}").Replace(colon, ":").
                                       Replace(arrayBracketOpen, "[").Replace(arrayBracketClose, "]").Replace(",]", "]");
             //Debug.Log(orgSentence);
-
             root = JSON.Parse(orgSentence);
+
+            Debug.Log("Color: " + ColorScheme());
         }
 
         public Item[] Animals()

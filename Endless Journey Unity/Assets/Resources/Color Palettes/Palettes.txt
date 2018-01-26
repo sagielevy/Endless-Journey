@@ -1,7 +1,6 @@
 #dbc2cf #9fa2b2 #3c7a89 #2e4756 #16262e
 #c4bbb8 #f5b0cb #dc6acf #745c97 #39375b
 #160f29 #246a73 #368f8b #f3dfc1 #ddbea8
-#000000 #000000 #000000 #000000 #000000
 #bce7fd #c492b1 #af3b6e #424651 #21fa90
 #44af69 #f8333c #fcab10 #2b9eb3 #dbd5b5
 #83b692 #f9ada0 #f9627d #c65b7c #5b3758
