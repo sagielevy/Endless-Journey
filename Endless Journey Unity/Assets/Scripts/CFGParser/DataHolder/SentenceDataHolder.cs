@@ -77,6 +77,11 @@ namespace Assets.Scripts.CFGParser.DataHolder
             return Items(plantsToken, plantsSubtypeToken);
         }
 
+        public string ColorIndex()
+        {
+            return root[colorSchemeToken].Value;
+        }
+
         public string ColorScheme()
         {
             return  colorPalettes[int.Parse(root[colorSchemeToken].Value)];

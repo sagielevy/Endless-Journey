@@ -1,8 +1,11 @@
 ﻿using Assets.Scripts.CFGParser.DataHolder;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Threading;
+using UnityEngine;
 
 namespace Scripts.Tracery.Generator
 {
@@ -49,7 +52,7 @@ namespace Scripts.Tracery.Generator
         private void EnqueueNewSentence()
         {
             SentenceDataHolder lastSentence = list.Last;
-
+            // Debug.Log("Last sentence colors: " + ((lastSentence != null) ? (lastSentence.ColorScheme()) : ("NULL")));
             Sentence[] sentences = new Sentence[NUM_OF_SENTENCES_PER_RUN];
             for (int i = 0; i < sentences.Length; i++)
             {
@@ -58,6 +61,7 @@ namespace Scripts.Tracery.Generator
                 Sentence s = new Sentence();
                 s.Weight = weight;
                 s.SentenceData = sentenceData;
+                // Debug.Log("Color: " + sentenceData.ColorScheme() + " Weight: " + weight.ToString());
                 sentences[i] = s;
             }
 
@@ -80,7 +84,37 @@ namespace Scripts.Tracery.Generator
 
         private float CalcDistance(SentenceDataHolder orig, SentenceDataHolder toCompare)
         {
-            return 5;
+            if(orig == null)
+            {
+                return 0;
+            }
+            int[] origColors = GetColors(orig);
+            int[] compareColors = GetColors(toCompare);
+
+            // Calc the differences
+            float distance = 0;
+
+            for (int i = 0; i < origColors.Length; i++)
+            {
+                distance += Math.Abs(origColors[i] - compareColors[i]);
+            }
+
+            return distance;
+        }
+
+        private int[] GetColors(SentenceDataHolder dataHolder)
+        {
+            try
+            {
+                return dataHolder.ColorScheme().Split(' ').Select(color => int.Parse(color, NumberStyles.HexNumber)).ToArray();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.Message);
+                Debug.LogError("Colors: " + dataHolder.ColorScheme());
+                Debug.LogError("Color Index: " + dataHolder.ColorIndex());
+                return null;
+            }
         }
     }
 
