@@ -41,7 +41,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 int innerIndex = i % tracks.Length;
                 if(innerIndex  == tracks[trackIndex].track)
                 {
-                    Debug.Log("I: " + i.ToString() + " track index: " + trackIndex.ToString() + " Inner index: " + innerIndex.ToString());
+                    // Debug.Log("I: " + i.ToString() + " track index: " + trackIndex.ToString() + " Inner index: " + innerIndex.ToString());
                     vol = tracks[trackIndex].vol;
                 }
                 
