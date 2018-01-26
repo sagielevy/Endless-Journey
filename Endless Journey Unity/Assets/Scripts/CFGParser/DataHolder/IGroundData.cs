@@ -13,6 +13,5 @@ namespace Assets.Scripts.CFGParser.DataHolder
         string GroundColor1();
         string GroundColor2();
         string GroundColor3();
-        string GroundColor4();
     }
 }

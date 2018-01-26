@@ -14,8 +14,8 @@ namespace Assets.Scripts.CFGParser.DataHolder
         HorizonColor,
         // PathColor,
         GroundColor1,
-        ItemColor1,
-        ItemColor2
+        GroundColor2,
+        GroundColor3
         // Clouds are always white - affected by sky & horizon colors
     }
 
@@ -103,17 +103,12 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
         public string GroundColor2()
         {
-            throw new NotImplementedException();
+            return colorPalettes[int.Parse(root[colorSchemeToken].Value)].Split(colorDelimiter)[(int)ColorIndicies.GroundColor2];
         }
 
         public string GroundColor3()
         {
-            throw new NotImplementedException();
-        }
-
-        public string GroundColor4()
-        {
-            throw new NotImplementedException();
+            return colorPalettes[int.Parse(root[colorSchemeToken].Value)].Split(colorDelimiter)[(int)ColorIndicies.GroundColor3];
         }
 
         public bool IsSkyGradient()
