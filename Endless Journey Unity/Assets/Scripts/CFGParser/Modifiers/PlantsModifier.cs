@@ -46,9 +46,10 @@ namespace Assets.Scripts.CFGParser.Modifiers
                     newPlant.parent = parent;
 
                     // Set normal Y value!
-                    newPlant.localPosition = new Vector3(actualPosX, 100f, actualPosZ);
+                    newPlant.localPosition = new Vector3(actualPosX, 70f, actualPosZ);
 
-                    // Enable mesh renderer!!
+                    // Enable stuff!!
+                    newPlant.GetComponent<Rigidbody>().useGravity = true;
                     newPlant.GetComponent<MeshRenderer>().enabled = true;
                 }
             }

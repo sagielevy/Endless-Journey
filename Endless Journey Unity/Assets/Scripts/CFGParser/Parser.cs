@@ -31,7 +31,7 @@ namespace Assets.Scripts.CFGParser
             cFGGenerator = new AsyncCFGGenerator("CFG" + Path.DirectorySeparatorChar + "EndlessJourneyCFG", colorPalettes);
             modifiers = new List<IWorldModifier>();
             originalModels = GameObject.Find("OriginalModels");
-            musicAudioSources = GameObject.Find("Music");
+            musicAudioSources = GameObject.Find("Tracks");
 
             sentenceDataHolder = cFGGenerator.GetSentence(); // Load first sentence
 
