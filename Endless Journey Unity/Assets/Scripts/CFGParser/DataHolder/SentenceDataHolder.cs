@@ -131,9 +131,19 @@ namespace Assets.Scripts.CFGParser.DataHolder
             return float.Parse(root[metallicToken].Value);
         }
 
-        public int MusicIndex()
+        public MusicTrack[] MusicTracks()
         {
-            return int.Parse(root[musicToken].Value);
+            // Magic numbers make me orgasm oh oh oh yeah
+            MusicTrack[] result = new MusicTrack[3];
+            for (int i = 0; i < 3; i++)
+            {
+                MusicTrack track = new MusicTrack();
+                var token = root[musicToken][i];
+                track.track = int.Parse(token[0]);
+                track.vol = float.Parse(token[1]);
+                result[i] = track;
+            }
+            return result;
         }
 
         public float PathGlow()

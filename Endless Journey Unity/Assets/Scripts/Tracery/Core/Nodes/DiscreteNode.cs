@@ -25,7 +25,7 @@ namespace Tracery
             Assert.AreEqual(splitted.Length, 2, "Discrete range must have lower and upper bounds " + key);
             int lower = int.Parse(splitted[0]);
             int upper= int.Parse(splitted[1]);
-            return Tracery.Rng.Next(lower, upper).ToString();
+            return Tracery.Rng.Next(lower, upper + 1).ToString();
         }
 	}
 }

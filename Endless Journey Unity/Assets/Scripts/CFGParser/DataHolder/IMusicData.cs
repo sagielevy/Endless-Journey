@@ -5,8 +5,14 @@ using System.Text;
 
 namespace Assets.Scripts.CFGParser.DataHolder
 {
+    public struct MusicTrack
+    {
+        public int track;
+        public float vol;
+    }
+
     public interface IMusicData : ISentenceData
     {
-        int MusicIndex();
+        MusicTrack[] MusicTracks();
     }
 }
