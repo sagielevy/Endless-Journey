@@ -39,6 +39,8 @@ namespace Assets.Scripts.CFGParser
         // Naive! Could be done better
         public static VertexAndDist NearestVertexTo(MeshFilter chunk, Vector3 point)
         {
+            const float minDist = 0.05f;
+
             // convert point to local space
             point = chunk.transform.InverseTransformPoint(point);
 
@@ -55,6 +57,11 @@ namespace Assets.Scripts.CFGParser
                 {
                     minDistanceSqr = distSqr;
                     nearestVertex = vertex;
+                }
+
+                if (distSqr < minDist)
+                {
+                    break; // More efficient
                 }
             }
 

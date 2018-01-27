@@ -129,7 +129,10 @@ public class TerrainChunk {
                     }
                 }
 
-                GenerateItems();
+                //if (lodMeshes[0].hasMesh)
+                //{
+                    GenerateItems();
+                //}
             }
             else
             {
@@ -171,13 +174,18 @@ public class TerrainChunk {
         {
             var transform = item.transform;
 
-            // Find nearest vertex to this chunk
-            var nearestVertex = Helpers.NearestVertexTo(meshFilter, transform.position);
-
-            transform.position = new Vector3(transform.position.x, nearestVertex.vertex.y, transform.position.z);
-
             // Enable the item. Shit.
-            EnableItemRenderer(transform.gameObject);
+            var renderer = GetItemRenderer(transform.gameObject);
+
+            //if (!renderer.enabled)
+            //{
+                // Find nearest vertex to this chunk
+                var nearestVertex = Helpers.NearestVertexTo(meshFilter, transform.position);
+
+                transform.position = new Vector3(transform.position.x, nearestVertex.vertex.y, transform.position.z);
+
+                renderer.enabled = true;
+            //}
         }
 
         // AIRBORNE ITEMS
@@ -186,11 +194,11 @@ public class TerrainChunk {
             var transform = item.transform;
 
             // Enable the item. Shit.
-            EnableItemRenderer(transform.gameObject);
+            GetItemRenderer(transform.gameObject).enabled = true;
         }
     }
 
-    private void EnableItemRenderer(GameObject item)
+    private Renderer GetItemRenderer(GameObject item)
     {
         Renderer renderer = item.GetComponent<MeshRenderer>();
 
@@ -199,7 +207,7 @@ public class TerrainChunk {
             renderer = item.GetComponentInChildren<SkinnedMeshRenderer>();
         }
 
-        renderer.enabled = true;
+        return renderer;
     }
 
 	public void UpdateCollisionMesh() {

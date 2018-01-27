@@ -61,7 +61,7 @@ namespace Assets.Scripts.CFGParser
 
         public void Update()
         {
-            if (!sectionModifier.IsSectionComplete())
+            if (sectionModifier != null && !sectionModifier.IsSectionComplete())
             {
                 // Run each modifier once per frame
                 foreach (var modifier in modifiers)
