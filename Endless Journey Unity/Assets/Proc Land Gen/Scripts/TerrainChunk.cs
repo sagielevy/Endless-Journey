@@ -99,53 +99,44 @@ public class TerrainChunk {
 			bool wasVisible = IsVisible ();
 			bool visible = viewerDstFromNearestEdge <= maxViewDst;
 
-			if (visible) {
-				int lodIndex = 0;
+			if (visible)
+            {
+                int lodIndex = 0;
 
-				for (int i = 0; i < detailLevels.Length - 1; i++) {
-					if (viewerDstFromNearestEdge > detailLevels [i].visibleDstThreshold) {
-						lodIndex = i + 1;
-					} else {
-						break;
-					}
-				}
-
-				if (lodIndex != previousLODIndex) {
-					LODMesh lodMesh = lodMeshes [lodIndex];
-					if (lodMesh.hasMesh) {
-						previousLODIndex = lodIndex;
-						meshFilter.mesh = lodMesh.mesh;
-					} else if (!lodMesh.hasRequestedMesh) {
-						lodMesh.RequestMesh (heightMap, meshSettings);
-					}
-				}
-
-                // GROUNDED ITEMS
-                // Set our items' Y position and display them
-                foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
+                for (int i = 0; i < detailLevels.Length - 1; i++)
                 {
-                    var transform = item.transform;
-
-                    // Find nearest vertex to this chunk
-                    var nearestVertex = Helpers.NearestVertexTo(meshFilter, transform.position);
-
-                    transform.position = new Vector3(transform.position.x, nearestVertex.y, transform.position.z);
-
-                    // Enable the item. Shit.
-                    item.GetComponent<MeshRenderer>().enabled = true;
+                    if (viewerDstFromNearestEdge > detailLevels[i].visibleDstThreshold)
+                    {
+                        lodIndex = i + 1;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
 
-                // AIRBORNE ITEMS
-                foreach (var item in meshFilter.GetComponentsInChildren<AirborneItemComponent>())
+                if (lodIndex != previousLODIndex)
                 {
-                    var transform = item.transform;
-
-                    // Enable the item. Shit.
-                    item.GetComponent<MeshRenderer>().enabled = true;
+                    LODMesh lodMesh = lodMeshes[lodIndex];
+                    if (lodMesh.hasMesh)
+                    {
+                        previousLODIndex = lodIndex;
+                        meshFilter.mesh = lodMesh.mesh;
+                    }
+                    else if (!lodMesh.hasRequestedMesh)
+                    {
+                        lodMesh.RequestMesh(heightMap, meshSettings);
+                    }
                 }
+
+                GenerateItems();
+            }
+            else
+            {
+                DestroyItems();
             }
 
-			if (wasVisible != visible) {
+            if (wasVisible != visible) {
 				
 				SetVisible (visible);
 				if (onVisibilityChanged != null) {
@@ -154,6 +145,62 @@ public class TerrainChunk {
 			}
 		}
 	}
+
+    private void DestroyItems()
+    {
+        // Lost visibility, remove items
+        // GROUNDED ITEMS
+        // Set our items' Y position and display them
+        foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
+        {
+            GameObject.Destroy(item);
+        }
+
+        // AIRBORNE ITEMS
+        foreach (var item in meshFilter.GetComponentsInChildren<AirborneItemComponent>())
+        {
+            GameObject.Destroy(item);
+        }
+    }
+
+    private void GenerateItems()
+    {
+        // GROUNDED ITEMS
+        // Set our items' Y position and display them
+        foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
+        {
+            var transform = item.transform;
+
+            // Find nearest vertex to this chunk
+            var nearestVertex = Helpers.NearestVertexTo(meshFilter, transform.position);
+
+            transform.position = new Vector3(transform.position.x, nearestVertex.vertex.y, transform.position.z);
+
+            // Enable the item. Shit.
+            EnableItemRenderer(transform.gameObject);
+        }
+
+        // AIRBORNE ITEMS
+        foreach (var item in meshFilter.GetComponentsInChildren<AirborneItemComponent>())
+        {
+            var transform = item.transform;
+
+            // Enable the item. Shit.
+            EnableItemRenderer(transform.gameObject);
+        }
+    }
+
+    private void EnableItemRenderer(GameObject item)
+    {
+        Renderer renderer = item.GetComponent<MeshRenderer>();
+
+        if (renderer == null)
+        {
+            renderer = item.GetComponentInChildren<SkinnedMeshRenderer>();
+        }
+
+        renderer.enabled = true;
+    }
 
 	public void UpdateCollisionMesh() {
 		if (!hasSetCollider) {

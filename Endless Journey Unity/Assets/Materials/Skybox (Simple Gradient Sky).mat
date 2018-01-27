@@ -60,7 +60,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _Glossiness: 0.5
-    - _HorizonLevel: 0.06
+    - _HorizonLevel: 0.1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -74,5 +74,5 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _HorizonColor: {r: 0.31664315, g: 0.32892296, b: 0.28852358, a: 1}
-    - _SkyColor: {r: 0.22352941, g: 0.4509804, b: 0.40392157, a: 1}
+    - _HorizonColor: {r: 0.45491403, g: 0.43450525, b: 0.472147, a: 1}
+    - _SkyColor: {r: 0.34509805, g: 0.20784314, b: 0.36862746, a: 1}

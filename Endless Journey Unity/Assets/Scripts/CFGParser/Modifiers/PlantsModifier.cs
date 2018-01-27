@@ -36,13 +36,16 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 foreach (var plant in plantData.Plants())
                 {
                     // Origin center of section
-                    actualPosX = plant.pos_x_percent * sectionData.SectionLength() / 2;
-                    actualPosZ = plant.pos_z_percent * sectionData.SectionLength() / 2;
+                    actualPosX = plant.pos_x_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2;
+                    actualPosZ = plant.pos_z_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2;
 
                     // FOR DEBUG
                     int subSubType = random.Next(1, maxes[plant.subtypeIndex - 1]);
                     var plantName = "Plants_" + plant.subtypeIndex + "_" + subSubType;
                     var newPlant = GameObject.Instantiate(originalModels.transform.Find(plantName));
+
+                    // Uniform scale
+                    newPlant.localScale *= plant.scale_mul;
 
                     // Set chunk parent
                     var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));

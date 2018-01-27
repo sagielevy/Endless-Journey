@@ -42,6 +42,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
         const string angleZToken = "angle_z";
         const string itemXPercentToken = "item_x";
         const string itemZPercentToken = "item_z";
+        const string itemScaleToken = "scale";
         const string plantsSubtypeToken = "plant_subtype";
         const string cloudSubtypeToken = "cloud_subtype";
         const string animalSubtypeToken = "animal_subtype";
@@ -189,6 +190,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
             {
                 result[i] = new Item(float.Parse(root[itemTypeToken][i][itemXPercentToken].Value),
                                      float.Parse(root[itemTypeToken][i][itemZPercentToken].Value),
+                                     float.Parse(root[itemTypeToken][i][itemScaleToken].Value),
                                      int.Parse(root[itemTypeToken][i][itemSubtypeToken].Value));
             }
 

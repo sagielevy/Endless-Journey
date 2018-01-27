@@ -58,18 +58,20 @@ namespace Assets.Scripts.CFGParser
 
         private void CreateNewModifiers()
         {
-            // TODO Think of a way to free items created previously
-
             sectionModifier = new SectionModifier(Camera.main.transform.position, Camera.main.transform, sentenceDataHolder);
 
             // Clear Previous modifiers
             modifiers.Clear();
 
             modifiers.Add(new SkyModifier(SkyMat));
-            modifiers.Add(new GroundModifier(GetComponent<TerrainGenerator>().textureSettings, GetComponent<TerrainGenerator>().mapMaterial));
+            modifiers.Add(new GroundModifier(GetComponent<TerrainGenerator>().textureSettings, 
+                            GetComponent<TerrainGenerator>().mapMaterial));
             modifiers.Add(new PlantsModifier(sentenceDataHolder, originalModels, 
                             GetComponent<TerrainGenerator>()));
-            modifiers.Add(new CloudModifier(sentenceDataHolder, originalModels, GetComponent<TerrainGenerator>()));
+            modifiers.Add(new CloudModifier(sentenceDataHolder, originalModels, 
+                            GetComponent<TerrainGenerator>()));
+            modifiers.Add(new AnimalModifier(sentenceDataHolder, originalModels, 
+                            GetComponent<TerrainGenerator>()));
             modifiers.Add(new MusicModifier(musicAudioSources));
         }
     }

@@ -43,14 +43,17 @@ namespace Assets.Scripts.CFGParser.Modifiers
                     // FOR DEBUG
                     int subSubType = random.Next(1, maxes[cloud.subtypeIndex - 1]);
                     var plantName = "Clouds_" + cloud.subtypeIndex + "_" + subSubType;
-                    var newPlant = GameObject.Instantiate(originalModels.transform.Find(plantName));
+                    var newCloud = GameObject.Instantiate(originalModels.transform.Find(plantName));
+
+                    // Uniform scale
+                    newCloud.localScale *= cloud.scale_mul;
 
                     // Set chunk parent
                     var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
-                    chunk.AddItem(newPlant);
+                    chunk.AddItem(newCloud);
 
-                    // Set current item position to X, Y = 100, Z
-                    newPlant.position = new Vector3(actualPosX, Globals.cloudHeight, actualPosZ);
+                    // Set current item position to X, Y = cloud height, Z
+                    newCloud.position = new Vector3(actualPosX, Globals.cloudHeight, actualPosZ);
                 }
             }
         }

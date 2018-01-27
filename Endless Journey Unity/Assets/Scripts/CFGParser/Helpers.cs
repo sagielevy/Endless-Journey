@@ -37,7 +37,7 @@ namespace Assets.Scripts.CFGParser
         }
 
         // Naive! Could be done better
-        public static Vector3 NearestVertexTo(MeshFilter chunk, Vector3 point)
+        public static VertexAndDist NearestVertexTo(MeshFilter chunk, Vector3 point)
         {
             // convert point to local space
             point = chunk.transform.InverseTransformPoint(point);
@@ -59,7 +59,19 @@ namespace Assets.Scripts.CFGParser
             }
 
             // convert nearest vertex back to world space
-            return chunk.transform.TransformPoint(nearestVertex);
+            return new VertexAndDist(chunk.transform.TransformPoint(nearestVertex), (minDistanceSqr == Mathf.Infinity) ? 0 : minDistanceSqr);
+        }
+    }
+
+    public struct VertexAndDist
+    {
+        public Vector3 vertex;
+        public float distance;
+
+        public VertexAndDist(Vector3 vertex, float distance)
+        {
+            this.vertex = vertex;
+            this.distance = distance;
         }
     }
 }
