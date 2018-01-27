@@ -13,13 +13,15 @@ namespace Assets.Scripts.CFGParser.Modifiers
         private GameObject originalModels;
         private TerrainGenerator terrainChunksParent;
         private bool hasRun;
+        private Vector3 origin;
 
         public CloudModifier(ISectionData sectionData, GameObject originalModels,
-                              TerrainGenerator terrainChunksParent)
+                              TerrainGenerator terrainChunksParent, Vector3 origin)
         {
             this.sectionData = sectionData;
             this.originalModels = originalModels;
             this.terrainChunksParent = terrainChunksParent;
+            this.origin = origin;
             hasRun = false;
         }
 
@@ -37,8 +39,8 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 foreach (var cloud in cloudData.Clouds())
                 {
                     // Origin center of section
-                    actualPosX = cloud.pos_x_percent * sectionData.SectionLength() * Globals.cloudSeperateMul / 2;
-                    actualPosZ = cloud.pos_z_percent * sectionData.SectionLength() * Globals.cloudSeperateMul / 2;
+                    actualPosX = origin.x + (cloud.pos_x_percent * sectionData.SectionLength() * Globals.cloudSeperateMul / 2);
+                    actualPosZ = origin.z + (cloud.pos_z_percent * sectionData.SectionLength() * Globals.cloudSeperateMul / 2);
 
                     // FOR DEBUG
                     int subSubType = random.Next(1, maxes[cloud.subtypeIndex - 1]);

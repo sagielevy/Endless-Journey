@@ -5,12 +5,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.PostProcessing;
 
 namespace Assets.Scripts.CFGParser
 {
     [RequireComponent(typeof(TerrainGenerator))]
     public class Parser : MonoBehaviour
     {
+        public PostProcessingProfile myProfile;
+
         SentenceDataHolder sentenceDataHolder;
         List<IWorldModifier> modifiers;
         SectionModifier sectionModifier;
@@ -18,7 +21,7 @@ namespace Assets.Scripts.CFGParser
         string[] colorPalettes;
         GameObject originalModels;
         GameObject musicAudioSources;
-
+        
         // Unity objects from scene
         Material SkyMat;
 
@@ -51,6 +54,7 @@ namespace Assets.Scripts.CFGParser
             else
             {
                 // New section!
+                Debug.Log("New Section!");
                 sentenceDataHolder = cFGGenerator.GetSentence();
                 CreateNewModifiers();
             }
@@ -67,14 +71,15 @@ namespace Assets.Scripts.CFGParser
             modifiers.Add(new GroundModifier(GetComponent<TerrainGenerator>().textureSettings, 
                             GetComponent<TerrainGenerator>().mapMaterial));
             modifiers.Add(new PlantsModifier(sentenceDataHolder, originalModels, 
-                            GetComponent<TerrainGenerator>()));
+                            GetComponent<TerrainGenerator>(), GetComponent<TerrainGenerator>().viewer.position));
             modifiers.Add(new RocksModifier(sentenceDataHolder, originalModels,
-                            GetComponent<TerrainGenerator>()));
+                            GetComponent<TerrainGenerator>(), GetComponent<TerrainGenerator>().viewer.position));
             modifiers.Add(new CloudModifier(sentenceDataHolder, originalModels, 
-                            GetComponent<TerrainGenerator>()));
+                            GetComponent<TerrainGenerator>(), GetComponent<TerrainGenerator>().viewer.position));
             modifiers.Add(new AnimalModifier(sentenceDataHolder, originalModels, 
-                            GetComponent<TerrainGenerator>()));
+                            GetComponent<TerrainGenerator>(), GetComponent<TerrainGenerator>().viewer.position));
             modifiers.Add(new MusicModifier(musicAudioSources));
+            modifiers.Add(new PathModifier(myProfile));
         }
     }
 }

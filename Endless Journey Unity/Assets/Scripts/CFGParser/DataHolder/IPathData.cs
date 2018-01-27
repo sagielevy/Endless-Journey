@@ -7,6 +7,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
 {
     public interface IPathData : ISentenceData
     {
-        float PathGlow();
+        float BloomIntensity();
+        float BloomThreshold();
     }
 }

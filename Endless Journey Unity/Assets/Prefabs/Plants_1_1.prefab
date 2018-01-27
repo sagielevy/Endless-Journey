@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 64567829362949790}
   - component: {fileID: 114582083267093718}
   m_Layer: 0
-  m_Name: Plants_1_5
+  m_Name: Plants_1_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37,7 +37,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1943822090288770}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.00016571044, y: 0.0034693913, z: 0.0043150345}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 30, y: 30, z: 30}
   m_Children: []
   m_Father: {fileID: 0}

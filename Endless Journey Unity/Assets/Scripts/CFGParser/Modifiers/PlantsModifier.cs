@@ -12,14 +12,16 @@ namespace Assets.Scripts.CFGParser.Modifiers
         private ISectionData sectionData;
         private GameObject originalModels;
         private TerrainGenerator terrainChunksParent;
+        private Vector3 origin;
         private bool hasRun;
 
         public PlantsModifier(ISectionData sectionData, GameObject originalModels,
-                              TerrainGenerator terrainChunksParent)
+                              TerrainGenerator terrainChunksParent, Vector3 origin)
         {
             this.sectionData = sectionData;
             this.originalModels = originalModels;
             this.terrainChunksParent = terrainChunksParent;
+            this.origin = origin;
             hasRun = false;
         }
 
@@ -36,8 +38,8 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 foreach (var plant in plantData.Plants())
                 {
                     // Origin center of section
-                    actualPosX = plant.pos_x_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2;
-                    actualPosZ = plant.pos_z_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2;
+                    actualPosX = origin.x + (plant.pos_x_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2);
+                    actualPosZ = origin.z + (plant.pos_z_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2);
 
                     // FOR DEBUG
                     int subSubType = random.Next(1, maxes[plant.subtypeIndex - 1]);

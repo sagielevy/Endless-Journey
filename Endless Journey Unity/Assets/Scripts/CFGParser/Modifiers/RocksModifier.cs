@@ -12,14 +12,16 @@ namespace Assets.Scripts.CFGParser.Modifiers
         private ISectionData sectionData;
         private GameObject originalModels;
         private TerrainGenerator terrainChunksParent;
+        private Vector3 origin;
         private bool hasRun;
 
         public RocksModifier(ISectionData sectionData, GameObject originalModels,
-                              TerrainGenerator terrainChunksParent)
+                              TerrainGenerator terrainChunksParent, Vector3 origin)
         {
             this.sectionData = sectionData;
             this.originalModels = originalModels;
             this.terrainChunksParent = terrainChunksParent;
+            this.origin = origin;
             hasRun = false;
         }
 
@@ -36,8 +38,8 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 foreach (var rock in rocksData.Rocks())
                 {
                     // Origin center of section
-                    actualPosX = rock.pos_x_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2;
-                    actualPosZ = rock.pos_z_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2;
+                    actualPosX = origin.x + (rock.pos_x_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2);
+                    actualPosZ = origin.z + (rock.pos_z_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2);
 
                     // FOR DEBUG
                     int subSubType = random.Next(1, maxes[rock.subtypeIndex - 1]);

@@ -35,6 +35,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
         const string metallicToken = "metallic";
         const string smoothnessToken = "smoothness";
         const string pathGlowToken = "path_glow";
+        const string pathThresholdToken = "path_threshold";
         const string colorSchemeToken = "color_scheme";
         const string skyGradientToken = "sky_gradient";
         const string skyGradientTrue = "sky_gradient";
@@ -154,11 +155,6 @@ namespace Assets.Scripts.CFGParser.DataHolder
             return result;
         }
 
-        public float PathGlow()
-        {
-            return float.Parse(root[pathGlowToken].Value);
-        }
-
         public float[,] SectionAngles()
         {
             int length = root[anglesToken].Children.Count();
@@ -202,6 +198,16 @@ namespace Assets.Scripts.CFGParser.DataHolder
             }
 
             return result;
+        }
+
+        public float BloomIntensity()
+        {
+            return float.Parse(root[pathGlowToken].Value);
+        }
+
+        public float BloomThreshold()
+        {
+            return float.Parse(root[pathThresholdToken].Value);
         }
     }
 }
