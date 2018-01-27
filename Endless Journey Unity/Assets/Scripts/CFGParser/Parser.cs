@@ -88,16 +88,18 @@ namespace Assets.Scripts.CFGParser
             modifiers.Add(new SkyModifier(SkyMat));
             modifiers.Add(new GroundModifier(GetComponent<TerrainGenerator>().textureSettings, 
                             GetComponent<TerrainGenerator>().mapMaterial));
-            modifiers.Add(new PlantsModifier(sentenceDataHolder, originalModels, 
-                            GetComponent<TerrainGenerator>(), GetComponent<TerrainGenerator>().viewer.position));
-            modifiers.Add(new RocksModifier(sentenceDataHolder, originalModels,
-                            GetComponent<TerrainGenerator>(), GetComponent<TerrainGenerator>().viewer.position));
-            modifiers.Add(new CloudModifier(sentenceDataHolder, originalModels, 
-                            GetComponent<TerrainGenerator>(), GetComponent<TerrainGenerator>().viewer.position));
-            modifiers.Add(new AnimalModifier(sentenceDataHolder, originalModels, 
-                            GetComponent<TerrainGenerator>(), GetComponent<TerrainGenerator>().viewer.position));
             modifiers.Add(new MusicModifier(musicAudioSources));
             modifiers.Add(new PathModifier(myProfile));
+
+            // Item modifiers
+            modifiers.Add(new PlantsModifier(sentenceDataHolder, originalModels,
+                GetComponent<TerrainGenerator>(), GetComponent<TerrainGenerator>().viewer.position));
+            modifiers.Add(new RocksModifier(sentenceDataHolder, originalModels,
+                            GetComponent<TerrainGenerator>(), GetComponent<TerrainGenerator>().viewer.position));
+            modifiers.Add(new CloudModifier(sentenceDataHolder, originalModels,
+                            GetComponent<TerrainGenerator>(), GetComponent<TerrainGenerator>().viewer.position));
+            modifiers.Add(new AnimalModifier(sentenceDataHolder, originalModels,
+                            GetComponent<TerrainGenerator>(), GetComponent<TerrainGenerator>().viewer.position));
         }
     }
 }
