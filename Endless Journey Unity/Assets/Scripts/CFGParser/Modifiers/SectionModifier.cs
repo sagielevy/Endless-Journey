@@ -15,7 +15,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
         Rigidbody player;
         RigidbodyFirstPersonController Controller;
         ISectionData data;
-        Vector2[] angles;
+        SectionAngle[] angles;
         Vector2[] points;
         int currSubPath;
         bool hasRun;
@@ -42,16 +42,15 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 hasRun = true;
 
                 angles = sectionData.SectionAngles();
-                Array.Sort(angles, new Vec2Comp());
+                Array.Sort(angles, new SectionAngleComp());
 
                 
                 points = new Vector2[angles.Length + 1];
 
                 for (int i = 0; i < angles.Length; i++)
                 {
-                    // TODO angles are points! need to add angle
-                    points[i] = new Vector2(initialPosition.x + angles[i].x * sectionData.SectionLength(),
-                                            initialPosition.z + angles[i].y * sectionData.SectionLength());
+                    points[i] = new Vector2(initialPosition.x + angles[i].pos_x * sectionData.SectionLength(),
+                                            initialPosition.z + angles[i].pos_z * sectionData.SectionLength());
 
                 }
 
@@ -83,12 +82,13 @@ namespace Assets.Scripts.CFGParser.Modifiers
         }
     }
 
-    class Vec2Comp : IComparer<Vector2>
+    class SectionAngleComp : IComparer<SectionAngle>
     {
-        public int Compare(Vector2 x, Vector2 y)
+        public int Compare(SectionAngle x, SectionAngle y)
         {
             //return Mathf.RoundToInt(x.x - y.x);
-            return Mathf.RoundToInt(x.magnitude - y.magnitude);
+            return Mathf.RoundToInt(new Vector2(x.pos_x, x.pos_z).magnitude -
+                                    new Vector2(y.pos_x, y.pos_z).magnitude);
         }
     }
 }

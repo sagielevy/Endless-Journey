@@ -53,6 +53,9 @@ namespace Assets.Scripts.CFGParser.Modifiers
                     // Uniform scale
                     newAnimal.localScale *= animal.scale_mul;
 
+                    // Rotation around Y axis
+                    newAnimal.rotation = Quaternion.Euler(0, animal.angle * 360, 0);
+
                     // Set chunk parent
                     var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
                     chunk.AddItem(newAnimal);

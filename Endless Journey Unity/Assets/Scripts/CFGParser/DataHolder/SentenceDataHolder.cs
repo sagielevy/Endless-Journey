@@ -40,8 +40,9 @@ namespace Assets.Scripts.CFGParser.DataHolder
         const string skyGradientToken = "sky_gradient";
         const string skyGradientTrue = "sky_gradient";
         const string anglesToken = "angles";
-        const string angleXToken = "angle_x";
-        const string angleZToken = "angle_z";
+        const string angleAngleToken = "angle";
+        const string anglePosXToken = "pos_x";
+        const string anglePosZToken = "pos_z";
         const string itemXPercentToken = "item_x";
         const string itemZPercentToken = "item_z";
         const string itemScaleToken = "scale";
@@ -49,6 +50,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
         const string rocksSubtypeToken = "rock_subtype";
         const string cloudSubtypeToken = "cloud_subtype";
         const string animalSubtypeToken = "animal_subtype";
+        const string animalAngleToken = "animal_angle";
         const string sectionLengthToken = "section_length";
 
         private string orgSentence;
@@ -68,7 +70,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
         public Item[] Animals()
         {
-            return Items(animalsToken, animalSubtypeToken);
+            return Items(animalsToken, animalSubtypeToken, animalAngleToken);
         }
 
         public Item[] Clouds()
@@ -152,18 +154,20 @@ namespace Assets.Scripts.CFGParser.DataHolder
                 track.vol = float.Parse(token[1]);
                 result[i] = track;
             }
+
             return result;
         }
 
-        public Vector2[] SectionAngles()
+        public SectionAngle[] SectionAngles()
         {
             int length = root[anglesToken].Children.Count();
-            Vector2[] result = new Vector2[length];
+            var result = new SectionAngle[length];
 
             for (int i = 0; i < length; i++)
             {
-                result[i] = new Vector2(float.Parse(root[anglesToken][i][angleXToken].Value),
-                                        float.Parse(root[anglesToken][i][angleZToken].Value));
+                result[i] = new SectionAngle(float.Parse(root[anglesToken][i][anglePosXToken].Value),
+                                        float.Parse(root[anglesToken][i][anglePosZToken].Value),
+                                        float.Parse(root[anglesToken][i][angleAngleToken].Value));
             }
 
             return result;
@@ -184,17 +188,28 @@ namespace Assets.Scripts.CFGParser.DataHolder
             return orgSentence;
         }
 
-        private Item[] Items(string itemTypeToken, string itemSubtypeToken)
+        private Item[] Items(string itemTypeToken, string itemSubtypeToken, string angleToken = null)
         {
             int length = root[itemTypeToken].Children.Count();
             Item[] result = new Item[length];
 
             for (int i = 0; i < length; i++)
             {
-                result[i] = new Item(float.Parse(root[itemTypeToken][i][itemXPercentToken].Value),
-                                     float.Parse(root[itemTypeToken][i][itemZPercentToken].Value),
-                                     float.Parse(root[itemTypeToken][i][itemScaleToken].Value),
-                                     int.Parse(root[itemTypeToken][i][itemSubtypeToken].Value));
+                if (angleToken == null)
+                {
+                    result[i] = new Item(float.Parse(root[itemTypeToken][i][itemXPercentToken].Value),
+                                         float.Parse(root[itemTypeToken][i][itemZPercentToken].Value),
+                                         float.Parse(root[itemTypeToken][i][itemScaleToken].Value),
+                                         int.Parse(root[itemTypeToken][i][itemSubtypeToken].Value));
+                }
+                else
+                {
+                    result[i] = new Item(float.Parse(root[itemTypeToken][i][itemXPercentToken].Value),
+                                         float.Parse(root[itemTypeToken][i][itemZPercentToken].Value),
+                                         float.Parse(root[itemTypeToken][i][itemScaleToken].Value),
+                                         float.Parse(root[itemTypeToken][i][angleToken].Value),
+                                         int.Parse(root[itemTypeToken][i][itemSubtypeToken].Value));
+                }
             }
 
             return result;
@@ -208,6 +223,18 @@ namespace Assets.Scripts.CFGParser.DataHolder
         public float BloomThreshold()
         {
             return float.Parse(root[pathThresholdToken].Value);
+        }
+    }
+
+    public struct SectionAngle
+    {
+        public float pos_x, pos_z, angle;
+
+        public SectionAngle(float pos_x, float pos_z, float angle)
+        {
+            this.pos_x = pos_x;
+            this.pos_z = pos_z;
+            this.angle = angle;
         }
     }
 }

@@ -25,6 +25,12 @@ namespace Assets.Scripts.CFGParser
         // Unity objects from scene
         Material SkyMat;
 
+        public void Awake()
+        {
+            // Change seed!
+            GetComponent<TerrainGenerator>().heightMapSettings.noiseSettings.seed = new System.Random().Next();
+        }
+
         public void Start()
         {
             // Init stuff

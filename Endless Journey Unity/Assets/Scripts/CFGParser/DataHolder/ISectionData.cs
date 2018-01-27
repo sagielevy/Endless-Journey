@@ -9,6 +9,6 @@ namespace Assets.Scripts.CFGParser.DataHolder
     public interface ISectionData : ISentenceData
     {
         int SectionLength();
-        Vector2[] SectionAngles();
+        SectionAngle[] SectionAngles();
     }
 }
