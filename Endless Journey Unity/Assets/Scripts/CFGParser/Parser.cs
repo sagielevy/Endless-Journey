@@ -68,6 +68,8 @@ namespace Assets.Scripts.CFGParser
                             GetComponent<TerrainGenerator>().mapMaterial));
             modifiers.Add(new PlantsModifier(sentenceDataHolder, originalModels, 
                             GetComponent<TerrainGenerator>()));
+            modifiers.Add(new RocksModifier(sentenceDataHolder, originalModels,
+                            GetComponent<TerrainGenerator>()));
             modifiers.Add(new CloudModifier(sentenceDataHolder, originalModels, 
                             GetComponent<TerrainGenerator>()));
             modifiers.Add(new AnimalModifier(sentenceDataHolder, originalModels, 

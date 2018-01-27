@@ -21,7 +21,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
     // Implement each section component here
     public class SentenceDataHolder : ISkyData, IAnimalsData, ICloudsData, IGroundData, IMusicData, IPathData,
-                                      IPlantsData, ISectionData
+                                      IPlantsData, IRocksData, ISectionData
     {
         const char colorDelimiter = ' ';
         const string colon = ";;;";
@@ -30,6 +30,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
         const string musicToken = "music";
         const string plantsToken = "plants";
         const string animalsToken = "animals";
+        const string rocksToken = "rocks";
         const string cloudsToken = "clouds";
         const string metallicToken = "metallic";
         const string smoothnessToken = "smoothness";
@@ -44,6 +45,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
         const string itemZPercentToken = "item_z";
         const string itemScaleToken = "scale";
         const string plantsSubtypeToken = "plant_subtype";
+        const string rocksSubtypeToken = "rock_subtype";
         const string cloudSubtypeToken = "cloud_subtype";
         const string animalSubtypeToken = "animal_subtype";
         const string sectionLengthToken = "section_length";
@@ -71,6 +73,11 @@ namespace Assets.Scripts.CFGParser.DataHolder
         public Item[] Clouds()
         {
             return Items(cloudsToken, cloudSubtypeToken);
+        }
+
+        public Item[] Rocks()
+        {
+            return Items(rocksToken, rocksSubtypeToken);
         }
 
         public Item[] Plants()

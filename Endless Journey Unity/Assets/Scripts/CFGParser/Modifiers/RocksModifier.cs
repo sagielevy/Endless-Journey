@@ -7,14 +7,14 @@ using UnityEngine;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    public class PlantsModifier : IWorldModifier//<IPlantsData>
+    public class RocksModifier : IWorldModifier
     {
         private ISectionData sectionData;
         private GameObject originalModels;
         private TerrainGenerator terrainChunksParent;
         private bool hasRun;
 
-        public PlantsModifier(ISectionData sectionData, GameObject originalModels,
+        public RocksModifier(ISectionData sectionData, GameObject originalModels,
                               TerrainGenerator terrainChunksParent)
         {
             this.sectionData = sectionData;
@@ -28,31 +28,31 @@ namespace Assets.Scripts.CFGParser.Modifiers
             if (!hasRun) {
                 hasRun = true;
                 System.Random random = new System.Random();
-                var plantData = data as IPlantsData;
+                var rocksData = data as IRocksData;
                 float actualPosX, actualPosZ;
 
-                int[] maxes = new int[] { 4, 8, 4 };
+                int[] maxes = new int[] { 5 };
 
-                foreach (var plant in plantData.Plants())
+                foreach (var rock in rocksData.Rocks())
                 {
                     // Origin center of section
-                    actualPosX = plant.pos_x_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2;
-                    actualPosZ = plant.pos_z_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2;
+                    actualPosX = rock.pos_x_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2;
+                    actualPosZ = rock.pos_z_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2;
 
                     // FOR DEBUG
-                    int subSubType = random.Next(1, maxes[plant.subtypeIndex - 1]);
-                    var plantName = "Plants_" + plant.subtypeIndex + "_" + subSubType;
-                    var newPlant = GameObject.Instantiate(originalModels.transform.Find(plantName));
+                    int subSubType = random.Next(1, maxes[rock.subtypeIndex - 1]);
+                    var rockName = "Rocks_" + rock.subtypeIndex + "_" + subSubType;
+                    var newRock = GameObject.Instantiate(originalModels.transform.Find(rockName));
 
                     // Uniform scale
-                    newPlant.localScale *= plant.scale_mul;
+                    newRock.localScale *= rock.scale_mul;
 
                     // Set chunk parent
                     var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
-                    chunk.AddItem(newPlant);
+                    chunk.AddItem(newRock);
 
                     // Set current item position to X, Y = 100, Z
-                    newPlant.position = new Vector3(actualPosX, Globals.maxHeight, actualPosZ);
+                    newRock.position = new Vector3(actualPosX, Globals.maxHeight, actualPosZ);
                 }
             }
         }
