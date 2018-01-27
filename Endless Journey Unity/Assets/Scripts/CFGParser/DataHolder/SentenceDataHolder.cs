@@ -155,15 +155,15 @@ namespace Assets.Scripts.CFGParser.DataHolder
             return result;
         }
 
-        public float[,] SectionAngles()
+        public Vector2[] SectionAngles()
         {
             int length = root[anglesToken].Children.Count();
-            float[,] result = new float[2, length];
+            Vector2[] result = new Vector2[length];
 
             for (int i = 0; i < length; i++)
             {
-                result[0,i] = float.Parse(root[anglesToken][i][angleXToken].Value);
-                result[1, i] = float.Parse(root[anglesToken][i][angleZToken].Value);
+                result[i] = new Vector2(float.Parse(root[anglesToken][i][angleXToken].Value),
+                                        float.Parse(root[anglesToken][i][angleZToken].Value));
             }
 
             return result;

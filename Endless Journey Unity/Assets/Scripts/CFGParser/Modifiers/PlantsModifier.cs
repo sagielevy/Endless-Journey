@@ -45,6 +45,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
                     int subSubType = random.Next(1, maxes[plant.subtypeIndex - 1]);
                     var plantName = "Plants_" + plant.subtypeIndex + "_" + subSubType;
                     var newPlant = GameObject.Instantiate(originalModels.transform.Find(plantName));
+                    newPlant.GetComponent<MeshRenderer>().enabled = false;
 
                     // Uniform scale
                     newPlant.localScale *= plant.scale_mul;

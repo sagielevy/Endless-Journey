@@ -41,6 +41,24 @@ namespace Assets.Scripts.CFGParser
             CreateNewModifiers();
         }
 
+        public Vector2 GetMovement()
+        {
+            if (sectionModifier != null && !sectionModifier.IsSectionComplete())
+            {
+                sectionModifier.ModifySection(sentenceDataHolder);
+            }
+
+            return sectionModifier.movement;
+        }
+
+        //public void FixedUpdate()
+        //{
+        //    if (!sectionModifier.IsSectionComplete())
+        //    {
+        //        sectionModifier.ModifySection(sentenceDataHolder);
+        //    }
+        //}
+
         public void Update()
         {
             if (!sectionModifier.IsSectionComplete())
@@ -54,7 +72,6 @@ namespace Assets.Scripts.CFGParser
             else
             {
                 // New section!
-                Debug.Log("New Section!");
                 sentenceDataHolder = cFGGenerator.GetSentence();
                 CreateNewModifiers();
             }
@@ -62,11 +79,12 @@ namespace Assets.Scripts.CFGParser
 
         private void CreateNewModifiers()
         {
-            sectionModifier = new SectionModifier(Camera.main.transform.position, Camera.main.transform, sentenceDataHolder);
+            sectionModifier = new SectionModifier(GetComponent<TerrainGenerator>().viewer, sentenceDataHolder);
 
             // Clear Previous modifiers
             modifiers.Clear();
 
+            //modifiers.Add(sectionModifier);
             modifiers.Add(new SkyModifier(SkyMat));
             modifiers.Add(new GroundModifier(GetComponent<TerrainGenerator>().textureSettings, 
                             GetComponent<TerrainGenerator>().mapMaterial));

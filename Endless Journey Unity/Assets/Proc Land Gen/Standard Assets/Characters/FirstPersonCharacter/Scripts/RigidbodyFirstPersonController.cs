@@ -1,3 +1,4 @@
+using Assets.Scripts.CFGParser;
 using System;
 using UnityEngine;
 
@@ -80,6 +81,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public MovementSettings movementSettings = new MovementSettings();
         public MouseLook mouseLook = new MouseLook();
         public AdvancedSettings advancedSettings = new AdvancedSettings();
+        public Parser parser;
 
 
         private Rigidbody m_RigidBody;
@@ -144,7 +146,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private void FixedUpdate()
         {
             GroundCheck();
-            Vector2 input = GetInput();
+            Vector2 input = GetInput(); //GetInput(parser.GetMovement());
 
             if ((Mathf.Abs(input.x) > float.Epsilon || Mathf.Abs(input.y) > float.Epsilon) && (advancedSettings.airControl || m_IsGrounded))
             {
@@ -212,6 +214,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
         }
 
+        public Vector2 GetInput(Vector2 input)
+        {
+            movementSettings.UpdateDesiredTargetSpeed(input);
+            return input;
+        }
 
         private Vector2 GetInput()
         {
