@@ -129,10 +129,8 @@ public class TerrainChunk {
                     }
                 }
 
-                //if (lodMeshes[0].hasMesh)
-                //{
-                    GenerateItems();
-                //}
+                // Inefficient!
+                GenerateItems();
             }
             else
             {

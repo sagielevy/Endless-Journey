@@ -84,6 +84,8 @@ namespace Scripts.Tracery.Generator
 
         private float CalcDistance(SentenceDataHolder orig, SentenceDataHolder toCompare)
         {
+            return 5;
+
             if(orig == null)
             {
                 return 0;
