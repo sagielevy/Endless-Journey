@@ -230,6 +230,8 @@ public class TerrainChunk {
 		}
     }
 
+    // TODO This is not enough! If walking a large distance game will eventually crash due to 
+    // memory allocation. Must destroy chunks after a certain distance
 	public void SetVisible(bool visible) {
 		meshObject.SetActive (visible);
 	}

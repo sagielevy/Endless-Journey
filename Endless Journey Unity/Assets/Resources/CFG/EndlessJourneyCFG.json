@@ -11,7 +11,7 @@
   "background": [ "#ground#, #items#" ],
   "ground": [ "#metallic#, #smoothness#" ],
   "items": [ "\"rocks\";;;@!!<#num_rocks# {#item_pos#, #rock_subtype#},>!!@, \"plants\";;;@!!<#num_plants# {#item_pos#, #plant_subtype#},>!!@, \"animals\";;;@!!<#num_animals# {#item_pos#, #animal_subtype#, #animal_angle#},>!!@, \"clouds\";;;@!!<#num_clouds# {#item_pos#, #cloud_subtype#},>!!@" ],
-  "item_pos": [ "\"item_x\";;;#random 0~1#, \"item_z\";;;#random 0~1#, \"scale\";;;#random 0.5~2#" ],
+  "item_pos": [ "\"item_x\";;;#random -1~1#, \"item_z\";;;#random -1~1#, \"scale\";;;#random 0.3~2.6#" ],
   "rock_subtype": ["\"rock_subtype\";;;#discrete 1~1#"],
   "plant_subtype": [ "\"plant_subtype\";;;#discrete 1~3#" ],
   "animal_subtype": [ "\"animal_subtype\";;;#discrete 1~2#" ],

@@ -42,8 +42,8 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 foreach (var animal in animalData.Animals())
                 {
                     // Origin center of section
-                    actualPosX = origin.x + (animal.pos_x_percent * sectionData.SectionLength() * Globals.animalSeperateMul / 2);
-                    actualPosZ = origin.z + (animal.pos_z_percent * sectionData.SectionLength() * Globals.animalSeperateMul / 2);
+                    actualPosX = origin.x + (animal.pos_x_percent * sectionData.SectionLength() * Globals.animalSeperateMul);
+                    actualPosZ = origin.z + (animal.pos_z_percent * sectionData.SectionLength() * Globals.animalSeperateMul);
 
                     // FOR DEBUG
                     int subSubType = random.Next(1, maxes[animal.subtypeIndex - 1]);

@@ -38,8 +38,8 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 foreach (var rock in rocksData.Rocks())
                 {
                     // Origin center of section
-                    actualPosX = origin.x + (rock.pos_x_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2);
-                    actualPosZ = origin.z + (rock.pos_z_percent * sectionData.SectionLength() * Globals.groundSeperateMul / 2);
+                    actualPosX = origin.x + (rock.pos_x_percent * sectionData.SectionLength() * Globals.groundSeperateMul);
+                    actualPosZ = origin.z + (rock.pos_z_percent * sectionData.SectionLength() * Globals.groundSeperateMul);
 
                     // FOR DEBUG
                     int subSubType = random.Next(1, maxes[rock.subtypeIndex - 1]);
