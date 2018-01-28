@@ -42,7 +42,8 @@ namespace Assets.Scripts.CFGParser
             originalModels = GameObject.Find("OriginalModels");
             musicAudioSources = GameObject.Find("Tracks");
 
-            sentenceDataHolder = cFGGenerator.GetSentence(); // Load first sentence
+            // Load first sentence & modifiers
+            sentenceDataHolder = cFGGenerator.GetSentence();
 
             CreateNewModifiers();
         }
@@ -65,7 +66,7 @@ namespace Assets.Scripts.CFGParser
         //    }
         //}
 
-        public void Update()
+        public void FixedUpdate()
         {
             if (sectionModifier != null && !sectionModifier.IsSectionComplete())
             {

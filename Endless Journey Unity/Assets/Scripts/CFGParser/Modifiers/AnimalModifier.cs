@@ -45,8 +45,9 @@ namespace Assets.Scripts.CFGParser.Modifiers
                     actualPosX = origin.x + (animal.pos_x_percent * sectionData.SectionLength() * Globals.animalSeperateMul);
                     actualPosZ = origin.z + (animal.pos_z_percent * sectionData.SectionLength() * Globals.animalSeperateMul);
 
-                    // FOR DEBUG
+                    // FOR DEBUG (choose one of the available animal subsub types)
                     int subSubType = random.Next(1, maxes[animal.subtypeIndex - 1]);
+
                     var animalName = "Animals_" + animal.subtypeIndex + "_" + subSubType;
                     var newAnimal = GameObject.Instantiate(originalModels.transform.Find(animalName));
 

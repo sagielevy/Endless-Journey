@@ -36,7 +36,7 @@ namespace Assets.Scripts.CFGParser
             return closetChunk;
         }
 
-        // Naive! Could be done better
+        // TODO Naive! Could be done better
         public static VertexAndDist NearestVertexTo(MeshFilter chunk, Vector3 point)
         {
             const float minDist = 0.05f;

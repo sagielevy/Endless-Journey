@@ -178,15 +178,12 @@ public class TerrainChunk {
             // Enable the item. Shit.
             var renderer = GetItemRenderer(transform.gameObject);
 
-            //if (!renderer.enabled)
-            //{
-                // Find nearest vertex to this chunk
-                var nearestVertex = Helpers.NearestVertexTo(meshFilter, transform.position);
+            // Find nearest vertex to this chunk
+            var nearestVertex = Helpers.NearestVertexTo(meshFilter, transform.position);
 
-                transform.position = new Vector3(transform.position.x, nearestVertex.vertex.y, transform.position.z);
+            transform.position = new Vector3(transform.position.x, nearestVertex.vertex.y, transform.position.z);
 
-                renderer.enabled = true;
-            //}
+            renderer.enabled = true;
         }
 
         // AIRBORNE ITEMS

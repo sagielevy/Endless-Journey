@@ -57,7 +57,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 points[angles.Length] = new Vector2(sectionData.SectionLength(), 0);
             }
 
-            // Move Character!
+            // Move Character! Currently not working well...
             // If not done with curr sub path
             //if (Vector2.Distance(points[currSubPath], new Vector2(player.position.x, player.position.z)) < distThreshold) {
             //    currSubPath++;

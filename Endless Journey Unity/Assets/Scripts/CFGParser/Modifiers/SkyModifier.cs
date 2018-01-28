@@ -12,7 +12,6 @@ namespace Assets.Scripts.CFGParser.Modifiers
     {
         const string SkyColorId = "_SkyColor";
         const string HorizonColorId = "_HorizonColor";
-        //const float speed = 0.08f;
         Material skyMaterial;
         Color orgSkyColor, orgHorizonColor;
         float startTime;
@@ -26,7 +25,6 @@ namespace Assets.Scripts.CFGParser.Modifiers
             orgHorizonColor = skyMaterial.GetColor(HorizonColorId);
         }
 
-        // TODO When modifying, change both the values of the skybox material AND the environment lighting gradient colors!
         public void ModifySection(ISentenceData data)
         {
             var skyData = data as ISkyData;
