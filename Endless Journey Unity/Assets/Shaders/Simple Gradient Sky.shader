@@ -37,21 +37,25 @@ Shader "CubedParadox/Simple Gradient Sky" {
             uniform float4 _SkyColor;
             uniform float4 _HorizonColor;
 			uniform float _HorizonLevel;
+
             struct VertexInput {
                 float4 vertex : POSITION;
             };
-            struct VertexOutput {
+            
+			struct VertexOutput {
                 float4 pos : SV_POSITION;
                 float4 posWorld : TEXCOORD0;
             };
+
             VertexOutput vert (VertexInput v) {
                 VertexOutput o = (VertexOutput)0;
                 o.posWorld = mul(unity_ObjectToWorld, v.vertex);
-                o.pos = UnityObjectToClipPos(v.vertex );
+                o.pos = UnityObjectToClipPos(v.vertex);
                 return o;
             }
-            float4 frag(VertexOutput i) : COLOR {
-                float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
+
+            float4 frag(VertexOutput i) : COLOR {                
+				float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
 ////// Lighting:
 ////// Emissive:
                 float3 node_2737 = lerp(_SkyColor.rgb, _HorizonColor.rgb, pow((1.0 - max(0, dot(viewDirection, float3(0,-1,0)) - _HorizonLevel)),8.0)); // Sky
