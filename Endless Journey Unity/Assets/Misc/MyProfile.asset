@@ -33,7 +33,7 @@ MonoBehaviour:
     m_Settings:
       method: 0
       fxaaSettings:
-        preset: 2
+        preset: 4
       taaSettings:
         jitterSpread: 0.75
         sharpen: 0.3
@@ -80,7 +80,7 @@ MonoBehaviour:
     m_Enabled: 1
     m_Settings:
       shutterAngle: 270
-      sampleCount: 5
+      sampleCount: 10
       frameBlending: 0
   eyeAdaptation:
     m_Enabled: 0
@@ -100,8 +100,8 @@ MonoBehaviour:
     m_Enabled: 1
     m_Settings:
       bloom:
-        intensity: 0.8121566
-        threshold: 0.81483114
+        intensity: 0.8615213
+        threshold: 0.6507139
         softKnee: 0.5
         radius: 4
         antiFlicker: 0

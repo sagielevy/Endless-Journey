@@ -1,6 +1,6 @@
 ﻿Shader "Custom/Terrain" {
 	Properties {
-		testTexture("Texture", 2D) = "white"{}
+		//testTexture("Texture", 2D) = "white"{}
 		testScale("Scale", Float) = 1
 		
 		// Sagie additions, to make it look more dreamy
@@ -28,12 +28,12 @@
 		float baseStartHeights[maxLayerCount];
 		float baseBlends[maxLayerCount];
 		float baseColourStrength[maxLayerCount];
-		float baseTextureScales[maxLayerCount];
+		//float baseTextureScales[maxLayerCount];
 
 		float minHeight;
 		float maxHeight;
 
-		sampler2D testTexture;
+		//sampler2D testTexture;
 		float testScale;
 
 		half _Glossiness;

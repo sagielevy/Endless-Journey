@@ -31,6 +31,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
             var musicData = data as IMusicData;
             MusicTrack[] tracks = musicData.MusicTracks();
             AudioSource[] sources = musicAudioSources.GetComponentsInChildren<AudioSource>();
+
             for (int i = 0; i < sources.Length; i++)
             {
                 // TODO: Using tracks length in such a fasion assumes that the number of 'a' tracks is the same number
@@ -39,6 +40,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 int trackIndex = i / tracks.Length;
                 float vol = 0;
                 int innerIndex = i % tracks.Length;
+
                 if(innerIndex  == tracks[trackIndex].track)
                 {
                     // Debug.Log("I: " + i.ToString() + " track index: " + trackIndex.ToString() + " Inner index: " + innerIndex.ToString());

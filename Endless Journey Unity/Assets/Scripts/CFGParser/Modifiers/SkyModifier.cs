@@ -33,7 +33,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
 
             // Interpolate colors!
             // Interpolate Environment settings as well
-            var newSkyColor = Color.Lerp(orgSkyColor, Helpers.FromText(skyData.ColorSky()), Time.time - startTime);
+            var newSkyColor = Color.Lerp(orgSkyColor, Helpers.FromText(skyData.ColorSky()), Globals.speedChange * (Time.time - startTime));
             skyMaterial.SetColor(SkyColorId, newSkyColor);
             RenderSettings.ambientSkyColor = newSkyColor;
 
@@ -51,6 +51,9 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 RenderSettings.ambientEquatorColor = newHorizonColor;
                 skyMaterial.SetColor(HorizonColorId, newHorizonColor);
             }
+
+            // Change ground color to match horizon
+            RenderSettings.ambientGroundColor = RenderSettings.ambientEquatorColor;
         }
     }
 }

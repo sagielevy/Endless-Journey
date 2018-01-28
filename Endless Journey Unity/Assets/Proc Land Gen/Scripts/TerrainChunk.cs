@@ -147,20 +147,23 @@ public class TerrainChunk {
 		}
 	}
 
+    // TODO It would be smarter to MOVE an item to a new location rather than destroying it
+    // and reallocating it later. Should make some data structure to manage this whole thing
     private void DestroyItems()
     {
         // Lost visibility, remove items
         // GROUNDED ITEMS
-        // Set our items' Y position and display them
         foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
         {
-            GameObject.Destroy(item);
+            // Destroy the actual gameobject! Not just the script!
+            GameObject.Destroy(item.gameObject);
         }
 
         // AIRBORNE ITEMS
         foreach (var item in meshFilter.GetComponentsInChildren<AirborneItemComponent>())
         {
-            GameObject.Destroy(item);
+            // Destroy the actual gameobject! Not just the script!
+            GameObject.Destroy(item.gameObject);
         }
     }
 
