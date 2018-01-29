@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.PostProcessing.Utilities;
 
 [RequireComponent(typeof(FocusPuller))]
-public class ManualFocus : MonoBehaviour
+public class PlayerControl : MonoBehaviour
 {
     private string path;
 
@@ -22,13 +22,13 @@ public class ManualFocus : MonoBehaviour
     }
     void Update () {
         // Take Screenshot
-		if (Input.GetKey(KeyCode.E))
+		if (Input.GetKeyDown(KeyCode.E))
         {
             ScreenCapture.CaptureScreenshot(path + Path.GetRandomFileName() + ".png");
         }
 
         // Focus!
-        if (Input.GetKey(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             RaycastHit hit;
             Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
@@ -38,6 +38,11 @@ public class ManualFocus : MonoBehaviour
             {
                 GetComponent<FocusPuller>().target = hit.transform;
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
         }
 	}
 }
