@@ -7,12 +7,12 @@
 	}
 	SubShader {
 		// TODO Verify that this is not too expensive
-		Tags {"RenderType"="Transparent" } // { "RenderType"="Opaque" }
+		Tags {"RenderType"="Transparent" }
 		LOD 200
 		
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Standard fullforwardshadows alpha:fade //vertex:vert (might be more efficient)
+		#pragma surface surf Standard fullforwardshadows alpha:fade
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
@@ -21,13 +21,13 @@
 		const static float epsilon = 1E-4;
 
 		int layerCount;
-		float3 baseColours[maxLayerCount];
-		float baseStartHeights[maxLayerCount];
-		float baseBlends[maxLayerCount];
-		float baseColourStrength[maxLayerCount];
+		half3 baseColours[maxLayerCount];
+		half baseStartHeights[maxLayerCount];
+		half baseBlends[maxLayerCount];
+		half baseColourStrength[maxLayerCount];
 
-		float minHeight;
-		float maxHeight;
+		half minHeight;
+		half maxHeight;
 
 		half _Glossiness;
 		half _Metallic;
@@ -42,32 +42,18 @@
 			return saturate((value-a)/(b-a));
 		}
 
-		 // This is to use vertex coloring instead!
-		 //struct Input {
-         //    float2 uv_MainTex;
-         //    float3 vertexColor; // Vertex color stored here by vert() method
-         //};
-         //void vert (inout appdata_full v, out Input o)
-         //{
-         //    UNITY_INITIALIZE_OUTPUT(Input,o);
-         //    o.vertexColor = v.color; // Save the Vertex Color in the Input for the surf() method
-         //}
-
 		void surf (Input IN, inout SurfaceOutputStandard o) {
-			float heightPercent = inverseLerp(minHeight,maxHeight, IN.worldPos.y);
-			float3 blendAxes = abs(IN.worldNormal);
-			blendAxes /= blendAxes.x + blendAxes.y + blendAxes.z;
+			half heightPercent = inverseLerp(minHeight,maxHeight, IN.worldPos.y);
 
-			o.Alpha = 1;
+			// layerCount >= 2 && baseStartHeights[1] >= heightPercent
+			half isWater = step(2.0, layerCount) * step(heightPercent, baseStartHeights[1]);
 
-			// Change alpha value for water (must have at least two layers!)
-			if (layerCount > 2 && baseStartHeights[1] > heightPercent) {
-				o.Alpha = _WaterAlpha;
-			}
+			// If water - set alpha, otherwise set opaque
+			o.Alpha = isWater * _WaterAlpha + (1-isWater);
 
 			for (int i = 0; i < layerCount; i ++) {
-				float drawStrength = inverseLerp(-baseBlends[i]/2 - epsilon, baseBlends[i]/2, heightPercent - baseStartHeights[i]);
-				float3 baseColour = baseColours[i] * baseColourStrength[i];
+				half drawStrength = inverseLerp(-baseBlends[i]/2 - epsilon, baseBlends[i]/2, heightPercent - baseStartHeights[i]);
+				half3 baseColour = baseColours[i] * baseColourStrength[i];
 				
 				o.Albedo = o.Albedo * (1-drawStrength) + baseColour * drawStrength;
 			}

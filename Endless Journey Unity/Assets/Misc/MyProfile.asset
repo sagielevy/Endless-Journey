@@ -80,7 +80,7 @@ MonoBehaviour:
     m_Enabled: 1
     m_Settings:
       shutterAngle: 270
-      sampleCount: 10
+      sampleCount: 15
       frameBlending: 0
   eyeAdaptation:
     m_Enabled: 0

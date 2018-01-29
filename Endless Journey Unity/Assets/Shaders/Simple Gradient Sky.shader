@@ -25,15 +25,14 @@ Shader "CubedParadox/Simple Gradient Sky" {
                 "LightMode"="ForwardBase"
             }
             
-            
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #define UNITY_PASS_FORWARDBASE
             #include "UnityCG.cginc"
             #pragma multi_compile_fwdbase
-            #pragma exclude_renderers gles3 metal d3d11_9x xbox360 xboxone ps3 ps4 psp2 
             #pragma target 3.0
+
             uniform float4 _SkyColor;
             uniform float4 _HorizonColor;
 			uniform float _HorizonLevel;
@@ -66,5 +65,4 @@ Shader "CubedParadox/Simple Gradient Sky" {
             ENDCG
         }
     }
-    //CustomEditor "ShaderForgeMaterialInspector"
 }
