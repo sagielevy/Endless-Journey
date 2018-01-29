@@ -8,5 +8,7 @@ namespace Assets.Scripts.CFGParser
 {
     public class GroundItemComponent : MonoBehaviour
     {
+        public Vector2 ActualOriginalPos;
+        public bool hasPerfectPos = false;
     }
 }

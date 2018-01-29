@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.CFGParser;
+﻿using System;
+using Assets.Scripts.CFGParser;
 using UnityEngine;
 
 public class TerrainChunk {
@@ -99,7 +100,7 @@ public class TerrainChunk {
 			bool wasVisible = IsVisible ();
 			bool visible = viewerDstFromNearestEdge <= maxViewDst;
 
-			if (visible)
+            if (visible)
             {
                 int lodIndex = 0;
 
@@ -129,8 +130,11 @@ public class TerrainChunk {
                     }
                 }
 
-                // Inefficient!
-                GenerateItems();
+                // Position and enable items only when LOD is fine (1 or 0)
+                if (lodIndex <= 1 && lodMeshes[lodIndex] != null && lodMeshes[lodIndex].mesh != null && lodMeshes[lodIndex].mesh.vertexCount > 0)
+                {
+                    PositionItems(lodIndex);
+                }
             }
             else
             {
@@ -167,32 +171,41 @@ public class TerrainChunk {
         }
     }
 
-    private void GenerateItems()
+    private void PositionItems(int levelOfDetail)
     {
-        // GROUNDED ITEMS
-        // Set our items' Y position and display them
-        foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
+        // Verify before placing
+        if (meshFilter.sharedMesh != null && meshFilter.sharedMesh.vertexCount > 0)
         {
-            var transform = item.transform;
+            // GROUNDED ITEMS
+            // Set our items' Y position and display them
+            foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
+            {
+                // Enable the item. Shit.
+                var renderer = GetItemRenderer(item.transform.gameObject);
 
-            // Enable the item. Shit.
-            var renderer = GetItemRenderer(transform.gameObject);
+                if (!item.hasPerfectPos)
+                {
+                    // Set to true if cacluating for smalled LOD
+                    item.hasPerfectPos = levelOfDetail == 0;
 
-            // Find nearest vertex to this chunk
-            var nearestVertex = Helpers.NearestVertexTo(meshFilter, transform.position);
+                    // Find nearest vertex where height is half of max possible
+                    var nearestVertex = Helpers.NearestVertexTo(meshFilter,
+                        new Vector3(item.ActualOriginalPos.x, heightMap.maxValue / 2, item.ActualOriginalPos.y));
 
-            transform.position = new Vector3(transform.position.x, nearestVertex.vertex.y, transform.position.z);
+                    item.transform.position = new Vector3(nearestVertex.vertex.x,
+                                                               nearestVertex.vertex.y,
+                                                               nearestVertex.vertex.z);
+                }
 
-            renderer.enabled = true;
-        }
+                renderer.enabled = true;
+            }
 
-        // AIRBORNE ITEMS
-        foreach (var item in meshFilter.GetComponentsInChildren<AirborneItemComponent>())
-        {
-            var transform = item.transform;
-
-            // Enable the item. Shit.
-            GetItemRenderer(transform.gameObject).enabled = true;
+            // AIRBORNE ITEMS
+            foreach (var item in meshFilter.GetComponentsInChildren<AirborneItemComponent>())
+            {
+                // Enable the item. Shit.
+                GetItemRenderer(item.gameObject).enabled = true;
+            }
         }
     }
 
@@ -240,7 +253,6 @@ public class TerrainChunk {
 }
 
 class LODMesh {
-
 	public Mesh mesh;
 	public bool hasRequestedMesh;
 	public bool hasMesh;
@@ -252,10 +264,10 @@ class LODMesh {
 	}
 
 	void OnMeshDataReceived(object meshDataObject) {
-		mesh = ((MeshData)meshDataObject).CreateMesh ();
+        mesh = ((MeshData)meshDataObject).CreateMesh();
 		hasMesh = true;
-
-		updateCallback ();
+        
+        updateCallback ();
 	}
 
 	public void RequestMesh(HeightMap heightMap, MeshSettings meshSettings) {

@@ -61,6 +61,12 @@ namespace Assets.Scripts.CFGParser.Modifiers
                     var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
                     chunk.AddItem(newAnimal);
 
+                    if (newAnimal.GetComponent<GroundItemComponent>() != null)
+                    {
+                        // Save original actual pos
+                        newAnimal.GetComponent<GroundItemComponent>().ActualOriginalPos = new Vector2(actualPosX, actualPosZ);
+                    }
+
                     // Set current item position
                     newAnimal.position = new Vector3(actualPosX, (flyerIndex == animal.subtypeIndex) ? Globals.birdHeight : Globals.maxHeight, actualPosZ);
                 }

@@ -1,21 +1,35 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.PostProcessing.Utilities;
 
 [RequireComponent(typeof(FocusPuller))]
-public class ManualFocus : MonoBehaviour {
-    
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (Input.GetKey(KeyCode.F))
+public class ManualFocus : MonoBehaviour
+{
+    private string path;
+
+    private void Start()
+    {
+        path = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + Path.DirectorySeparatorChar +
+                "Endless Journey" + Path.DirectorySeparatorChar;
+
+        if (!Directory.Exists(path))
         {
-            // Focus!
+            Directory.CreateDirectory(path);
+        }
+    }
+    void Update () {
+        // Take Screenshot
+		if (Input.GetKey(KeyCode.E))
+        {
+            ScreenCapture.CaptureScreenshot(path + Path.GetRandomFileName() + ".png");
+        }
+
+        // Focus!
+        if (Input.GetKey(KeyCode.F))
+        {
             RaycastHit hit;
             Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
             Debug.DrawRay(transform.position, ray.direction);

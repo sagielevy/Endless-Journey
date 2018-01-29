@@ -80,7 +80,12 @@ namespace Assets.Scripts.CFGParser
             {
                 // New section!
                 sentenceDataHolder = cFGGenerator.GetSentence();
-                CreateNewModifiers();
+
+                // If null try getting sentence next call
+                if (sentenceDataHolder != null)
+                {
+                    CreateNewModifiers();
+                }
             }
         }
 

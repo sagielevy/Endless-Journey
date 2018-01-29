@@ -1,9 +1,9 @@
 {
   "num_angles": [ "#discrete 1~8#" ],
-  "num_plants": [ "#discrete 35~85#" ],
-  "num_animals": [ "#discrete 7~17#" ],
-  "num_clouds": [ "#discrete 25~80#" ],
-  "num_rocks": [ "#discrete 60~120#" ],
+  "num_plants": [ "#discrete 50~115#" ],
+  "num_animals": [ "#discrete 15~28#" ],
+  "num_clouds": [ "#discrete 50~110#" ],
+  "num_rocks": [ "#discrete 100~200#" ],
   "animal_angle": ["\"animal_angle\";;;#random 0~1#"],
   "music": [ "\"music\";;;@!!{\"t1\";;;#discrete 0~2#, \"v1\";;;#random 0.5~1#}, {\"t2\";;;#discrete 0~2#, \"v2\";;;#random 0.5~1#}, {\"t3\";;;#discrete 0~2#, \"v3\";;;#random 0.5~1#}, !!@" ],
   "section": [ "\"angles\";;;#angles#, #path#" ],
@@ -20,8 +20,8 @@
   "color_scheme": [ "\"color_scheme\";;;#discrete 0~1714#" ],
   "metallic": [ "\"metallic\";;;#random 0~0.8#" ],
   "smoothness": [ "\"smoothness\";;;#random 0~0.7#" ],
-  "glow": [ "#random 0.3~1.2#" ],
-  "section_length": [ "\"section_length\";;;#discrete 150~400#" ],
+  "glow": [ "#random 0.3~1.1#" ],
+  "section_length": [ "\"section_length\";;;#discrete 150~320#" ],
   "angles": [ "@!!<#num_angles# {\"pos_x\";;;#random 0~1#, \"pos_z\";;;#random 0~1#, \"angle\";;;#random 0~1#},>!!@" ],
   "start": [ "{#section_length#, #color_scheme#, #section#, #background#, #music#}" ]
 }

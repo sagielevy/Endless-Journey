@@ -307,6 +307,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4664685341777688}
   - component: {fileID: 137234091679906268}
+  - component: {fileID: 64166706783591304}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -622,6 +623,20 @@ Transform:
   m_Father: {fileID: 4360918541966674}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &64166706783591304
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1928042561474546}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 4300000, guid: 6ea962ae7d6750a4796333a525dbe85f, type: 3}
 --- !u!95 &95418831027593654
 Animator:
   serializedVersion: 3
@@ -656,7 +671,7 @@ SkinnedMeshRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1928042561474546}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
