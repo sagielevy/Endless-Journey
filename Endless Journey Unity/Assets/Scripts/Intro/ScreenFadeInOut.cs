@@ -1,45 +1,48 @@
 ﻿using Assets.Scripts.CFGParser;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.Intro
 {
-    [RequireComponent(typeof(IntroText))]
     public class ScreenFadeInOut : MonoBehaviour
     {
-
+        public Text text;
+        public Image FadeImg;
         public float fadeSpeed = 1.5f;
         private bool sceneStarting = true;
-        private float lowAlpha = 0.1f;
+        private float lowAlpha = 0.05f;
         private float highAlpha = 0.9f;
-        private IntroText intro;
-        private float screenSizeVal;
+        //private float screenSizeVal;
+        private bool TextCutsceneComplete;
 
-        void Awake()
-        {
-            screenSizeVal = Screen.width + Screen.height;
-            GetComponent<GUITexture>().pixelInset = new Rect(0f, 0f, Screen.width, Screen.height);
-        }
+        //void Awake()
+        //{
+        //    screenSizeVal = Screen.width + Screen.height;
+        //}
 
         void Start()
         {
-            intro = GetComponent<IntroText>();
-            StartCoroutine(intro.TextCutscene(Globals.INTRO_TEXTS));
+            //FadeImg.rectTransform.localScale = new Vector2(Screen.width, Screen.height);
+            //text.rectTransform.localScale = new Vector2(Screen.width, Screen.height);
+
+            StartCoroutine(TextCutscene(Globals.INTRO_TEXTS));
         }
 
-        // Use this for initialization
-        void Update()
+        void FixedUpdate()
         {
-            // If screen size changed
-            if (screenSizeVal != Screen.width + Screen.height)
-            {
-                // Update screen size value and re-create the texture rect
-                screenSizeVal = Screen.width + Screen.height;
-                GetComponent<GUITexture>().pixelInset = new Rect(0f, 0f, Screen.width, Screen.height);
-            }
+            //// If screen size changed
+            //if (screenSizeVal != Screen.width + Screen.height)
+            //{
+            //    // Update screen size value and re-create the rects
+            //    screenSizeVal = Screen.width + Screen.height;
+            //    FadeImg.rectTransform.localScale = new Vector2(Screen.width, Screen.height);
+            //    text.rectTransform.localScale = new Vector2(Screen.width, Screen.height);
+            //}
 
             // If the scene is starting...
             if (sceneStarting)
@@ -49,27 +52,82 @@ namespace Assets.Scripts.Intro
             }
         }
 
+        void FadeTextIn()
+        {
+            text.color = Color.Lerp(text.color, Color.white, fadeSpeed * Time.deltaTime);
+        }
+
+        void FadeTextOut()
+        {
+            text.color = Color.Lerp(text.color, Color.clear, fadeSpeed * Time.deltaTime);
+        }
+
+        public IEnumerator TextCutscene(string[] texts)
+        {
+            // Init variables
+            TextCutsceneComplete = false;
+            text.color = Color.clear;
+            text.text = texts[0];
+
+            // Loop through the texts
+            for (int i = 0; i < texts.Length; i++)
+            {
+                // Fade in
+                while (text.color.a < highAlpha)
+                {
+                    FadeTextIn();
+                    yield return new WaitForEndOfFrame();
+                }
+
+                // Finish white
+                text.color = Color.white;
+
+                yield return new WaitForSeconds(3f);
+
+                // Fade out
+                while (text.color.a > lowAlpha)
+                {
+                    FadeTextOut();
+                    yield return new WaitForEndOfFrame();
+                }
+
+                // Finish clear.
+                text.color = Color.clear;
+
+                // Change text and wait a bit (if there's text to change to)
+                if (i + 1 < texts.Length)
+                {
+                    text.text = texts[i + 1];
+                }
+            }
+
+            TextCutsceneComplete = true;
+        }
+
         void FadeToClear()
         {
-            GetComponent<GUITexture>().color = Color.Lerp(GetComponent<GUITexture>().color, Color.clear, fadeSpeed * Time.deltaTime);
+            // Lerp the colour of the image between itself and transparent.
+            FadeImg.color = Color.Lerp(FadeImg.color, Color.clear, fadeSpeed * Time.deltaTime);
         }
 
         void FadeToBlack()
         {
-            GetComponent<GUITexture>().color = Color.Lerp(GetComponent<GUITexture>().color, Color.black, fadeSpeed * Time.deltaTime);
+            // Lerp the colour of the image between itself and black.
+            FadeImg.color = Color.Lerp(FadeImg.color, Color.black, fadeSpeed * Time.deltaTime);
         }
 
         void StartScene()
         {
             // Fade in and stop once intro is done
-            if (intro.TextCutsceneComplete)
+            if (TextCutsceneComplete)
             {
                 FadeToClear();
 
-                if (GetComponent<GUITexture>().color.a <= lowAlpha)
+                if (FadeImg.color.a <= lowAlpha)
                 {
-                    GetComponent<GUITexture>().color = Color.clear;
-                    GetComponent<GUITexture>().enabled = false;
+
+                    FadeImg.color = Color.clear;
+                    FadeImg.enabled = false;
                     sceneStarting = false;
                 }
             }

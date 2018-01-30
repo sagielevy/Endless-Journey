@@ -16,6 +16,6 @@ namespace Assets.Scripts.CFGParser
         public static readonly float groundSeperateMul = 1.0f;
         public static readonly float cloudSeperateMul = 1.0f;
         public static readonly float animalSeperateMul = 1.0f;
-        public readonly static string[] INTRO_TEXTS = new string[] { "Endless Journey", "More Text" };
+        public readonly static string[] INTRO_TEXTS = new string[] { "Endless Journey" };
     }
 }
