@@ -11,6 +11,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
     public class SectionModifier : IWorldModifier//<ISectionData>
     {
         private float distThreshold = 1.5f;
+        private float sectionLengthPassThreshold = 1.3f;
         Vector3 initialPosition;
         Rigidbody player;
         RigidbodyFirstPersonController Controller;
@@ -76,9 +77,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
 
         public bool IsSectionComplete()
         {
-            // Not reached dest
-            //return points != null && currSubPath >= points.Length;
-            return Vector3.Distance(initialPosition, player.position) >= data.SectionLength();
+            return Vector3.Distance(initialPosition, player.position) >= data.SectionLength() / sectionLengthPassThreshold;
         }
     }
 
