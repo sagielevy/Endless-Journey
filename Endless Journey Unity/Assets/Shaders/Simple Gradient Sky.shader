@@ -11,6 +11,8 @@ Shader "CubedParadox/Simple Gradient Sky" {
         _SkyColor ("Sky Color", Color) = (0.197,0.197,0.197,1)
         _HorizonColor ("Horizon Color", Color) = (0.4980392,0.4980392,0.4980392,1)
 		_HorizonLevel ("Horizon Level", Range(0, 1)) = 0.1
+		_StarsThreshold ("Stars Threshold", Range(0, 1)) = 0.95 // More stars will appear the lower the threshold
+		_BrightThreshold ("Brightness Threshold", Range(0, 1)) = 0.3 // At what level of darkness may light be seen
     }
     SubShader {
         Tags {
@@ -36,6 +38,9 @@ Shader "CubedParadox/Simple Gradient Sky" {
             uniform float4 _SkyColor;
             uniform float4 _HorizonColor;
 			uniform float _HorizonLevel;
+			uniform vector _StarPos;
+			uniform float _StarsThreshold;
+			uniform float _BrightThreshold;
 
             struct VertexInput {
                 float4 vertex : POSITION;
@@ -53,14 +58,49 @@ Shader "CubedParadox/Simple Gradient Sky" {
                 return o;
             }
 
+			//---------NOISE GENERATION------------
+			//Noise generation based on a simple hash, to ensure that if a given point on the dome
+			//(after taking into account the rotation of the sky) is a star, it remains a star all night long
+			float Hash(float n) {
+				return frac((1.0 + sin(n)) * 415.92653);
+			}
+
+			float Noise3d(float3 x) {
+				float xhash = Hash(round(400 * x.x) * 37.0);
+				float yhash = Hash(round(400 * x.y) * 57.0);
+				float zhash = Hash(round(400 * x.z) * 67.0);
+				return frac(xhash + yhash + zhash);
+			}
+
+			// Get brightness (0,1)
+			float GetBright(float4 color) {
+				return color.r * 0.3 + color.g * 0.59 + color.b * 0.11;
+			}
+
             float4 frag(VertexOutput i) : COLOR {                
 				float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
-////// Lighting:
-////// Emissive:
-                float3 node_2737 = lerp(_SkyColor.rgb, _HorizonColor.rgb, pow((1.0 - max(0, dot(viewDirection, float3(0,-1,0)) - _HorizonLevel)),8.0)); // Sky
-                float3 emissive = node_2737;
-                float3 finalColor = emissive;
+				
+				// Emissive:
+                float3 finalColor = lerp(_SkyColor.rgb, _HorizonColor.rgb, pow((1.0 - max(0, dot(viewDirection, float3(0,-1, _HorizonLevel)))),8.0));
+
+				float brightness = GetBright(_SkyColor);
+				
+
+				// Stars
+				if (brightness < _BrightThreshold) {
+					// We generate a random value between 0 and 1
+					float star_intensity = Noise3d(normalize(i.posWorld.xyz));
+
+					// And we apply a threshold to keep only the brightest areas
+					if (star_intensity >= _StarsThreshold) {
+						// We compute the star intensity
+						star_intensity = pow((star_intensity - _StarsThreshold + 0.006) / (1.0 - _StarsThreshold), 6.0) * (-brightness + _BrightThreshold);
+						finalColor += float3(star_intensity, star_intensity, star_intensity);
+					}
+				}
+
                 return fixed4(finalColor,1);
+				
             }
             ENDCG
         }
