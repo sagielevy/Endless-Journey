@@ -16,34 +16,16 @@ namespace Assets.Scripts.Intro
         public float fadeSpeed = 1.5f;
         private bool sceneStarting = true;
         private float lowAlpha = 0.05f;
-        private float highAlpha = 0.9f;
-        //private float screenSizeVal;
+        private float highAlpha = 0.95f;
         private bool TextCutsceneComplete;
-
-        //void Awake()
-        //{
-        //    screenSizeVal = Screen.width + Screen.height;
-        //}
 
         void Start()
         {
-            //FadeImg.rectTransform.localScale = new Vector2(Screen.width, Screen.height);
-            //text.rectTransform.localScale = new Vector2(Screen.width, Screen.height);
-
             StartCoroutine(TextCutscene(Globals.INTRO_TEXTS));
         }
 
         void FixedUpdate()
         {
-            //// If screen size changed
-            //if (screenSizeVal != Screen.width + Screen.height)
-            //{
-            //    // Update screen size value and re-create the rects
-            //    screenSizeVal = Screen.width + Screen.height;
-            //    FadeImg.rectTransform.localScale = new Vector2(Screen.width, Screen.height);
-            //    text.rectTransform.localScale = new Vector2(Screen.width, Screen.height);
-            //}
-
             // If the scene is starting...
             if (sceneStarting)
             {
