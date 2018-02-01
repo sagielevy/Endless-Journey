@@ -11,7 +11,6 @@ Shader "CubedParadox/Simple Gradient Sky" {
         _SkyColor ("Sky Color", Color) = (0.197,0.197,0.197,1)
         _HorizonColor ("Horizon Color", Color) = (0.4980392,0.4980392,0.4980392,1)
 		_HorizonLevel ("Horizon Level", Range(0, 1)) = 0.1
-		_StarsThreshold ("Stars Threshold", Range(0, 1)) = 0.95 // More stars will appear the lower the threshold
 		_BrightThreshold ("Brightness Threshold", Range(0, 1)) = 0.3 // At what level of darkness may light be seen
     }
     SubShader {
@@ -39,7 +38,6 @@ Shader "CubedParadox/Simple Gradient Sky" {
             uniform float4 _HorizonColor;
 			uniform float _HorizonLevel;
 			uniform vector _StarPos;
-			uniform float _StarsThreshold;
 			uniform float _BrightThreshold;
 
             struct VertexInput {
@@ -88,13 +86,15 @@ Shader "CubedParadox/Simple Gradient Sky" {
 
 				// Stars
 				if (brightness < _BrightThreshold) {
+					float starsThreshold = 0.99; // More stars will appear the lower the threshold
+
 					// We generate a random value between 0 and 1
 					float star_intensity = Noise3d(normalize(i.posWorld.xyz));
 
 					// And we apply a threshold to keep only the brightest areas
-					if (star_intensity >= _StarsThreshold) {
+					if (star_intensity >= starsThreshold) {
 						// We compute the star intensity
-						star_intensity = pow((star_intensity - _StarsThreshold + 0.006) / (1.0 - _StarsThreshold), 6.0) * (-brightness + _BrightThreshold);
+						star_intensity = pow((star_intensity - starsThreshold + 0.006) / (1.0 - starsThreshold), 5) * (-brightness + _BrightThreshold);
 						finalColor += float3(star_intensity, star_intensity, star_intensity);
 					}
 				}

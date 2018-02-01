@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: SimpleSky
+  m_Name: CloudShader
   m_Shader: {fileID: 4800000, guid: d85865626a474ff46b971226f83b8a1c, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
