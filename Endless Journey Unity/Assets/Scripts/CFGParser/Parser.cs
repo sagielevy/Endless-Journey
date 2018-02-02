@@ -21,6 +21,7 @@ namespace Assets.Scripts.CFGParser
         string[] colorPalettes;
         GameObject originalModels;
         GameObject musicAudioSources;
+        GameObject lights;
         
         // Unity objects from scene
         Material SkyMat;
@@ -41,6 +42,7 @@ namespace Assets.Scripts.CFGParser
             modifiers = new List<IWorldModifier>();
             originalModels = GameObject.Find("OriginalModels");
             musicAudioSources = GameObject.Find("Tracks");
+            lights = GameObject.Find("Lights");
 
             // Load first sentence & modifiers
             //sentenceDataHolder = cFGGenerator.GetSentence();
@@ -98,7 +100,7 @@ namespace Assets.Scripts.CFGParser
             modifiers.Clear();
 
             //modifiers.Add(sectionModifier);
-            modifiers.Add(new SkyModifier(SkyMat));
+            modifiers.Add(new SkyModifier(SkyMat, lights));
             modifiers.Add(new GroundModifier(GetComponent<TerrainGenerator>().textureSettings, 
                             GetComponent<TerrainGenerator>().mapMaterial));
             modifiers.Add(new MusicModifier(musicAudioSources));

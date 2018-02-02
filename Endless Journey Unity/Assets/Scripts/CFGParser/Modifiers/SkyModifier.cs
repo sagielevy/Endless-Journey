@@ -13,13 +13,15 @@ namespace Assets.Scripts.CFGParser.Modifiers
         const string SkyColorId = "_SkyColor";
         const string HorizonColorId = "_HorizonColor";
         Material skyMaterial;
+        GameObject lights;
         Color orgSkyColor, orgHorizonColor;
         float startTime;
         
 
-        public SkyModifier(Material skyMaterial)
+        public SkyModifier(Material skyMaterial, GameObject lights)
         {
             this.skyMaterial = skyMaterial;
+            this.lights = lights;
             startTime = Time.time;
             orgSkyColor = skyMaterial.GetColor(SkyColorId);
             orgHorizonColor = skyMaterial.GetColor(HorizonColorId);
@@ -30,10 +32,16 @@ namespace Assets.Scripts.CFGParser.Modifiers
             var skyData = data as ISkyData;
 
             // Interpolate colors!
-            // Interpolate Environment settings as well
+            // Interpolate Environment settings & directional lights as well
             var newSkyColor = Color.Lerp(orgSkyColor, Helpers.FromText(skyData.ColorSky()), Globals.speedChange * (Time.time - startTime));
             skyMaterial.SetColor(SkyColorId, newSkyColor);
             RenderSettings.ambientSkyColor = newSkyColor;
+
+            foreach (var light in lights.GetComponentsInChildren<Light>())
+            {
+                // Just a touch of the new light color
+                light.color = Color.Lerp(Color.white, newSkyColor, 0.1f);
+            }
 
             // Change horizon to new horizon color
             if (skyData.IsSkyGradient())

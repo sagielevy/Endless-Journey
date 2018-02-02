@@ -7,7 +7,7 @@
   "animal_angle": ["\"animal_angle\";;;#random 0~1#"],
   "music": [ "\"music\";;;@!!{\"t1\";;;#discrete 0~2#, \"v1\";;;#random 0.5~1#}, {\"t2\";;;#discrete 0~2#, \"v2\";;;#random 0.5~1#}, {\"t3\";;;#discrete 0~2#, \"v3\";;;#random 0.5~1#}, !!@" ],
   "section": [ "\"angles\";;;#angles#, #path#" ],
-  "path": [ "\"path_glow\";;;#glow#, \"path_threshold\";;;#random 0.4~1.0#" ],
+  "path": [ "\"path_glow\";;;#glow#, \"path_threshold\";;;#random 0.65~1.0#" ],
   "background": [ "#ground#, #items#" ],
   "ground": [ "#metallic#, #smoothness#" ],
   "items": [ "\"rocks\";;;@!!<#num_rocks# {#item_pos#, #rock_subtype#},>!!@, \"plants\";;;@!!<#num_plants# {#item_pos#, #plant_subtype#},>!!@, \"animals\";;;@!!<#num_animals# {#item_pos#, #animal_subtype#, #animal_angle#},>!!@, \"clouds\";;;@!!<#num_clouds# {#item_pos#, #cloud_subtype#},>!!@" ],
