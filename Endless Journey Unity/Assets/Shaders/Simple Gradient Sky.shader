@@ -56,6 +56,12 @@ Shader "CubedParadox/Simple Gradient Sky" {
                 return o;
             }
 
+			// Convert from one range to another
+			float map(float s, float a1, float a2, float b1, float b2)
+			{
+				return b1 + (s - a1)*(b2 - b1) / (a2 - a1);
+			}
+
 			//---------NOISE GENERATION------------
 			//Noise generation based on a simple hash, to ensure that if a given point on the dome
 			//(after taking into account the rotation of the sky) is a star, it remains a star all night long
@@ -79,7 +85,7 @@ Shader "CubedParadox/Simple Gradient Sky" {
 				float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
 				
 				// Emissive:
-                float3 finalColor = lerp(_SkyColor.rgb, _HorizonColor.rgb, pow((1.0 - max(0, dot(viewDirection, float3(0,-1, _HorizonLevel)))),8.0));
+                float3 finalColor = lerp(_SkyColor.rgb, _HorizonColor.rgb, pow((1.0 - max(0, dot(viewDirection, float3(0,-1, _HorizonLevel)))), 7.0));
 
 				float brightness = GetBright(_SkyColor);
 				
@@ -87,14 +93,30 @@ Shader "CubedParadox/Simple Gradient Sky" {
 				// Stars
 				if (brightness < _BrightThreshold) {
 					float starsThreshold = 0.99; // More stars will appear the lower the threshold
+					float twinkleThreshold = 0.0097; // The a star that passes the sum of twinkle threshold and star threshold will twinkle
+					float minShine = 0.006;
 
 					// We generate a random value between 0 and 1
 					float star_intensity = Noise3d(normalize(i.posWorld.xyz));
 
 					// And we apply a threshold to keep only the brightest areas
-					if (star_intensity >= starsThreshold) {
+					if (star_intensity - twinkleThreshold >= starsThreshold) {
+						// Twinkly star!
+						float minIntensity = starsThreshold + twinkleThreshold;
+						float intensityRange = (star_intensity - minIntensity) * (1.0 / minIntensity);  // Range of 0..1
+						float extraIntensity = lerp(0.0070, minShine, intensityRange); // How much to add to star intensity
+
+						// Extra intensity wave change as a factor of time (twinkle effect)
+						float currExtraInt = lerp(extraIntensity, minShine, abs(sin(map(intensityRange, 0, 1, 4.5, 50) *_Time[1])));
+
+						// Light brighter by intensity range. Change light ferquencies between stars
+						star_intensity = pow((star_intensity - starsThreshold + currExtraInt) / (1.0 - starsThreshold), 5) *
+							(-brightness + _BrightThreshold);
+						finalColor += float3(star_intensity, star_intensity, star_intensity);
+					}
+					else if (star_intensity >= starsThreshold) {
 						// We compute the star intensity
-						star_intensity = pow((star_intensity - starsThreshold + 0.006) / (1.0 - starsThreshold), 5) * (-brightness + _BrightThreshold);
+						star_intensity = pow((star_intensity - starsThreshold + minShine) / (1.0 - starsThreshold), 5) * (-brightness + _BrightThreshold);
 						finalColor += float3(star_intensity, star_intensity, star_intensity);
 					}
 				}

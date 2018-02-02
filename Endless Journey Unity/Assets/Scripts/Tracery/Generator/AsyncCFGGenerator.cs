@@ -86,10 +86,11 @@ namespace Scripts.Tracery.Generator
         {
             //return 5;
 
-            if(orig == null)
+            if (orig == null)
             {
                 return 0;
             }
+
             int[] origColors = GetColors(orig);
             int[] compareColors = GetColors(toCompare);
 
@@ -98,7 +99,9 @@ namespace Scripts.Tracery.Generator
 
             for (int i = 0; i < origColors.Length; i++)
             {
-                distance += Math.Abs(origColors[i] - compareColors[i]);
+                // Add distance between each color in the palette, but modify distance by color weight
+                // Adds square so that the distance will not linearly affect weight
+                distance += Mathf.Sqrt(Mathf.Abs(origColors[i] - compareColors[i]));
             }
 
             return distance;

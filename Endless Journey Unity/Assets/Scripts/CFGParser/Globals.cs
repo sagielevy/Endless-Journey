@@ -16,9 +16,9 @@ namespace Assets.Scripts.CFGParser
         public static readonly float groundSeperateMul = 1.0f;
         public static readonly float cloudSeperateMul = 1.0f;
         public static readonly float animalSeperateMul = 1.0f;
-        public readonly static string[] INTRO_TEXTS = new string[] { "Endless Journey",
-                                                                     "Use WASD and the Cursor to move around",
-                                                                     "Press Space to jump and hold Left Shift to run",
-                                                                     "Press F to change focus and E to take a photo" };
+        public readonly static string[] INTRO_TEXTS = new string[] { /*"Endless Journey",*/
+                                                                     "Use WASD and the Cursor to move around.\n" +
+                                                                     "Press Space to jump and hold Left Shift to run.",
+                                                                     "Press F to change focus and E to take a photo." };
     }
 }

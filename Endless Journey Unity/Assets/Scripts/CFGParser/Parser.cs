@@ -43,9 +43,9 @@ namespace Assets.Scripts.CFGParser
             musicAudioSources = GameObject.Find("Tracks");
 
             // Load first sentence & modifiers
-            sentenceDataHolder = cFGGenerator.GetSentence();
+            //sentenceDataHolder = cFGGenerator.GetSentence();
 
-            CreateNewModifiers();
+            //CreateNewModifiers();
         }
 
         public Vector2 GetMovement()
@@ -68,6 +68,7 @@ namespace Assets.Scripts.CFGParser
 
         public void FixedUpdate()
         {
+            // If section modifier exists and is not completed, run modifiers
             if (sectionModifier != null && !sectionModifier.IsSectionComplete())
             {
                 // Run each modifier once per frame

@@ -38,7 +38,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
         const string pathThresholdToken = "path_threshold";
         const string colorSchemeToken = "color_scheme";
         const string skyGradientToken = "sky_gradient";
-        const string skyGradientTrue = "sky_gradient";
+        const string skyGradientTrue = "gradient";
         const string anglesToken = "angles";
         const string angleAngleToken = "angle";
         const string anglePosXToken = "pos_x";
@@ -134,7 +134,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
         public bool IsSkyGradient()
         {
-            return root[skyGradientToken].ToString() == skyGradientTrue;
+            return root[skyGradientToken].Value == skyGradientTrue;
         }
 
         public float Metallic()

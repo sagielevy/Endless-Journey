@@ -193,8 +193,8 @@ public class TerrainChunk {
                         new Vector3(item.ActualOriginalPos.x, heightMap.maxValue / 2, item.ActualOriginalPos.y));
 
                     item.transform.position = new Vector3(nearestVertex.vertex.x,
-                                                               nearestVertex.vertex.y,
-                                                               nearestVertex.vertex.z);
+                                                          nearestVertex.vertex.y,
+                                                          nearestVertex.vertex.z);
                 }
 
                 renderer.enabled = true;
