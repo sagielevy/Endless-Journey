@@ -57,9 +57,9 @@ Shader "CubedParadox/Simple Gradient Sky" {
             }
 
 			// Convert from one range to another
-			float map(float s, float a1, float a2, float b1, float b2)
+			float map(float val, float old1, float old2, float new1, float new2)
 			{
-				return b1 + (s - a1)*(b2 - b1) / (a2 - a1);
+				return new1 + (val - old1) * (new2 - new1) / (old2 - old1);
 			}
 
 			//---------NOISE GENERATION------------

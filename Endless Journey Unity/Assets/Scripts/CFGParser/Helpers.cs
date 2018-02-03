@@ -9,6 +9,11 @@ namespace Assets.Scripts.CFGParser
 {
     public static class Helpers
     {
+        public static float Sum(this Color color)
+        {
+            return color.a + color.b + color.r + color.g;
+        }
+
         public static Color FromText(string text)
         {
             return new Color(int.Parse(text.Substring(0, 2), NumberStyles.HexNumber) / 255.0f,

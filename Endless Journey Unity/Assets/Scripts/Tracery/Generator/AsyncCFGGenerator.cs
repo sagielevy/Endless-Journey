@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.CFGParser.DataHolder;
+﻿using Assets.Scripts.CFGParser;
+using Assets.Scripts.CFGParser.DataHolder;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -69,7 +70,8 @@ namespace Scripts.Tracery.Generator
             Array.Sort(sentences);
 
             // The first element should have the minimal distance
-            list.Enqueue(sentences[0].SentenceData);
+            //list.Enqueue(sentences[0].SentenceData);
+            list.Enqueue(WeightedRandomization.Choose(sentences).SentenceData);
         }
 
         /// <summary>
@@ -88,11 +90,12 @@ namespace Scripts.Tracery.Generator
 
             if (orig == null)
             {
-                return 0;
+                // Default
+                return 1;
             }
 
-            int[] origColors = GetColors(orig);
-            int[] compareColors = GetColors(toCompare);
+            var origColors = GetColors(orig);
+            var compareColors = GetColors(toCompare);
 
             // Calc the differences
             float distance = 0;
@@ -100,18 +103,20 @@ namespace Scripts.Tracery.Generator
             for (int i = 0; i < origColors.Length; i++)
             {
                 // Add distance between each color in the palette, but modify distance by color weight
+                distance += Mathf.Abs(origColors[i] - compareColors[i]);
+
                 // Adds square so that the distance will not linearly affect weight
-                distance += Mathf.Sqrt(Mathf.Abs(origColors[i] - compareColors[i]));
+                //distance += Mathf.Sqrt(Mathf.Abs(origColors[i] - compareColors[i]));
             }
 
             return distance;
         }
 
-        private int[] GetColors(SentenceDataHolder dataHolder)
+        private float[] GetColors(SentenceDataHolder dataHolder)
         {
             try
             {
-                return dataHolder.ColorScheme().Split(' ').Select(color => int.Parse(color, NumberStyles.HexNumber)).ToArray();
+                return dataHolder.ColorScheme().Split(' ').Select(color => Helpers.FromText(color).Sum()).ToArray();
             }
             catch (Exception e)
             {
@@ -123,7 +128,7 @@ namespace Scripts.Tracery.Generator
         }
     }
 
-    public struct Sentence : IComparable
+    public class Sentence : IComparable
     {
         public SentenceDataHolder SentenceData;
         public float Weight;
@@ -132,6 +137,7 @@ namespace Scripts.Tracery.Generator
         {
             Sentence s = (Sentence)obj;
             float distance = Weight - s.Weight;
+
             if(distance > 0)
             {
                 return 1;
@@ -141,6 +147,37 @@ namespace Scripts.Tracery.Generator
                 return -1;
             }
             return 0;
+        }
+    }
+
+    static class WeightedRandomization
+    {
+        //public static T Choose<T>(List<T> list) where T : Sentence
+        public static T Choose<T>(T[] list) where T : Sentence
+        {
+            if (list.Length == 0)
+            {
+                return default(T);
+            }
+
+            float totalweight = list.Sum(c => c.Weight);
+            float choice = (float)new System.Random().NextDouble() * totalweight;
+            float sum = 0;
+
+            foreach (var obj in list)
+            {
+                var range = choice - sum;
+
+                // 0 <= choice - sum < obj.Weight
+                if (0 <= range && range < obj.Weight)
+                {
+                    return obj;
+                }
+
+                sum += obj.Weight;
+            }
+
+            return list.First();
         }
     }
 }
