@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.CFGParser
 {
-    public class GroundItemComponent : MonoBehaviour
+    public class GroundItemComponent : ItemComponent
     {
         public Vector2 ActualOriginalPos;
         public bool hasPerfectPos = false;

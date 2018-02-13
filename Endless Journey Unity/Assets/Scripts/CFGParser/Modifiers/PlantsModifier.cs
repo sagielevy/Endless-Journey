@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.CFGParser.DataHolder;
+using EZObjectPools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,19 +8,19 @@ using UnityEngine;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    public class PlantsModifier : IWorldModifier//<IPlantsData>
+    public class PlantsModifier : PoolRequester, IWorldModifier//<IPlantsData>
     {
         private ISectionData sectionData;
-        private GameObject originalModels;
+        private EZObjectPool[] pools;
         private TerrainGenerator terrainChunksParent;
         private Vector3 origin;
         private bool hasRun;
 
-        public PlantsModifier(ISectionData sectionData, GameObject originalModels,
-                              TerrainGenerator terrainChunksParent, Vector3 origin)
+        public PlantsModifier(ISectionData sectionData, EZObjectPool[] pools,
+                              TerrainGenerator terrainChunksParent, Vector3 origin) :
+            base("Plants_", pools)
         {
             this.sectionData = sectionData;
-            this.originalModels = originalModels;
             this.terrainChunksParent = terrainChunksParent;
             this.origin = origin;
             hasRun = false;
@@ -44,20 +45,26 @@ namespace Assets.Scripts.CFGParser.Modifiers
                     // FOR DEBUG
                     int subSubType = random.Next(1, maxes[plant.subtypeIndex - 1]);
                     var plantName = "Plants_" + plant.subtypeIndex + "_" + subSubType;
-                    var newPlant = GameObject.Instantiate(originalModels.transform.Find(plantName));
+                    //var newPlant = GameObject.Instantiate(pools.transform.Find(plantName));
+                    GameObject newPlant;
 
-                    // Uniform scale
-                    newPlant.localScale *= plant.scale_mul;
+                    if (poolsDict[plantName].TryGetNextObject(new Vector3(), Globals.defaultRotation, out newPlant))
+                    {
+                        newPlant.GetComponent<ItemComponent>().SetOrgLocalScale(newPlant.transform.localScale);
 
-                    // Set chunk parent
-                    var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
-                    chunk.AddItem(newPlant);
+                        // Uniform scale
+                        newPlant.transform.localScale *= plant.scale_mul;
 
-                    // Save original actual pos
-                    newPlant.GetComponent<GroundItemComponent>().ActualOriginalPos = new Vector2(actualPosX, actualPosZ);
+                        // Set chunk parent
+                        var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
+                        chunk.AddItem(newPlant.transform);
 
-                    // Set current item position to X, Z
-                    newPlant.position = new Vector3(actualPosX, Globals.maxHeight, actualPosZ);
+                        // Save original actual pos
+                        newPlant.GetComponent<GroundItemComponent>().ActualOriginalPos = new Vector2(actualPosX, actualPosZ);
+
+                        // Set inital pos!
+                        chunk.PositionSingleGroundItem(newPlant.GetComponent<GroundItemComponent>());
+                    }
                 }
             }
         }

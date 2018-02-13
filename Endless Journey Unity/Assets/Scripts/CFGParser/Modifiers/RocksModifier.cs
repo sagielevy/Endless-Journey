@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.CFGParser.DataHolder;
+using EZObjectPools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,19 +8,18 @@ using UnityEngine;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    public class RocksModifier : IWorldModifier
+    public class RocksModifier : PoolRequester, IWorldModifier
     {
         private ISectionData sectionData;
-        private GameObject originalModels;
         private TerrainGenerator terrainChunksParent;
         private Vector3 origin;
         private bool hasRun;
 
-        public RocksModifier(ISectionData sectionData, GameObject originalModels,
-                              TerrainGenerator terrainChunksParent, Vector3 origin)
+        public RocksModifier(ISectionData sectionData, EZObjectPool[] pools,
+                              TerrainGenerator terrainChunksParent, Vector3 origin) :
+            base("Rocks_", pools)
         {
             this.sectionData = sectionData;
-            this.originalModels = originalModels;
             this.terrainChunksParent = terrainChunksParent;
             this.origin = origin;
             hasRun = false;
@@ -33,7 +33,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 var rocksData = data as IRocksData;
                 float actualPosX, actualPosZ;
 
-                int[] maxes = new int[] { 5 };
+                int[] maxes = new int[] { 6 };
 
                 foreach (var rock in rocksData.Rocks())
                 {
@@ -44,20 +44,26 @@ namespace Assets.Scripts.CFGParser.Modifiers
                     // FOR DEBUG
                     int subSubType = random.Next(1, maxes[rock.subtypeIndex - 1]);
                     var rockName = "Rocks_" + rock.subtypeIndex + "_" + subSubType;
-                    var newRock = GameObject.Instantiate(originalModels.transform.Find(rockName));
+                    //var newRock = GameObject.Instantiate(originalModels.transform.Find(rockName));
+                    GameObject newRock;
 
-                    // Uniform scale
-                    newRock.localScale *= rock.scale_mul;
+                    if (poolsDict[rockName].TryGetNextObject(new Vector3(), Globals.defaultRotation, out newRock))
+                    {
+                        newRock.GetComponent<ItemComponent>().SetOrgLocalScale(newRock.transform.localScale);
 
-                    // Set chunk parent
-                    var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
-                    chunk.AddItem(newRock);
+                        // Uniform scale
+                        newRock.transform.localScale *= rock.scale_mul;
 
-                    // Save original actual pos
-                    newRock.GetComponent<GroundItemComponent>().ActualOriginalPos = new Vector2(actualPosX, actualPosZ);
+                        // Set chunk parent
+                        var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
+                        chunk.AddItem(newRock.transform);
 
-                    // Set current item position to X, Z
-                    newRock.position = new Vector3(actualPosX, Globals.maxHeight, actualPosZ);
+                        // Save original actual pos
+                        newRock.GetComponent<GroundItemComponent>().ActualOriginalPos = new Vector2(actualPosX, actualPosZ);
+
+                        // Set inital pos!
+                        chunk.PositionSingleGroundItem(newRock.GetComponent<GroundItemComponent>());
+                    }
                 }
             }
         }

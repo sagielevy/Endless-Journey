@@ -12,6 +12,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
     {
         const string SkyColorId = "_SkyColor";
         const string HorizonColorId = "_HorizonColor";
+        const float FogDarknessFactor = 1.15f; // 10% darker
         Material skyMaterial;
         GameObject lights;
         Color orgSkyColor, orgHorizonColor;
@@ -36,6 +37,13 @@ namespace Assets.Scripts.CFGParser.Modifiers
             var newSkyColor = Color.Lerp(orgSkyColor, Helpers.FromText(skyData.ColorSky()), Globals.speedChange * (Time.time - startTime));
             skyMaterial.SetColor(SkyColorId, newSkyColor);
             RenderSettings.ambientSkyColor = newSkyColor;
+
+            // Darken color
+            float h, s, v;
+            Color.RGBToHSV(newSkyColor, out h, out s, out v);
+            v = Mathf.Clamp01(v * FogDarknessFactor);
+
+            RenderSettings.fogColor = Color.HSVToRGB(h, s, v); // TODO Color a bit darker than the actual sky color!
 
             foreach (var light in lights.GetComponentsInChildren<Light>())
             {

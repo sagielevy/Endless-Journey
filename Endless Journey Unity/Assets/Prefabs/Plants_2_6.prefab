@@ -49,7 +49,7 @@ MeshRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1292120990455906}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -109,3 +109,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14aeaff0ed777304488d727442402eed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ActualOriginalPos: {x: 0, y: 0}
+  hasPerfectPos: 0

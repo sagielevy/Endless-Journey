@@ -45,7 +45,7 @@ MonoBehaviour:
       intensity: 2.45
       radius: 3.48
       sampleCount: 10
-      downsampling: 0
+      downsampling: 1
       forceForwardCompatibility: 0
       ambientOnly: 1
       highPrecision: 0

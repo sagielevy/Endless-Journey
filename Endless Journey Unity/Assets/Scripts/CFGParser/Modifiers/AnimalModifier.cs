@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.CFGParser.DataHolder;
+using EZObjectPools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,22 +8,21 @@ using UnityEngine;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    public class AnimalModifier : IWorldModifier//<IAnimalsData>
+    public class AnimalModifier : PoolRequester, IWorldModifier//<IAnimalsData>
     {
         const int flyerIndex = 1;
         const int groundIndex = 2;
 
         private ISectionData sectionData;
-        private GameObject originalModels;
         private TerrainGenerator terrainChunksParent;
         private Vector3 origin;
         private bool hasRun;
 
-        public AnimalModifier(ISectionData sectionData, GameObject originalModels,
-                              TerrainGenerator terrainChunksParent, Vector3 origin)
+        public AnimalModifier(ISectionData sectionData, EZObjectPool[] pools,
+                              TerrainGenerator terrainChunksParent, Vector3 origin) :
+            base("Animals_", pools)
         {
             this.sectionData = sectionData;
-            this.originalModels = originalModels;
             this.terrainChunksParent = terrainChunksParent;
             this.origin = origin;
             hasRun = false;
@@ -49,26 +49,39 @@ namespace Assets.Scripts.CFGParser.Modifiers
                     int subSubType = random.Next(1, maxes[animal.subtypeIndex - 1]);
 
                     var animalName = "Animals_" + animal.subtypeIndex + "_" + subSubType;
-                    var newAnimal = GameObject.Instantiate(originalModels.transform.Find(animalName));
+                    //var newAnimal = GameObject.Instantiate(originalModels.transform.Find(animalName));
+                    GameObject newAnimal;
 
-                    // Uniform scale
-                    newAnimal.localScale *= animal.scale_mul;
-
-                    // Rotation around Y axis
-                    newAnimal.rotation = Quaternion.Euler(0, animal.angle * 360, 0);
-
-                    // Set chunk parent
-                    var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
-                    chunk.AddItem(newAnimal);
-
-                    if (newAnimal.GetComponent<GroundItemComponent>() != null)
+                    if (poolsDict[animalName].TryGetNextObject(new Vector3(), Quaternion.Euler(0, animal.angle * 360, 0), out newAnimal))
                     {
-                        // Save original actual pos
-                        newAnimal.GetComponent<GroundItemComponent>().ActualOriginalPos = new Vector2(actualPosX, actualPosZ);
-                    }
+                        // Set org scale
+                        newAnimal.GetComponent<ItemComponent>().SetOrgLocalScale(newAnimal.transform.localScale);
 
-                    // Set current item position
-                    newAnimal.position = new Vector3(actualPosX, (flyerIndex == animal.subtypeIndex) ? Globals.birdHeight : Globals.maxHeight, actualPosZ);
+                        // Uniform scale
+                        newAnimal.transform.localScale *= animal.scale_mul;
+
+                        // Rotation around Y axis
+                        //newAnimal.rotation = Quaternion.Euler(0, animal.angle * 360, 0);
+
+                        // Set chunk parent
+                        var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
+                        chunk.AddItem(newAnimal.transform);
+
+
+                        if (newAnimal.GetComponent<GroundItemComponent>() != null)
+                        {
+                            // Save original actual pos
+                            newAnimal.GetComponent<GroundItemComponent>().ActualOriginalPos = new Vector2(actualPosX, actualPosZ);
+
+                            // Set inital pos!
+                            chunk.PositionSingleGroundItem(newAnimal.GetComponent<GroundItemComponent>());
+
+                        } else if (newAnimal.GetComponent<AirborneItemComponent>() != null)
+                        {
+                            // Set current item position
+                            newAnimal.transform.position = new Vector3(actualPosX, Globals.birdHeight, actualPosZ);
+                        }
+                    }
                 }
             }
         }

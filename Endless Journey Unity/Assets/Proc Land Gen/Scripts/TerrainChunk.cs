@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Assets.Scripts.CFGParser;
 using UnityEngine;
 
@@ -10,9 +11,12 @@ public class TerrainChunk {
 	public Vector2 sampleCentre { get; private set; }
     public MeshFilter meshFilter { get; private set; }
 
+    private List<Transform> chunkItems;
+
     public void AddItem(Transform item)
     {
-        item.parent = meshFilter.gameObject.transform;
+        //item.parent = meshFilter.gameObject.transform;
+        chunkItems.Add(item);
     }
 
     HeightMap heightMap;
@@ -45,9 +49,11 @@ public class TerrainChunk {
 		this.meshSettings = meshSettings;
 		this.viewer = viewer;
 
-		sampleCentre = coord * meshSettings.meshWorldSize / meshSettings.meshScale;
-		Vector2 position = coord * meshSettings.meshWorldSize ;
-		bounds = new Bounds(position,Vector2.one * meshSettings.meshWorldSize );
+        chunkItems = new List<Transform>();
+
+        sampleCentre = coord * meshSettings.meshWorldSize / meshSettings.meshScale;
+		Vector2 position = coord * meshSettings.meshWorldSize;
+		bounds = new Bounds(position, Vector2.one * meshSettings.meshWorldSize);
 
 
 		meshObject = new GameObject("Terrain Chunk");
@@ -138,7 +144,7 @@ public class TerrainChunk {
             }
             else
             {
-                DestroyItems();
+                DetachItems();
             }
 
             if (wasVisible != visible) {
@@ -151,23 +157,54 @@ public class TerrainChunk {
 		}
 	}
 
-    // TODO It would be smarter to MOVE an item to a new location rather than destroying it
-    // and reallocating it later. Should make some data structure to manage this whole thing
-    private void DestroyItems()
+    // Remove items from this chunk's list as it will no longer control them
+    private void DetachItems()
     {
         // Lost visibility, remove items
-        // GROUNDED ITEMS
-        foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
+        // Detach!
+        foreach (var item in chunkItems)
         {
-            // Destroy the actual gameobject! Not just the script!
-            GameObject.Destroy(item.gameObject);
+            // Disable items to allow them to be returned to the pool and be reused 
+            item.GetComponent<ItemComponent>().PreDisable();
+            item.gameObject.SetActive(false);
         }
 
+        chunkItems.Clear();
+
+        // GROUNDED ITEMS
+        //foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
+        //{
+        //    // Destroy the actual gameobject! Not just the script!
+        //    //GameObject.Destroy(item.gameObject);
+        //}
+
         // AIRBORNE ITEMS
-        foreach (var item in meshFilter.GetComponentsInChildren<AirborneItemComponent>())
+        //foreach (var item in meshFilter.GetComponentsInChildren<AirborneItemComponent>())
+        //{
+        //    // Destroy the actual gameobject! Not just the script!
+        //    //GameObject.Destroy(item.gameObject);
+
+        //    // Detach!
+        //    item.transform.parent = null;
+        //}
+    }
+
+    // For initiating positions
+    public void PositionSingleGroundItem(GroundItemComponent groundItem)
+    {
+        // Verify before placing
+        if (meshFilter.sharedMesh != null && meshFilter.sharedMesh.vertexCount > 0 && previousLODIndex < 2 && !groundItem.hasPerfectPos)
         {
-            // Destroy the actual gameobject! Not just the script!
-            GameObject.Destroy(item.gameObject);
+            // Set to true if cacluating for smalled LOD
+            groundItem.hasPerfectPos = previousLODIndex == 0;
+
+            // Find nearest vertex where height is half of max possible
+            var nearestVertex = Helpers.NearestVertexTo(meshFilter,
+                new Vector3(groundItem.ActualOriginalPos.x, heightMap.maxValue / 2, groundItem.ActualOriginalPos.y));
+
+            groundItem.transform.position = new Vector3(nearestVertex.vertex.x,
+                                                        nearestVertex.vertex.y,
+                                                        nearestVertex.vertex.z);
         }
     }
 
@@ -176,50 +213,55 @@ public class TerrainChunk {
         // Verify before placing
         if (meshFilter.sharedMesh != null && meshFilter.sharedMesh.vertexCount > 0)
         {
-            // GROUNDED ITEMS
-            // Set our items' Y position and display them
-            foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
+            foreach (var item in chunkItems)
             {
-                // Enable the item. Shit.
-                var renderer = GetItemRenderer(item.transform.gameObject);
-
-                if (!item.hasPerfectPos)
+                // GROUNDED ITEMS
+                // Set our items' Y position and display them
+                //foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
+                if (item.GetComponent<GroundItemComponent>() != null)
                 {
-                    // Set to true if cacluating for smalled LOD
-                    item.hasPerfectPos = levelOfDetail == 0;
+                    var groundItem = item.GetComponent<GroundItemComponent>();
 
-                    // Find nearest vertex where height is half of max possible
-                    var nearestVertex = Helpers.NearestVertexTo(meshFilter,
-                        new Vector3(item.ActualOriginalPos.x, heightMap.maxValue / 2, item.ActualOriginalPos.y));
+                    // Enable the item. Shit.
+                    //var renderer = GetItemRenderer(item.transform.gameObject);
 
-                    item.transform.position = new Vector3(nearestVertex.vertex.x,
-                                                          nearestVertex.vertex.y,
-                                                          nearestVertex.vertex.z);
+                    if (!groundItem.hasPerfectPos)
+                    {
+                        // Set to true if cacluating for smalled LOD
+                        groundItem.hasPerfectPos = levelOfDetail == 0;
+
+                        // Find nearest vertex where height is half of max possible
+                        var nearestVertex = Helpers.NearestVertexTo(meshFilter,
+                            new Vector3(groundItem.ActualOriginalPos.x, heightMap.maxValue / 2, groundItem.ActualOriginalPos.y));
+
+                        item.transform.position = new Vector3(nearestVertex.vertex.x,
+                                                              nearestVertex.vertex.y,
+                                                              nearestVertex.vertex.z);
+                    }
                 }
 
-                renderer.enabled = true;
-            }
-
-            // AIRBORNE ITEMS
-            foreach (var item in meshFilter.GetComponentsInChildren<AirborneItemComponent>())
-            {
-                // Enable the item. Shit.
-                GetItemRenderer(item.gameObject).enabled = true;
+                // AIRBORNE ITEMS
+                //foreach (var item in meshFilter.GetComponentsInChildren<AirborneItemComponent>())
+                //else if (item.GetComponent<AirborneItemComponent>() != null)
+                //{
+                //    // Enable the item. Shit.
+                //    GetItemRenderer(item.gameObject).enabled = true;
+                //}
             }
         }
     }
 
-    private Renderer GetItemRenderer(GameObject item)
-    {
-        Renderer renderer = item.GetComponent<MeshRenderer>();
+    //private Renderer GetItemRenderer(GameObject item)
+    //{
+    //    Renderer renderer = item.GetComponent<MeshRenderer>();
 
-        if (renderer == null)
-        {
-            renderer = item.GetComponentInChildren<SkinnedMeshRenderer>();
-        }
+    //    if (renderer == null)
+    //    {
+    //        renderer = item.GetComponentInChildren<SkinnedMeshRenderer>();
+    //    }
 
-        return renderer;
-    }
+    //    return renderer;
+    //}
 
 	public void UpdateCollisionMesh() {
 		if (!hasSetCollider) {

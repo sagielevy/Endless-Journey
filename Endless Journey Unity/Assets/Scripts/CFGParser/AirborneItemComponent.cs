@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.CFGParser
 {
-    public class AirborneItemComponent : MonoBehaviour
+    public class AirborneItemComponent : ItemComponent
     {
     }
 }

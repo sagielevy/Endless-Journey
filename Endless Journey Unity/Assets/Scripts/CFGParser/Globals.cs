@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Assets.Scripts.CFGParser
 {
@@ -16,6 +17,7 @@ namespace Assets.Scripts.CFGParser
         public static readonly float groundSeperateMul = 1.0f;
         public static readonly float cloudSeperateMul = 1.0f;
         public static readonly float animalSeperateMul = 1.0f;
+        public static readonly Quaternion defaultRotation = Quaternion.Euler(-90, 0, 0);
         public readonly static string[] INTRO_TEXTS = new string[] { /*"Endless Journey",*/
                                                                      "Use WASD and the Cursor to move around.\n" +
                                                                      "Press Space to jump and hold Left Shift to run.",

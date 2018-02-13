@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.CFGParser.DataHolder;
+using EZObjectPools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,19 +8,18 @@ using UnityEngine;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
-    public class CloudModifier : IWorldModifier//<ICloudsData>
+    public class CloudModifier : PoolRequester, IWorldModifier//<ICloudsData>
     {
         private ISectionData sectionData;
-        private GameObject originalModels;
         private TerrainGenerator terrainChunksParent;
         private bool hasRun;
         private Vector3 origin;
 
-        public CloudModifier(ISectionData sectionData, GameObject originalModels,
-                              TerrainGenerator terrainChunksParent, Vector3 origin)
+        public CloudModifier(ISectionData sectionData, EZObjectPool[] pools,
+                              TerrainGenerator terrainChunksParent, Vector3 origin) :
+            base("Clouds_", pools)
         {
             this.sectionData = sectionData;
-            this.originalModels = originalModels;
             this.terrainChunksParent = terrainChunksParent;
             this.origin = origin;
             hasRun = false;
@@ -44,18 +44,24 @@ namespace Assets.Scripts.CFGParser.Modifiers
 
                     // FOR DEBUG
                     int subSubType = random.Next(1, maxes[cloud.subtypeIndex - 1]);
-                    var plantName = "Clouds_" + cloud.subtypeIndex + "_" + subSubType;
-                    var newCloud = GameObject.Instantiate(originalModels.transform.Find(plantName));
+                    var cloudName = "Clouds_" + cloud.subtypeIndex + "_" + subSubType;
+                    //GameObject newCloud = GameObject.Instantiate(originalModels.transform.Find(plantName));
+                    GameObject newCloud;
 
-                    // Uniform scale
-                    newCloud.localScale *= cloud.scale_mul;
+                    if (poolsDict[cloudName].TryGetNextObject(new Vector3(), Globals.defaultRotation, out newCloud))
+                    {
+                        newCloud.GetComponent<ItemComponent>().SetOrgLocalScale(newCloud.transform.localScale);
 
-                    // Set chunk parent
-                    var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
-                    chunk.AddItem(newCloud);
+                        // Uniform scale
+                        newCloud.transform.localScale *= cloud.scale_mul;
 
-                    // Set current item position to X, Y = cloud height, Z
-                    newCloud.position = new Vector3(actualPosX, Globals.cloudHeight, actualPosZ);
+                        // Set chunk parent
+                        var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
+                        chunk.AddItem(newCloud.transform);
+
+                        // Set current item position to X, Y = cloud height, Z
+                        newCloud.transform.position = new Vector3(actualPosX, Globals.cloudHeight, actualPosZ);
+                    }
                 }
             }
         }
