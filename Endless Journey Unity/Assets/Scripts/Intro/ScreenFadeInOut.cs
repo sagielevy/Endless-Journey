@@ -14,6 +14,7 @@ namespace Assets.Scripts.Intro
         public Text text;
         public Image FadeImg;
         public float fadeSpeed = 1.5f;
+        public PlayerControl playerControl;
         private bool sceneStarting = true;
         private float lowAlpha = 0.05f;
         private float highAlpha = 0.95f;
@@ -31,6 +32,12 @@ namespace Assets.Scripts.Intro
             {
                 // ... call the StartScene function.
                 StartScene();
+            }
+
+            // Interrupt intro
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                TextCutsceneComplete = true;
             }
         }
 
@@ -51,11 +58,11 @@ namespace Assets.Scripts.Intro
             text.color = Color.clear;
             text.text = texts[0];
 
-            // Loop through the texts
-            for (int i = 0; i < texts.Length; i++)
+            // Loop through the texts (make sure not interrupted)
+            for (int i = 0; i < texts.Length && !TextCutsceneComplete; i++)
             {
-                // Fade in
-                while (text.color.a < highAlpha)
+                // Fade in (make sure not interrupted)
+                while (text.color.a < highAlpha && !TextCutsceneComplete)
                 {
                     FadeTextIn();
                     yield return new WaitForEndOfFrame();
@@ -66,8 +73,8 @@ namespace Assets.Scripts.Intro
 
                 yield return new WaitForSeconds(3f);
 
-                // Fade out
-                while (text.color.a > lowAlpha)
+                // Fade out (make sure not interrupted)
+                while (text.color.a > lowAlpha && !TextCutsceneComplete)
                 {
                     FadeTextOut();
                     yield return new WaitForEndOfFrame();
@@ -90,6 +97,9 @@ namespace Assets.Scripts.Intro
         {
             // Lerp the colour of the image between itself and transparent.
             FadeImg.color = Color.Lerp(FadeImg.color, Color.clear, fadeSpeed * Time.deltaTime);
+
+            // Clear out text as well!
+            FadeTextOut();
         }
 
         void FadeToBlack()
@@ -111,6 +121,9 @@ namespace Assets.Scripts.Intro
                     FadeImg.color = Color.clear;
                     FadeImg.enabled = false;
                     sceneStarting = false;
+
+                    // Intro is complete! Enable player control
+                    playerControl.enabled = true;
                 }
             }
         }

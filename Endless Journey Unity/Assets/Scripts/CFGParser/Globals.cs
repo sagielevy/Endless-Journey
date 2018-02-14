@@ -18,9 +18,7 @@ namespace Assets.Scripts.CFGParser
         public static readonly float cloudSeperateMul = 1.0f;
         public static readonly float animalSeperateMul = 1.0f;
         public static readonly Quaternion defaultRotation = Quaternion.Euler(-90, 0, 0);
-        public readonly static string[] INTRO_TEXTS = new string[] { /*"Endless Journey",*/
-                                                                     "Use WASD and the Cursor to move around.\n" +
-                                                                     "Press Space to jump and hold Left Shift to run.",
-                                                                     "Press F to change focus and E to take a photo." };
+        public readonly static string[] INTRO_TEXTS = new string[] { "Endless Journey\n\nAll content in this world is procedurally genrated.\nPress F1 for control info.\n\n\nPress G to skip",
+                                                                      "Credits\n\nDevelopers: Sagie Levy & Tom Feigin\nMusic: Ori Angel\nModels: Oded Kofian\n\nPress G to skip"};
     }
 }

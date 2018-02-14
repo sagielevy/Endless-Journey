@@ -12,6 +12,7 @@ public class PlayerControl : MonoBehaviour
 {
     private string path;
     private PostProcessingProfile profile;
+    public CanvasRenderer panel;
 
     private void Start()
     {
@@ -46,6 +47,12 @@ public class PlayerControl : MonoBehaviour
             //{
             //    GetComponent<FocusPuller>().target = hit.transform;
             //}
+        }
+
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            // Toggle activeness
+            panel.gameObject.SetActive(!panel.gameObject.activeSelf);
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))

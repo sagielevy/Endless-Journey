@@ -10,7 +10,8 @@ namespace Assets.Scripts.CFGParser.Modifiers
     class MusicModifier : IWorldModifier//<IMusicData>
     {
         GameObject musicAudioSources;
-        
+        private const float changeSpeed = 0.07f;
+
         float startTime;
         Dictionary<string, float> originalVolumes;
 
@@ -47,7 +48,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
                     vol = tracks[trackIndex].vol;
                 }
                 
-                var newVolume = Mathf.Lerp(originalVolumes[sources[i].name], vol, Globals.speedChange * 2 * (Time.time - startTime));
+                var newVolume = Mathf.Lerp(originalVolumes[sources[i].name], vol, changeSpeed * (Time.time - startTime));
                 sources[i].volume = newVolume;
             }
         }
