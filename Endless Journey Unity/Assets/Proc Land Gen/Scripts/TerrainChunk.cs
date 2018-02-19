@@ -11,12 +11,18 @@ public class TerrainChunk {
 	public Vector2 sampleCentre { get; private set; }
     public MeshFilter meshFilter { get; private set; }
 
-    private List<Transform> chunkItems;
+    private List<ItemComponent> chunkItems;
 
-    public void AddItem(Transform item)
+    public void AddItem(ItemComponent item)
     {
         //item.parent = meshFilter.gameObject.transform;
+        item.ParentChunk = this;
         chunkItems.Add(item);
+    }
+
+    public void RemoveItem(ItemComponent item)
+    {
+        chunkItems.Remove(item);
     }
 
     HeightMap heightMap;
@@ -49,7 +55,7 @@ public class TerrainChunk {
 		this.meshSettings = meshSettings;
 		this.viewer = viewer;
 
-        chunkItems = new List<Transform>();
+        chunkItems = new List<ItemComponent>();
 
         sampleCentre = coord * meshSettings.meshWorldSize / meshSettings.meshScale;
 		Vector2 position = coord * meshSettings.meshWorldSize;

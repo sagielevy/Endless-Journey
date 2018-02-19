@@ -57,7 +57,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
 
                         // Set chunk parent
                         var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
-                        chunk.AddItem(newCloud.transform);
+                        chunk.AddItem(newCloud.GetComponent<ItemComponent>());
 
                         // Set current item position to X, Y = cloud height, Z
                         newCloud.transform.position = new Vector3(actualPosX, Globals.cloudHeight, actualPosZ);

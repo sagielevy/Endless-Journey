@@ -10,5 +10,11 @@ namespace Assets.Scripts.CFGParser
     {
         public Vector2 ActualOriginalPos;
         public bool hasPerfectPos = false;
+
+        public override void PreDisable()
+        {
+            base.PreDisable();
+            hasPerfectPos = false;
+        }
     }
 }

@@ -56,7 +56,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
 
                         // Set chunk parent
                         var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
-                        chunk.AddItem(newRock.transform);
+                        chunk.AddItem(newRock.GetComponent<ItemComponent>());
 
                         // Save original actual pos
                         newRock.GetComponent<GroundItemComponent>().ActualOriginalPos = new Vector2(actualPosX, actualPosZ);
