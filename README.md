@@ -1,3 +1,3 @@
 # Endless-Journey
-## Suck my balls
-### Do it again
+## Everything you see is procedurally generated
+### Made in Global Game Jam 2018, Tel Aviv, Israel
