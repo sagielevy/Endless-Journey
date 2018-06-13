@@ -12,6 +12,7 @@ Shader "CubedParadox/Simple Gradient Sky" {
         _HorizonColor ("Horizon Color", Color) = (0.4980392,0.4980392,0.4980392,1)
 		_HorizonLevel ("Horizon Level", Range(0, 1)) = 0.1
 		_BrightThreshold ("Brightness Threshold", Range(0, 1)) = 0.3 // At what level of darkness may light be seen
+		_IntensityLevel("Star intensity Level", Range(0, 1)) = 0.3
     }
     SubShader {
         Tags {
@@ -23,15 +24,15 @@ Shader "CubedParadox/Simple Gradient Sky" {
         Pass {
             Name "FORWARD"
             Tags {
-                "LightMode"="ForwardBase"
+                "LightMode"="Always"
             }
             
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #define UNITY_PASS_FORWARDBASE
+            //#define UNITY_PASS_FORWARDBASE
             #include "UnityCG.cginc"
-            #pragma multi_compile_fwdbase
+            //#pragma multi_compile_fwdbase
             #pragma target 3.0
 
             uniform float4 _SkyColor;
@@ -86,6 +87,7 @@ Shader "CubedParadox/Simple Gradient Sky" {
 				
 				// Emissive:
                 float3 finalColor = lerp(_SkyColor.rgb, _HorizonColor.rgb, pow((1.0 - max(0, dot(viewDirection, float3(0,-1, _HorizonLevel)))), 7.0));
+				//float3 finalColor = float3(0,0,0);
 
 				float brightness = GetBright(_SkyColor);
 				
@@ -110,6 +112,7 @@ Shader "CubedParadox/Simple Gradient Sky" {
 						float currExtraInt = lerp(extraIntensity, minShine, abs(sin(map(intensityRange, 0, 1, 4.5, 50) *_Time[1])));
 
 						// Light brighter by intensity range. Change light ferquencies between stars
+						// TODO Shouldn't adjacent pixels be shown brighter instead of this specific pixel?
 						star_intensity = pow((star_intensity - starsThreshold + currExtraInt) / (1.0 - starsThreshold), 5) *
 							(-brightness + _BrightThreshold);
 						finalColor += float3(star_intensity, star_intensity, star_intensity);
