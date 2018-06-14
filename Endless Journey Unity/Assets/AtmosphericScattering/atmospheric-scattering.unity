@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 961490231}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.12606436, g: 0.12606436, b: 0.12606436, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -273,13 +273,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 961490229}
-  m_LocalRotation: {x: 0.0011639305, y: 0.99842983, z: -0.022697644, w: 0.051199276}
+  m_LocalRotation: {x: 0.021643016, y: 0.90511864, z: -0.4220637, w: 0.046413604}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 50, y: 174.12901, z: 0}
 --- !u!1001 &1014758108
 Prefab:
   m_ObjectHideFlags: 0
@@ -968,7 +968,7 @@ MonoBehaviour:
   SampleCount: 16
   MaxRayLength: 400
   IncomingLight: {r: 2.0350661, g: 2.0350661, b: 2.0350661, a: 1}
-  RayleighScatterCoef: 4
+  RayleighScatterCoef: 9.5
   RayleighExtinctionCoef: 1
   MieScatterCoef: 1.27
   MieExtinctionCoef: 1

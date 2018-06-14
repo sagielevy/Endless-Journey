@@ -224,7 +224,7 @@ Shader "Skybox/AtmosphericScattering"
 							// Twinkly star!
 							float minIntensity = starsThreshold + twinkleThreshold;
 							float intensityRange = (starIntensity - minIntensity) * (1.0 / minIntensity);  // Range of 0..1
-							float extraIntensity = lerp(0.0090, minShine, intensityRange); // How much to add to star intensity
+							float extraIntensity = lerp(0.0080, minShine, intensityRange); // How much to add to star intensity
 
 							// Extra intensity wave change as a factor of time (twinkle effect)
 							float currExtraInt = lerp(extraIntensity, minShine, abs(sin(map(intensityRange, 0, 1, 4.5, 50) *_Time[1])));

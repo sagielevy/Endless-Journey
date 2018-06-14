@@ -12,6 +12,7 @@ public class TerrainChunk {
     public MeshFilter meshFilter { get; private set; }
 
     private List<ItemComponent> chunkItems;
+    private KdTree CurrentMeshKdTree;
 
     public void AddItem(ItemComponent item)
     {
@@ -135,6 +136,7 @@ public class TerrainChunk {
                     {
                         previousLODIndex = lodIndex;
                         meshFilter.mesh = lodMesh.mesh;
+                        CurrentMeshKdTree = lodMesh.KdTreeVertices;
                     }
                     else if (!lodMesh.hasRequestedMesh)
                     {
@@ -205,7 +207,7 @@ public class TerrainChunk {
             groundItem.hasPerfectPos = previousLODIndex == 0;
 
             // Find nearest vertex where height is half of max possible
-            var nearestVertex = Helpers.NearestVertexTo(meshFilter,
+            var nearestVertex = Helpers.NearestVertexTo(meshFilter, CurrentMeshKdTree,
                 new Vector3(groundItem.ActualOriginalPos.x, heightMap.maxValue / 2, groundItem.ActualOriginalPos.y));
 
             groundItem.transform.position = new Vector3(nearestVertex.vertex.x,
@@ -237,7 +239,7 @@ public class TerrainChunk {
                         groundItem.hasPerfectPos = levelOfDetail == 0;
 
                         // Find nearest vertex where height is half of max possible
-                        var nearestVertex = Helpers.NearestVertexTo(meshFilter,
+                        var nearestVertex = Helpers.NearestVertexTo(meshFilter, CurrentMeshKdTree,
                             new Vector3(groundItem.ActualOriginalPos.x, heightMap.maxValue / 2, groundItem.ActualOriginalPos.y));
 
                         item.transform.position = new Vector3(nearestVertex.vertex.x,
@@ -306,13 +308,17 @@ class LODMesh {
 	public bool hasMesh;
 	int lod;
 	public event System.Action updateCallback;
+    public KdTree KdTreeVertices { get; private set; }
 
-	public LODMesh(int lod) {
+    public LODMesh(int lod) {
 		this.lod = lod;
 	}
 
 	void OnMeshDataReceived(object meshDataObject) {
         mesh = ((MeshData)meshDataObject).CreateMesh();
+
+        KdTreeVertices = new KdTree();
+        KdTreeVertices.build(mesh.vertices, mesh.triangles);
 		hasMesh = true;
         
         updateCallback ();
@@ -320,7 +326,7 @@ class LODMesh {
 
 	public void RequestMesh(HeightMap heightMap, MeshSettings meshSettings) {
 		hasRequestedMesh = true;
-		ThreadedDataRequester.RequestData (() => MeshGenerator.GenerateTerrainMesh (heightMap.values, meshSettings, lod), OnMeshDataReceived);
+		ThreadedDataRequester.RequestData (() => MeshGenerator.GenerateTerrainMesh(heightMap.values, meshSettings, lod), OnMeshDataReceived);
 	}
 
 }

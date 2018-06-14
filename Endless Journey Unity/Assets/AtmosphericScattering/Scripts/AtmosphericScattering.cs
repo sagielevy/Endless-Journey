@@ -57,6 +57,7 @@ public class AtmosphericScattering : MonoBehaviour
     private Texture2D _randomVectorsLUT = null;
     private RenderTexture _lightColorTexture;
     private Texture2D _lightColorTextureTemp;
+    private Color _SkyColor;
 
     private Vector3 _skyboxLUTSize = new Vector3(32, 128, 32);
 
@@ -93,9 +94,9 @@ public class AtmosphericScattering : MonoBehaviour
 
     [ColorUsage(false, true, 0, 10, 0, 10)]
     public Color IncomingLight = new Color(4, 4, 4, 4);
-    [Range(0, 10.0f)]
-    public float RayleighScatterCoef = 1;
-    [Range(0, 10.0f)]
+    [Range(0, 20.0f)]
+    public float RayleighScatterCoef = 10;
+    [Range(0, 20.0f)]
     public float RayleighExtinctionCoef = 1;
     [Range(0, 10.0f)]
     public float MieScatterCoef = 1;
@@ -476,15 +477,16 @@ public class AtmosphericScattering : MonoBehaviour
         material.SetVector("_ExtinctionR", RayleighSct * RayleighExtinctionCoef);
         material.SetVector("_ExtinctionM", MieSct * MieExtinctionCoef);
 
-        material.SetColor("_IncomingLight", IncomingLight);
+        // Mix colors
+        material.SetColor("_IncomingLight", 0.6f * IncomingLight + 0.4f * _SkyColor);
         material.SetFloat("_MieG", MieG);
         material.SetFloat("_DistanceScale", DistanceScale);
-        material.SetColor("_SunColor", _sunColor);
+        material.SetColor("_SunColor", .7f * _sunColor + 0.3f * _SkyColor);
 
         //---------------------------------------------------
 
         material.SetVector("_LightDir", new Vector4(Sun.transform.forward.x, Sun.transform.forward.y, Sun.transform.forward.z, 1.0f / (Sun.range * Sun.range)));
-        material.SetVector("_LightColor", Sun.color * Sun.intensity);
+        material.SetVector("_LightColor", .6f * (Sun.color * Sun.intensity) + 0.4f * _SkyColor);
 
         material.SetTexture("_ParticleDensityLUT", _particleDensityLUT);
 
@@ -673,6 +675,9 @@ public class AtmosphericScattering : MonoBehaviour
                 RenderSettings.skybox.DisableKeyword("RENDER_SUN");
 
             //RenderSettings.skybox.EnableKeyword("HIGH_QUALITY");
+
+            // Read sky color from material
+            _SkyColor = RenderSettings.skybox.GetColor("_SkyColor");
         }
     }
 

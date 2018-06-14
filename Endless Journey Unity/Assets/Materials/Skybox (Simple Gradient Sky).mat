@@ -66,6 +66,7 @@ Material:
     - _DstBlend: 0
     - _Glossiness: 0.5
     - _HorizonLevel: 0.005
+    - _IntensityLevel: 0.3
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -81,6 +82,6 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HorizonColor: {r: 0.281313, g: 0.30026627, b: 0.42002818, a: 1}
-    - _SkyColor: {r: 0.08612674, g: 0.101484805, b: 0.19852942, a: 1}
+    - _SkyColor: {r: 0.24410684, g: 0.9485294, b: 0.3947075, a: 1}
     - _Star: {r: 0.039215688, g: 0.019607844, b: 0, a: 1}
     - _StarPos: {r: 19.99, g: 50, b: 5, a: 1}
