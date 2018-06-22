@@ -32,6 +32,8 @@ namespace Assets.Scripts.CFGParser.DataHolder
         const string animalsToken = "animals";
         const string rocksToken = "rocks";
         const string cloudsToken = "clouds";
+        const string cloudHeightToken = "cloud_height";
+        const string animalHeightToken = "animal_height";
         const string metallicToken = "metallic";
         const string smoothnessToken = "smoothness";
         const string pathGlowToken = "path_glow";
@@ -70,12 +72,12 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
         public Item[] Animals()
         {
-            return Items(animalsToken, animalSubtypeToken, animalAngleToken);
+            return Items(animalsToken, animalSubtypeToken, animalAngleToken, animalHeightToken);
         }
 
         public Item[] Clouds()
         {
-            return Items(cloudsToken, cloudSubtypeToken);
+            return Items(cloudsToken, cloudSubtypeToken, cloudHeightToken);
         }
 
         public Item[] Rocks()
@@ -188,27 +190,24 @@ namespace Assets.Scripts.CFGParser.DataHolder
             return orgSentence;
         }
 
-        private Item[] Items(string itemTypeToken, string itemSubtypeToken, string angleToken = null)
+        private Item[] Items(string itemTypeToken, string itemSubtypeToken, params string[] extraTokens)
         {
             int length = root[itemTypeToken].Children.Count();
             Item[] result = new Item[length];
 
             for (int i = 0; i < length; i++)
             {
-                if (angleToken == null)
-                {
-                    result[i] = new Item(float.Parse(root[itemTypeToken][i][itemXPercentToken].Value),
+                result[i] = new Item(float.Parse(root[itemTypeToken][i][itemXPercentToken].Value),
                                          float.Parse(root[itemTypeToken][i][itemZPercentToken].Value),
                                          float.Parse(root[itemTypeToken][i][itemScaleToken].Value),
                                          int.Parse(root[itemTypeToken][i][itemSubtypeToken].Value));
-                }
-                else
+
+                // Set any speical tokens unique to some items afterwards
+                foreach (var extraToken in extraTokens)
                 {
-                    result[i] = new Item(float.Parse(root[itemTypeToken][i][itemXPercentToken].Value),
-                                         float.Parse(root[itemTypeToken][i][itemZPercentToken].Value),
-                                         float.Parse(root[itemTypeToken][i][itemScaleToken].Value),
-                                         float.Parse(root[itemTypeToken][i][angleToken].Value),
-                                         int.Parse(root[itemTypeToken][i][itemSubtypeToken].Value));
+                    var extra = float.Parse(root[itemTypeToken][i][extraToken].Value);
+                    result[i].GetType().GetFields().
+                        First(member => extraToken.ToLower().Contains(member.Name.ToLower())).SetValue(result[i], extra);
                 }
             }
 

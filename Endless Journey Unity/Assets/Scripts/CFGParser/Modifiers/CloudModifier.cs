@@ -60,7 +60,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
                         chunk.AddItem(newCloud.GetComponent<ItemComponent>());
 
                         // Set current item position to X, Y = cloud height, Z
-                        newCloud.transform.position = new Vector3(actualPosX, Globals.cloudHeight, actualPosZ);
+                        newCloud.transform.position = new Vector3(actualPosX, cloud.height, actualPosZ);
                     }
                 }
             }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Assets.Scripts.CFGParser.Modifiers
 {
@@ -67,6 +68,14 @@ namespace Assets.Scripts.CFGParser.Modifiers
                         var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
                         chunk.AddItem(newAnimal.GetComponent<ItemComponent>());
 
+                        // Set path for nav agent
+                        // DEBUG
+                        var agent = newAnimal.GetComponent<NavMeshAgent>();
+
+                        if (agent.isOnNavMesh)
+                        {
+                            agent.destination = Vector3.zero;
+                        }
 
                         if (newAnimal.GetComponent<GroundItemComponent>() != null)
                         {
@@ -79,7 +88,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
                         } else if (newAnimal.GetComponent<AirborneItemComponent>() != null)
                         {
                             // Set current item position
-                            newAnimal.transform.position = new Vector3(actualPosX, Globals.birdHeight, actualPosZ);
+                            newAnimal.transform.position = new Vector3(actualPosX, animal.height, actualPosZ);
                         }
                     }
                 }

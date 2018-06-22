@@ -51,6 +51,7 @@ GameObject:
   - component: {fileID: 4424675724555696}
   - component: {fileID: 95329413023450870}
   - component: {fileID: 114987350533216448}
+  - component: {fileID: 195624375852277978}
   m_Layer: 0
   m_Name: Animals_1_1
   m_TagString: Untagged
@@ -488,3 +489,24 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.00000021420419, y: 0.00008413009, z: 0.00091397204}
     m_Extent: {x: 0.036798544, y: 0.017122895, z: 0.016807538}
   m_DirtyAABB: 0
+--- !u!195 &195624375852277978
+NavMeshAgent:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1138720915646520}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 3
+  m_ObstacleAvoidanceType: 4

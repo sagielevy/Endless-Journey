@@ -478,15 +478,15 @@ public class AtmosphericScattering : MonoBehaviour
         material.SetVector("_ExtinctionM", MieSct * MieExtinctionCoef);
 
         // Mix colors
-        material.SetColor("_IncomingLight", 0.6f * IncomingLight + 0.4f * _SkyColor);
+        material.SetColor("_IncomingLight", 0.3f * IncomingLight + 0.7f * _SkyColor);
         material.SetFloat("_MieG", MieG);
         material.SetFloat("_DistanceScale", DistanceScale);
-        material.SetColor("_SunColor", .7f * _sunColor + 0.3f * _SkyColor);
+        material.SetColor("_SunColor", .3f * _sunColor + 0.7f * _SkyColor);
 
         //---------------------------------------------------
 
         material.SetVector("_LightDir", new Vector4(Sun.transform.forward.x, Sun.transform.forward.y, Sun.transform.forward.z, 1.0f / (Sun.range * Sun.range)));
-        material.SetVector("_LightColor", .6f * (Sun.color * Sun.intensity) + 0.4f * _SkyColor);
+        material.SetVector("_LightColor", .3f * (Sun.color * Sun.intensity) + 0.7f * (_SkyColor * Sun.intensity));
 
         material.SetTexture("_ParticleDensityLUT", _particleDensityLUT);
 

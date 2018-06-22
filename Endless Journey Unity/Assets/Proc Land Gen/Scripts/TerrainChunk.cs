@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Assets.Scripts.CFGParser;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class TerrainChunk {
 	
@@ -10,6 +11,7 @@ public class TerrainChunk {
 	public Vector2 coord;
 	public Vector2 sampleCentre { get; private set; }
     public MeshFilter meshFilter { get; private set; }
+    public NavMeshSurface navMeshSurface;
 
     private List<ItemComponent> chunkItems;
     private KdTree CurrentMeshKdTree;
@@ -67,6 +69,7 @@ public class TerrainChunk {
 		meshRenderer = meshObject.AddComponent<MeshRenderer>();
 		meshFilter = meshObject.AddComponent<MeshFilter>();
 		meshCollider = meshObject.AddComponent<MeshCollider>();
+        navMeshSurface = meshObject.AddComponent<NavMeshSurface>();
 		meshRenderer.material = material;
 
 		meshObject.transform.position = new Vector3(position.x,0,position.y);
@@ -142,13 +145,24 @@ public class TerrainChunk {
                     {
                         lodMesh.RequestMesh(heightMap, meshSettings);
                     }
-                }
 
-                // Position and enable items only when LOD is fine (1 or 0)
-                if (lodIndex <= 1 && lodMeshes[lodIndex] != null && lodMeshes[lodIndex].mesh != null && lodMeshes[lodIndex].mesh.vertexCount > 0)
-                {
-                    PositionItems(lodIndex);
+                    // Position and enable items only when LOD is fine (1 or 0)
+                    if (lodIndex <= 1 && lodMeshes[lodIndex] != null && lodMeshes[lodIndex].mesh != null && lodMeshes[lodIndex].mesh.vertexCount > 0)
+                    {
+                        PositionItems(lodIndex);
+
+                        // Build navmesh only for LOD 0
+                        if (lodIndex == 0)
+                        {
+                            Debug.Log("Building new navmesh");
+
+                            // Build nav mesh for agents to travel on
+                            // TODO THIS GETS THE GAME STUCK BECAUSE ITS TOO HEAVY TO COMPUTE?!
+                            //navMeshSurface.BuildNavMesh();
+                        }
+                    }
                 }
+                
             }
             else
             {

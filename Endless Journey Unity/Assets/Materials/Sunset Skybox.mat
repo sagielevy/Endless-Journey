@@ -61,16 +61,18 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _Glossiness: 0.5
-    - _HSDT: 0.08
+    - _HSDT: 0.18
     - _HorizonLevel: 0.1
     - _IntensityLevel: 0.3
-    - _MHST: 1.7
+    - _MHST: 1
+    - _Mean: 0.5
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _SrcBlend: 1
-    - _StarIntensityLevel: 0.4
+    - _StarIntensityLevel: 0.25
+    - _Stddev: 0.1
     - _SunAttenuation: 0.03
     - _SunHeight: 0
     - _UVSec: 0
@@ -78,5 +80,5 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _HorizonColor: {r: 0.827451, g: 0.8156863, b: 0.79607844, a: 1}
-    - _SkyColor: {r: 0.22352941, g: 0.24313726, b: 0.25490198, a: 1}
+    - _HorizonColor: {r: 0.5803922, g: 0.68235296, b: 0.5372549, a: 1}
+    - _SkyColor: {r: 0.5803922, g: 0.68235296, b: 0.5372549, a: 1}

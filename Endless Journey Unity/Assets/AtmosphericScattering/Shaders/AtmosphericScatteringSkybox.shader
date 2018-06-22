@@ -34,11 +34,13 @@ Shader "Skybox/AtmosphericScattering"
 	Properties{
 		_SkyColor("Sky Color", Color) = (0.197,0.197,0.197,1)
 		_HorizonColor("Horizon Color", Color) = (0.4980392,0.4980392,0.4980392,1)
-		_HorizonLevel("Horizon Level", Range(0, 1)) = 0.1
+		//_HorizonLevel("Horizon Level", Range(0, 1)) = 0.1
 		_MHST("Min Height Stars Threshold", Range(0, 10)) = 1.5 // At what level of darkness may stars be seen
-		_HSDT("Height Stars Drop Threshold", Range(0, 10)) = 0.08 // At what level of darkness may stars be seen
+		//_HSDT("Height Stars Drop Threshold", Range(0, 10)) = 0.08 // At what level of darkness may stars be seen
 		_StarIntensityLevel("Star intensity Level", Range(0, 1)) = 0.3
-		_SunAttenuation("Sun Attenuation", Range(0, 1)) = 0.2
+		//_SunAttenuation("Sun Attenuation", Range(0, 1)) = 0.2
+		//_Stddev("Standard deviation", Range(0, 1)) = 0.1
+		//_Mean("Mean", Range(0, 1)) = 0.5
 	}
 
 	SubShader
@@ -64,13 +66,15 @@ Shader "Skybox/AtmosphericScattering"
 			float3 _CameraPos;
 			uniform float4 _SkyColor;
 			uniform float4 _HorizonColor;
-			uniform float _HorizonLevel;
+			//uniform float _HorizonLevel;
 			uniform vector _StarPos;
 			uniform float _MHST;
-			uniform float _HSDT;
-			uniform float _SunAttenuation;
+			//uniform float _HSDT;
+			//uniform float _SunAttenuation;
 			uniform float _StarIntensityLevel;
 			uniform float _CurrentSunIntensity;
+			//uniform float _Stddev;
+			//uniform float _Mean;
 
 			struct appdata
 			{
@@ -117,6 +121,34 @@ Shader "Skybox/AtmosphericScattering"
 			float GetBright(float3 color) {
 				return color.r * 0.3 + color.g * 0.59 + color.b * 0.11;
 			}
+
+			//float gaussrand(float randVal)
+			//{
+			//	// Box-Muller method for sampling from the normal distribution
+			//	// http://en.wikipedia.org/wiki/Normal_distribution#Generating_values_from_normal_distribution
+			//	// This method requires 2 uniform random inputs and produces 2 
+			//	// Gaussian random outputs.  We'll take a 3rd random variable and use it to
+			//	// switch between the two outputs.
+
+			//	float U = randVal, V = randVal, R = randVal, Z;
+			//	// Add in the CPU-supplied random offsets to generate the 3 random values that
+			//	// we'll use.
+			//	//U = rand(co + vec2(offsets.x, offsets.x));
+			//	//V = rand(co + vec2(offsets.y, offsets.y));
+			//	//R = rand(co + vec2(offsets.z, offsets.z));
+
+			//	// Switch between the two random outputs.
+			//	if (R < 0.5)
+			//		Z = sqrt(-2.0 * log(U)) * sin(2.0 * PI * V);
+			//	else
+			//		Z = sqrt(-2.0 * log(U)) * cos(2.0 * PI * V);
+
+			//	// Apply the stddev and mean.
+			//	Z = Z * _Stddev + _Mean;
+
+			//	// Return it as a vec4, to be added to the input ("true") color.
+			//	return Z;
+			//}
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
@@ -185,12 +217,16 @@ Shader "Skybox/AtmosphericScattering"
 				// phase function
 				ApplyPhaseFunctionElek(scatterR.xyz, scatterM.xyz, dot(rayDir, -lightDir.xyz));
 
-				// Mix between incoming light & sky color
-				float3 lightInscatter = (scatterR * _ScatteringR + scatterM * _ScatteringM) * _IncomingLight.xyz; //(.7 * _IncomingLight.xyz + .3 *_SkyColor.xyz);
+				float3 lightInscatter = (scatterR * _ScatteringR + scatterM * _ScatteringM) * _IncomingLight.xyz;
 #ifdef RENDER_SUN
 				lightInscatter += RenderSun(m, dot(rayDir, -lightDir.xyz)) * _SunIntensity;
 #endif
 				float3 finalColor = max(0, lightInscatter);
+
+				// Horizon is horizoncolor darkened relative to the sun's intensity
+				if (viewZenith < ch) {
+					return _HorizonColor * min(_CurrentSunIntensity, 1.0);
+				}
 
 				/******************* Calculate stars ******************************/
 				float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
@@ -200,31 +236,29 @@ Shader "Skybox/AtmosphericScattering"
 					// Get brightness of current pixel. 
 					float skyBrightness = GetBright(finalColor);
 
-					float starsThreshold = 0.991; // More stars will appear the lower the threshold
-					float twinkleThreshold = 0.0087; // The a star that passes the sum of twinkle threshold and star threshold will twinkle
-					float minShine = 0.006;
+					float starsThreshold = 0.999; // More stars will appear the lower the threshold
+					float twinkleThreshold = 0.00096; // The a star that passes the sum of twinkle threshold and star threshold will twinkle
+					float minShine = 0.001;
 
 					// We generate a random value between 0 and 1
 					float starIntensity = Noise3d(normalize(i.posWorld.xyz));
 
 					float starIntensInLargeRange = map(starIntensity, starsThreshold, 1, 0, 1);
 
-					//float distFromSun = clamp(sunZenith, i.posWorld.xyz), 0.000001, 1);
-					//float attenuationI = clamp(_CurrentSunIntensity / (_SunAttenuation * distFromSun), 0, 1);
-					//float heightI = map(sqrt(sunHeightAboveHorizon / _HSDT), 0, sqrt(_MHST / _HSDT), 0, 1);
-
 					// Check if the current star intensity is high enough to be visible at all relative to the sun Intensity
-					float revealRatio = saturate(starIntensInLargeRange - (0.91 * _CurrentSunIntensity + /*0.5 * attenuationI*/ +5 * skyBrightness));
+					float revealRatio = saturate(starIntensInLargeRange - (.85 * _CurrentSunIntensity + 3 * skyBrightness));
 
 					if (revealRatio >= 0) {
-						revealRatio = min(0.6, revealRatio); // Floor level (so it won't take them so long to pop up
+						revealRatio = min(0.6, revealRatio); // Floor level (so it won't take them so long to pop up)
+
+						//gaussrand(starIntensInLargeRange)
 
 						// And we apply a threshold to keep only the brightest areas
 						if (starIntensity - twinkleThreshold >= starsThreshold) {
 							// Twinkly star!
-							float minIntensity = starsThreshold + twinkleThreshold;
+							float minIntensity = starsThreshold;
 							float intensityRange = (starIntensity - minIntensity) * (1.0 / minIntensity);  // Range of 0..1
-							float extraIntensity = lerp(0.0080, minShine, intensityRange); // How much to add to star intensity
+							float extraIntensity = lerp(0.0015, minShine, intensityRange); // How much to add to star intensity
 
 							// Extra intensity wave change as a factor of time (twinkle effect)
 							float currExtraInt = lerp(extraIntensity, minShine, abs(sin(map(intensityRange, 0, 1, 4.5, 50) *_Time[1])));

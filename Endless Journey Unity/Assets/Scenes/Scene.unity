@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 962081136}
-  m_IndirectSpecularColor: {r: 0.13371837, g: 0.13371837, b: 0.13371837, a: 1}
+  m_IndirectSpecularColor: {r: 0.42077106, g: 0.49722224, b: 0.3885809, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -806,7 +806,7 @@ MonoBehaviour:
   IncomingLight: {r: 1.9602475, g: 1.8449389, b: 1.8449389, a: 1}
   RayleighScatterCoef: 11
   RayleighExtinctionCoef: 1
-  MieScatterCoef: 1.27
+  MieScatterCoef: 2
   MieExtinctionCoef: 1
   MieG: 0.624
   DistanceScale: 6.62
@@ -839,7 +839,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DirLightTransform: {fileID: 962081137}
-  rotationSpeed: 0.15
+  rotationSpeed: 0.1
   sunsetStart: 170
   nightRotationRatio: 10
   daytimeRotationRatio: 5
@@ -862,7 +862,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  exposureAdjustment: 2
+  exposureAdjustment: 1.5
   middleGrey: 0.4
   white: 2
   adaptionSpeed: 1.5
@@ -1295,7 +1295,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 522957207}
-  m_Mesh: {fileID: 1578073907}
+  m_Mesh: {fileID: 1580403366}
 --- !u!4 &522957210
 Transform:
   m_ObjectHideFlags: 0
@@ -1833,13 +1833,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 962081135}
-  m_LocalRotation: {x: 0.7845811, y: -0.40344474, z: 0.036550477, w: 0.469392}
+  m_LocalRotation: {x: 0.80822176, y: -0.47093266, z: -0.06543082, w: 0.3474462}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1340987672}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 130, y: 30, z: 68.67}
+  m_LocalEulerAnglesHint: {x: 150, y: 30, z: 68.67}
 --- !u!1 &1008436972
 GameObject:
   m_ObjectHideFlags: 0
@@ -1897,7 +1897,9 @@ MonoBehaviour:
   colliderLODIndex: 0
   detailLevels:
   - lod: 0
-    visibleDstThreshold: 200
+    visibleDstThreshold: 150
+  - lod: 1
+    visibleDstThreshold: 250
   - lod: 2
     visibleDstThreshold: 400
   meshSettings: {fileID: 11400000, guid: 46ff57af49f874fe2bd2a350a99d063c, type: 2}
@@ -2471,7 +2473,7 @@ MonoBehaviour:
   PoolSize: 100
   InstantiateOnAwake: 1
   Shared: 1
---- !u!43 &1578073907
+--- !u!43 &1580403366
 Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -2762,7 +2764,7 @@ Transform:
   m_GameObject: {fileID: 1711656484}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 12.1, y: 0.1, z: 12.1}
+  m_LocalScale: {x: 5.3, y: 0.1, z: 5.3}
   m_Children: []
   m_Father: {fileID: 551791655}
   m_RootOrder: 0
