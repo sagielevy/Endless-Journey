@@ -68,15 +68,6 @@ namespace Assets.Scripts.CFGParser.Modifiers
                         var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
                         chunk.AddItem(newAnimal.GetComponent<ItemComponent>());
 
-                        // Set path for nav agent
-                        // DEBUG
-                        var agent = newAnimal.GetComponent<NavMeshAgent>();
-
-                        if (agent.isOnNavMesh)
-                        {
-                            agent.destination = Vector3.zero;
-                        }
-
                         if (newAnimal.GetComponent<GroundItemComponent>() != null)
                         {
                             // Save original actual pos

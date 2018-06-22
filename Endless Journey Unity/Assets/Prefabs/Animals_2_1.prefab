@@ -142,6 +142,7 @@ GameObject:
   - component: {fileID: 95418831027593654}
   - component: {fileID: 114039381147066658}
   - component: {fileID: 195313629577282034}
+  - component: {fileID: 114511678500252512}
   m_Layer: 0
   m_Name: Animals_2_1
   m_TagString: Untagged
@@ -668,6 +669,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ActualOriginalPos: {x: 0, y: 0}
   hasPerfectPos: 0
+--- !u!114 &114511678500252512
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1622448442949958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd76b8ee2dbcf4be6998e917c65cd6ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Range: 25
 --- !u!137 &137234091679906268
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
