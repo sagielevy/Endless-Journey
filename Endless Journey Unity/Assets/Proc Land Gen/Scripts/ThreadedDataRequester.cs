@@ -6,19 +6,20 @@ using System.Threading;
 
 public class ThreadedDataRequester : MonoBehaviour {
 
+    private const int maxThreads = 8;
 	static ThreadedDataRequester instance;
 	Queue<ThreadInfo> dataQueue = new Queue<ThreadInfo>();
 
 	void Awake() {
 		instance = FindObjectOfType<ThreadedDataRequester> ();
-	}
+        ThreadPool.SetMaxThreads(maxThreads, maxThreads);
+    }
 
 	public static void RequestData(Func<object> generateData, Action<object> callback) {
-		ThreadStart threadStart = delegate {
-			instance.DataThread (generateData, callback);
-		};
-
-		new Thread (threadStart).Start ();
+        // Use a threadpool to calculate data on threads. Way less overhead that starting any number of threads at once
+        ThreadPool.QueueUserWorkItem(delegate {
+            instance.DataThread(generateData, callback);
+        });
 	}
 
 	void DataThread(Func<object> generateData, Action<object> callback) {
@@ -33,7 +34,7 @@ public class ThreadedDataRequester : MonoBehaviour {
 		if (dataQueue.Count > 0) {
 			for (int i = 0; i < dataQueue.Count; i++) {
 				ThreadInfo threadInfo = dataQueue.Dequeue ();
-				threadInfo.callback (threadInfo.parameter);
+				threadInfo.callback(threadInfo.parameter);
 			}
 		}
 	}

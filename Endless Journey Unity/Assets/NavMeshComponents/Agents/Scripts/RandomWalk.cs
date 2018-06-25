@@ -18,6 +18,6 @@ public class RandomWalk : MonoBehaviour
         if (!m_agent.isOnNavMesh || m_agent.pathPending || m_agent.remainingDistance > 0.1f)
             return;
 
-        m_agent.destination = m_Range * Random.insideUnitCircle;
+        m_agent.destination = new Vector2(transform.position.x, transform.position.y) + m_Range * Random.insideUnitCircle;
     }
 }

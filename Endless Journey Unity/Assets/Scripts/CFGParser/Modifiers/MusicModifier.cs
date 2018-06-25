@@ -27,29 +27,35 @@ namespace Assets.Scripts.CFGParser.Modifiers
             }
         }
 
-        public void ModifySection(ISentenceData data)
+        public IEnumerator<WaitForEndOfFrame> ModifySection(ISentenceData data)
         {
             var musicData = data as IMusicData;
             MusicTrack[] tracks = musicData.MusicTracks();
             AudioSource[] sources = musicAudioSources.GetComponentsInChildren<AudioSource>();
 
-            for (int i = 0; i < sources.Length; i++)
+            // Keep runing till replaced by new enumerator
+            while (true)
             {
-                // TODO: Using tracks length in such a fasion assumes that the number of 'a' tracks is the same number
-                // of 'b' tracks and the same number of 'percussion' tracks etc. If we want a different size array for each
-                // type of track this code needs to be changed accordingly.
-                int trackIndex = i / tracks.Length;
-                float vol = 0;
-                int innerIndex = i % tracks.Length;
-
-                if(innerIndex  == tracks[trackIndex].track)
+                for (int i = 0; i < sources.Length; i++)
                 {
-                    // Debug.Log("I: " + i.ToString() + " track index: " + trackIndex.ToString() + " Inner index: " + innerIndex.ToString());
-                    vol = tracks[trackIndex].vol;
+                    // TODO: Using tracks length in such a fasion assumes that the number of 'a' tracks is the same number
+                    // of 'b' tracks and the same number of 'percussion' tracks etc. If we want a different size array for each
+                    // type of track this code needs to be changed accordingly.
+                    int trackIndex = i / tracks.Length;
+                    float vol = 0;
+                    int innerIndex = i % tracks.Length;
+
+                    if (innerIndex == tracks[trackIndex].track)
+                    {
+                        // Debug.Log("I: " + i.ToString() + " track index: " + trackIndex.ToString() + " Inner index: " + innerIndex.ToString());
+                        vol = tracks[trackIndex].vol;
+                    }
+
+                    var newVolume = Mathf.Lerp(originalVolumes[sources[i].name], vol, changeSpeed * (Time.time - startTime));
+                    sources[i].volume = newVolume;
                 }
-                
-                var newVolume = Mathf.Lerp(originalVolumes[sources[i].name], vol, changeSpeed * (Time.time - startTime));
-                sources[i].volume = newVolume;
+
+                yield return Globals.EndOfFrame;
             }
         }
     }

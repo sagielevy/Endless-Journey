@@ -19,6 +19,6 @@ public class RandomFly : MonoBehaviour
             return;
 
         var xzPlane = m_Range * Random.insideUnitCircle;
-        m_agent.destination = new Vector3(xzPlane.x, transform.position.y, xzPlane.y);
+        m_agent.destination = transform.position + new Vector3(xzPlane.x, transform.position.y, xzPlane.y);
     }
 }

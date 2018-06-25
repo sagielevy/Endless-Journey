@@ -1,24 +1,35 @@
 ﻿using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.CFGParser;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Profiling;
 
 public class TerrainChunk {
 	
 	const float colliderGenerationDistanceThreshold = 5;
-	public event System.Action<TerrainChunk, bool> onVisibilityChanged;
+    const int maxChangesPerFrame = 1;
+    const int maxNavMeshSurfaceCount = 3;
+
+    private static int navMeshSurfacesCounter = 0;
+    private static int currentChangesPerFrame = 0;
+
+    public event System.Action<TerrainChunk, bool> onVisibilityChanged;
 	public Vector2 coord;
 	public Vector2 sampleCentre { get; private set; }
     public MeshFilter meshFilter { get; private set; }
-    public NavMeshSurface navMeshSurface;
+    //public NavMeshSurface navMeshSurface;
 
-    private List<ItemComponent> chunkItems;
+    private HashSet<ItemComponent> chunkItems;
     private KdTree CurrentMeshKdTree;
+    private System.Random rand;
+
+    public static void ResetCurrChangesPerFrameCount() { currentChangesPerFrame = 0; }
 
     public void AddItem(ItemComponent item)
     {
-        //item.parent = meshFilter.gameObject.transform;
         item.ParentChunk = this;
         chunkItems.Add(item);
     }
@@ -33,8 +44,9 @@ public class TerrainChunk {
 	Bounds bounds;
 
 	MeshRenderer meshRenderer;
-	
 	MeshCollider meshCollider;
+
+    ItemHandler itemHandler;
 
 	LODInfo[] detailLevels;
 	LODMesh[] lodMeshes;
@@ -58,19 +70,23 @@ public class TerrainChunk {
 		this.meshSettings = meshSettings;
 		this.viewer = viewer;
 
-        chunkItems = new List<ItemComponent>();
+        chunkItems = new HashSet<ItemComponent>();
 
         sampleCentre = coord * meshSettings.meshWorldSize / meshSettings.meshScale;
 		Vector2 position = coord * meshSettings.meshWorldSize;
 		bounds = new Bounds(position, Vector2.one * meshSettings.meshWorldSize);
 
+        rand = new System.Random();
 
-		meshObject = new GameObject("Terrain Chunk");
+        meshObject = new GameObject("Terrain Chunk");
 		meshRenderer = meshObject.AddComponent<MeshRenderer>();
 		meshFilter = meshObject.AddComponent<MeshFilter>();
 		meshCollider = meshObject.AddComponent<MeshCollider>();
-        navMeshSurface = meshObject.AddComponent<NavMeshSurface>();
-		meshRenderer.material = material;
+        itemHandler = meshObject.AddComponent<ItemHandler>();
+        //navMeshSurface = meshObject.AddComponent<NavMeshSurface>();
+        //navMeshSurface.enabled = false; // Default is false
+        //navMeshSurface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
+        meshRenderer.material = material;
 
 		meshObject.transform.position = new Vector3(position.x,0,position.y);
 		meshObject.transform.parent = parent;
@@ -99,7 +115,7 @@ public class TerrainChunk {
 		this.heightMap = (HeightMap)heightMapObject;
 		heightMapReceived = true;
 
-		UpdateTerrainChunk ();
+		UpdateTerrainChunk();
 	}
 
 	Vector2 viewerPosition {
@@ -111,7 +127,7 @@ public class TerrainChunk {
 
 	public void UpdateTerrainChunk() {
 		if (heightMapReceived) {
-			float viewerDstFromNearestEdge = Mathf.Sqrt (bounds.SqrDistance (viewerPosition));
+			float viewerDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(viewerPosition));
 
 			bool wasVisible = IsVisible ();
 			bool visible = viewerDstFromNearestEdge <= maxViewDst;
@@ -145,70 +161,88 @@ public class TerrainChunk {
                     {
                         lodMesh.RequestMesh(heightMap, meshSettings);
                     }
-
-                    // Position and enable items only when LOD is fine (1 or 0)
-                    if (lodIndex <= 1 && lodMeshes[lodIndex] != null && lodMeshes[lodIndex].mesh != null && lodMeshes[lodIndex].mesh.vertexCount > 0)
-                    {
-                        PositionItems(lodIndex);
-
-                        // Build navmesh only for LOD 0
-                        if (lodIndex == 0)
-                        {
-                            Debug.Log("Building new navmesh");
-
-                            // Build nav mesh for agents to travel on
-                            // TODO THIS GETS THE GAME STUCK BECAUSE ITS TOO HEAVY TO COMPUTE?!
-                            //navMeshSurface.BuildNavMesh();
-                        }
-                    }
                 }
-                
+
+                // Position and enable items once mesh is ready
+                if (lodMeshes[lodIndex] != null && lodMeshes[lodIndex].mesh != null && lodMeshes[lodIndex].mesh.vertexCount > 0)
+                {
+                    itemHandler.positionItemsIter = PositionItems(lodIndex);
+                }
+
+                // If CURRENT CHUNK PLAYER IS ON
+                // Build navmesh
+                //if (viewerDstFromNearestEdge < bounds.extents.x)
+                //{
+                //    if (!navMeshSurface.enabled && navMeshSurfacesCounter < maxNavMeshSurfaceCount)
+                //    {
+                //        Debug.Log("Building new navmesh");
+                //        navMeshSurface.enabled = true;
+
+                //        // Build nav mesh for agents to travel on
+                //        //navMeshSurface.BuildNavMesh();
+                //        navMeshSurfacesCounter++;
+                //    }
+                //}
+                //else if (navMeshSurface.enabled)
+                //{
+                //    Debug.Log("Destroying old navmesh");
+
+                //    // Reset navmesh
+                //    navMeshSurface.enabled = false;
+                //    navMeshSurfacesCounter--;
+                //}
             }
             else
             {
-                DetachItems();
+                itemHandler.disableItemsIter = DetachItems();
             }
 
             if (wasVisible != visible) {
 				
 				SetVisible (visible);
 				if (onVisibilityChanged != null) {
-					onVisibilityChanged (this, visible);
+                    onVisibilityChanged (this, visible);
 				}
 			}
 		}
 	}
 
     // Remove items from this chunk's list as it will no longer control them
-    private void DetachItems()
+    private IEnumerator<WaitForEndOfFrame> DetachItems()
     {
-        // Lost visibility, remove items
-        // Detach!
-        foreach (var item in chunkItems)
+        // Store any item that was handled by this enumerator
+        var handledItems = new HashSet<ItemComponent>();
+        var difference = chunkItems.Except(handledItems);
+
+        //foreach (var item in chunkItems)
+        // Select a single item each iteration and remove it.
+        while (difference.Count() > 0)
         {
+            // Get the first item of the difference
+            var item = difference.First();
+
+            // Wait this frame
+            while (currentChangesPerFrame >= maxChangesPerFrame)
+            {
+                yield return Globals.EndOfFrame;
+            }
+
             // Disable items to allow them to be returned to the pool and be reused 
             item.GetComponent<ItemComponent>().PreDisable();
             item.gameObject.SetActive(false);
+
+            // Count change
+            currentChangesPerFrame++;
+
+            // Wait a frame for next item
+            yield return Globals.EndOfFrame;
+
+            // Add item to handled, calc difference again (note that chunkItems may have changed)
+            handledItems.Add(item);
+            difference = chunkItems.Except(handledItems);
         }
 
         chunkItems.Clear();
-
-        // GROUNDED ITEMS
-        //foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
-        //{
-        //    // Destroy the actual gameobject! Not just the script!
-        //    //GameObject.Destroy(item.gameObject);
-        //}
-
-        // AIRBORNE ITEMS
-        //foreach (var item in meshFilter.GetComponentsInChildren<AirborneItemComponent>())
-        //{
-        //    // Destroy the actual gameobject! Not just the script!
-        //    //GameObject.Destroy(item.gameObject);
-
-        //    // Detach!
-        //    item.transform.parent = null;
-        //}
     }
 
     // For initiating positions
@@ -224,19 +258,28 @@ public class TerrainChunk {
             var nearestVertex = Helpers.NearestVertexTo(meshFilter, CurrentMeshKdTree,
                 new Vector3(groundItem.ActualOriginalPos.x, heightMap.maxValue / 2, groundItem.ActualOriginalPos.y));
 
-            groundItem.transform.position = new Vector3(nearestVertex.vertex.x,
-                                                        nearestVertex.vertex.y,
-                                                        nearestVertex.vertex.z);
+            groundItem.UpdatePosition(new Vector3(nearestVertex.vertex.x,
+                                                    nearestVertex.vertex.y,
+                                                    nearestVertex.vertex.z));
         }
     }
 
-    private void PositionItems(int levelOfDetail)
+    private IEnumerator<WaitForEndOfFrame> PositionItems(int levelOfDetail)
     {
         // Verify before placing
         if (meshFilter.sharedMesh != null && meshFilter.sharedMesh.vertexCount > 0)
         {
-            foreach (var item in chunkItems)
+            // Store any item that was handled by this enumerator
+            var handledItems = new HashSet<ItemComponent>();
+            var difference = chunkItems.Except(handledItems);
+
+            //foreach (var item in chunkItems)
+            // Select a single item each iteration and remove it.
+            while (difference.Count() > 0)
             {
+                // Get the first item of the difference
+                var item = difference.First();
+
                 // GROUNDED ITEMS
                 // Set our items' Y position and display them
                 //foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
@@ -252,52 +295,59 @@ public class TerrainChunk {
                         // Set to true if cacluating for smalled LOD
                         groundItem.hasPerfectPos = levelOfDetail == 0;
 
+                        // This is not a good solution but whatever
+                        // Skip this frame instead of calculating nearest right now, in a certain probability
+                        while (rand.Next(100) <= 25)
+                        {
+                            // 25% change to skip this frame
+                            yield return Globals.EndOfFrame;
+                        }
+
+                        // Wait this frame
+                        while (currentChangesPerFrame >= maxChangesPerFrame)
+                        {
+                            yield return Globals.EndOfFrame;
+                        }
+
                         // Find nearest vertex where height is half of max possible
                         var nearestVertex = Helpers.NearestVertexTo(meshFilter, CurrentMeshKdTree,
                             new Vector3(groundItem.ActualOriginalPos.x, heightMap.maxValue / 2, groundItem.ActualOriginalPos.y));
 
-                        item.transform.position = new Vector3(nearestVertex.vertex.x,
-                                                              nearestVertex.vertex.y,
-                                                              nearestVertex.vertex.z);
+                        item.UpdatePosition(new Vector3(nearestVertex.vertex.x,
+                                                        nearestVertex.vertex.y,
+                                                        nearestVertex.vertex.z));
+
+                        // Count change
+                        currentChangesPerFrame++;
                     }
+
+                    // Pause after every positioning. Return false as long as not done
+                    yield return Globals.EndOfFrame;
                 }
 
-                // AIRBORNE ITEMS
-                //foreach (var item in meshFilter.GetComponentsInChildren<AirborneItemComponent>())
-                //else if (item.GetComponent<AirborneItemComponent>() != null)
-                //{
-                //    // Enable the item. Shit.
-                //    GetItemRenderer(item.gameObject).enabled = true;
-                //}
+                // Add item to handled, calc difference again (note that chunkItems may have changed)
+                handledItems.Add(item);
+                difference = chunkItems.Except(handledItems);
             }
         }
+
+        // Return null to signify end of iteration
+        yield return null;
     }
 
-    //private Renderer GetItemRenderer(GameObject item)
-    //{
-    //    Renderer renderer = item.GetComponent<MeshRenderer>();
-
-    //    if (renderer == null)
-    //    {
-    //        renderer = item.GetComponentInChildren<SkinnedMeshRenderer>();
-    //    }
-
-    //    return renderer;
-    //}
-
 	public void UpdateCollisionMesh() {
-		if (!hasSetCollider) {
-			float sqrDstFromViewerToEdge = bounds.SqrDistance (viewerPosition);
+        if (!hasSetCollider) {
+			float sqrDstFromViewerToEdge = bounds.SqrDistance(viewerPosition);
 
 			if (sqrDstFromViewerToEdge < detailLevels [colliderLODIndex].sqrVisibleDstThreshold) {
-				if (!lodMeshes [colliderLODIndex].hasRequestedMesh) {
-					lodMeshes [colliderLODIndex].RequestMesh (heightMap, meshSettings);
+				if (!lodMeshes[colliderLODIndex].hasRequestedMesh) {
+					lodMeshes[colliderLODIndex].RequestMesh(heightMap, meshSettings);
 				}
 			}
 
 			if (sqrDstFromViewerToEdge < colliderGenerationDistanceThreshold * colliderGenerationDistanceThreshold) {
-				if (lodMeshes [colliderLODIndex].hasMesh) {
-					meshCollider.sharedMesh = lodMeshes [colliderLODIndex].mesh;
+				if (lodMeshes[colliderLODIndex].hasMesh) {
+					meshCollider.sharedMesh = lodMeshes[colliderLODIndex].mesh;
 					hasSetCollider = true;
 				}
 			}
@@ -307,7 +357,7 @@ public class TerrainChunk {
     // TODO This is not enough! If walking a large distance game will eventually crash due to 
     // memory allocation. Must destroy chunks after a certain distance
 	public void SetVisible(bool visible) {
-		meshObject.SetActive (visible);
+		meshObject.SetActive(visible);
 	}
 
 	public bool IsVisible() {
@@ -321,7 +371,7 @@ class LODMesh {
 	public bool hasRequestedMesh;
 	public bool hasMesh;
 	int lod;
-	public event System.Action updateCallback;
+	public event Action updateCallback;
     public KdTree KdTreeVertices { get; private set; }
 
     public LODMesh(int lod) {
@@ -329,13 +379,14 @@ class LODMesh {
 	}
 
 	void OnMeshDataReceived(object meshDataObject) {
-        mesh = ((MeshData)meshDataObject).CreateMesh();
+        var meshData = (MeshData)meshDataObject;
+        mesh = meshData.CreateMesh();
 
-        KdTreeVertices = new KdTree();
-        KdTreeVertices.build(mesh.vertices, mesh.triangles);
-		hasMesh = true;
+        // Get tree from mesh data
+        KdTreeVertices = meshData.GetKdTree();
+        hasMesh = true;
         
-        updateCallback ();
+        updateCallback();
 	}
 
 	public void RequestMesh(HeightMap heightMap, MeshSettings meshSettings) {

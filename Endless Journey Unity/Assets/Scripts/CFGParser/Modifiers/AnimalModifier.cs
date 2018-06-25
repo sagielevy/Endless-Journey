@@ -17,7 +17,6 @@ namespace Assets.Scripts.CFGParser.Modifiers
         private ISectionData sectionData;
         private TerrainGenerator terrainChunksParent;
         private Vector3 origin;
-        private bool hasRun;
 
         public AnimalModifier(ISectionData sectionData, EZObjectPool[] pools,
                               TerrainGenerator terrainChunksParent, Vector3 origin) :
@@ -26,63 +25,61 @@ namespace Assets.Scripts.CFGParser.Modifiers
             this.sectionData = sectionData;
             this.terrainChunksParent = terrainChunksParent;
             this.origin = origin;
-            hasRun = false;
         }
 
-        public void ModifySection(ISentenceData data)
+        public IEnumerator<WaitForEndOfFrame> ModifySection(ISentenceData data)
         {
-            if (!hasRun)
+            System.Random random = new System.Random();
+            var animalData = data as IAnimalsData;
+            float actualPosX, actualPosZ;
+
+            int[] maxes = new int[] { 1, 1 };
+
+            foreach (var animal in animalData.Animals())
             {
-                hasRun = true;
-                System.Random random = new System.Random();
-                var animalData = data as IAnimalsData;
-                float actualPosX, actualPosZ;
+                // Origin center of section
+                actualPosX = origin.x + (animal.pos_x_percent * sectionData.SectionLength() * Globals.animalSeperateMul);
+                actualPosZ = origin.z + (animal.pos_z_percent * sectionData.SectionLength() * Globals.animalSeperateMul);
 
-                int[] maxes = new int[] { 1,1 };
+                // FOR DEBUG (choose one of the available animal subsub types)
+                int subSubType = random.Next(1, maxes[animal.subtypeIndex - 1]);
 
-                foreach (var animal in animalData.Animals())
+                var animalName = "Animals_" + animal.subtypeIndex + "_" + subSubType;
+                //var newAnimal = GameObject.Instantiate(originalModels.transform.Find(animalName));
+                GameObject newAnimal;
+
+                if (poolsDict[animalName].TryGetNextObject(new Vector3(), Quaternion.Euler(0, animal.angle * 360, 0), out newAnimal))
                 {
-                    // Origin center of section
-                    actualPosX = origin.x + (animal.pos_x_percent * sectionData.SectionLength() * Globals.animalSeperateMul);
-                    actualPosZ = origin.z + (animal.pos_z_percent * sectionData.SectionLength() * Globals.animalSeperateMul);
+                    // Set org scale
+                    newAnimal.GetComponent<ItemComponent>().SetOrgLocalScale(newAnimal.transform.localScale);
 
-                    // FOR DEBUG (choose one of the available animal subsub types)
-                    int subSubType = random.Next(1, maxes[animal.subtypeIndex - 1]);
+                    // Uniform scale
+                    newAnimal.transform.localScale *= animal.scale_mul;
 
-                    var animalName = "Animals_" + animal.subtypeIndex + "_" + subSubType;
-                    //var newAnimal = GameObject.Instantiate(originalModels.transform.Find(animalName));
-                    GameObject newAnimal;
+                    // Rotation around Y axis
+                    //newAnimal.rotation = Quaternion.Euler(0, animal.angle * 360, 0);
 
-                    if (poolsDict[animalName].TryGetNextObject(new Vector3(), Quaternion.Euler(0, animal.angle * 360, 0), out newAnimal))
+                    // Set chunk parent
+                    var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
+                    chunk.AddItem(newAnimal.GetComponent<ItemComponent>());
+
+                    if (newAnimal.GetComponent<GroundItemComponent>() != null)
                     {
-                        // Set org scale
-                        newAnimal.GetComponent<ItemComponent>().SetOrgLocalScale(newAnimal.transform.localScale);
+                        // Save original actual pos
+                        newAnimal.GetComponent<GroundItemComponent>().ActualOriginalPos = new Vector2(actualPosX, actualPosZ);
 
-                        // Uniform scale
-                        newAnimal.transform.localScale *= animal.scale_mul;
+                        // Set inital pos!
+                        chunk.PositionSingleGroundItem(newAnimal.GetComponent<GroundItemComponent>());
 
-                        // Rotation around Y axis
-                        //newAnimal.rotation = Quaternion.Euler(0, animal.angle * 360, 0);
-
-                        // Set chunk parent
-                        var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
-                        chunk.AddItem(newAnimal.GetComponent<ItemComponent>());
-
-                        if (newAnimal.GetComponent<GroundItemComponent>() != null)
-                        {
-                            // Save original actual pos
-                            newAnimal.GetComponent<GroundItemComponent>().ActualOriginalPos = new Vector2(actualPosX, actualPosZ);
-
-                            // Set inital pos!
-                            chunk.PositionSingleGroundItem(newAnimal.GetComponent<GroundItemComponent>());
-
-                        } else if (newAnimal.GetComponent<AirborneItemComponent>() != null)
-                        {
-                            // Set current item position
-                            newAnimal.transform.position = new Vector3(actualPosX, animal.height, actualPosZ);
-                        }
+                    }
+                    else if (newAnimal.GetComponent<AirborneItemComponent>() != null)
+                    {
+                        // Set current item position
+                        newAnimal.GetComponent<ItemComponent>().UpdatePosition(new Vector3(actualPosX, animal.height, actualPosZ));
                     }
                 }
+
+                yield return Globals.EndOfFrame;
             }
         }
     }

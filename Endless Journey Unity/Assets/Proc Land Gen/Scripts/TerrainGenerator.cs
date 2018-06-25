@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.AI;
 
 public class TerrainGenerator : MonoBehaviour {
 
@@ -18,7 +16,7 @@ public class TerrainGenerator : MonoBehaviour {
 	public Transform viewer;
 	public Material mapMaterial;
 
-	Vector2 viewerPosition;
+    Vector2 viewerPosition;
 	Vector2 viewerPositionOld;
 
 	float meshWorldSize;
@@ -44,29 +42,35 @@ public class TerrainGenerator : MonoBehaviour {
 		meshWorldSize = meshSettings.meshWorldSize;
 		chunksVisibleInViewDst = Mathf.RoundToInt(maxViewDst / meshWorldSize);
 
-		UpdateVisibleChunks ();
-	}
+		UpdateVisibleChunks();
+    }
 
-	void Update() {
-		viewerPosition = new Vector2 (viewer.position.x, viewer.position.z);
+	void FixedUpdate() {
+        viewerPosition = new Vector2 (viewer.position.x, viewer.position.z);
 
 		if (viewerPosition != viewerPositionOld) {
 			foreach (TerrainChunk chunk in visibleTerrainChunks) {
-				chunk.UpdateCollisionMesh ();
+				chunk.UpdateCollisionMesh();
 			}
 		}
 
 		if ((viewerPositionOld - viewerPosition).sqrMagnitude > sqrViewerMoveThresholdForChunkUpdate) {
 			viewerPositionOld = viewerPosition;
-			UpdateVisibleChunks ();
+			UpdateVisibleChunks();
 		}
 	}
-		
-	void UpdateVisibleChunks() {
-		HashSet<Vector2> alreadyUpdatedChunkCoords = new HashSet<Vector2> ();
+
+    private void LateUpdate()
+    {
+        // Reset curr changes per frame after fixed update calls are done for all game objects
+        TerrainChunk.ResetCurrChangesPerFrameCount();
+    }
+
+    void UpdateVisibleChunks() {
+        HashSet<Vector2> alreadyUpdatedChunkCoords = new HashSet<Vector2> ();
 		for (int i = visibleTerrainChunks.Count-1; i >= 0; i--) {
 			alreadyUpdatedChunkCoords.Add (visibleTerrainChunks [i].coord);
-			visibleTerrainChunks [i].UpdateTerrainChunk ();
+			visibleTerrainChunks[i].UpdateTerrainChunk();
 		}
 			
 		int currentChunkCoordX = Mathf.RoundToInt (viewerPosition.x / meshWorldSize);
@@ -77,25 +81,25 @@ public class TerrainGenerator : MonoBehaviour {
 				Vector2 viewedChunkCoord = new Vector2 (currentChunkCoordX + xOffset, currentChunkCoordY + yOffset);
 				if (!alreadyUpdatedChunkCoords.Contains (viewedChunkCoord)) {
 					if (terrainChunkDictionary.ContainsKey (viewedChunkCoord)) {
-						terrainChunkDictionary [viewedChunkCoord].UpdateTerrainChunk ();
+						terrainChunkDictionary [viewedChunkCoord].UpdateTerrainChunk();
 					} else {
 						TerrainChunk newChunk = new TerrainChunk (viewedChunkCoord,heightMapSettings,meshSettings, detailLevels, colliderLODIndex, transform, viewer, mapMaterial);
 						terrainChunkDictionary.Add (viewedChunkCoord, newChunk);
 						newChunk.onVisibilityChanged += OnTerrainChunkVisibilityChanged;
-						newChunk.Load ();
+						newChunk.Load();
 					}
 				}
-
 			}
 		}
-	}
+    }
 
 	void OnTerrainChunkVisibilityChanged(TerrainChunk chunk, bool isVisible) {
 		if (isVisible) {
-			visibleTerrainChunks.Add (chunk);
-		} else {
-			visibleTerrainChunks.Remove (chunk);
-		}
+			visibleTerrainChunks.Add(chunk);
+        }
+        else {
+			visibleTerrainChunks.Remove(chunk);
+        }
 	}
 
 }

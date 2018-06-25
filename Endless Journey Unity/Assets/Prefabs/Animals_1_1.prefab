@@ -461,7 +461,7 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 59f146b52e0509348a984c0c64e708c3, type: 3}
+  - {fileID: 2100000, guid: 52fe0b1f6b4f983459f152dfbb771a8e, type: 2}
   - {fileID: 2100000, guid: 9b3ad7a7c47ae95448739c4f654091da, type: 2}
   - {fileID: 2100000, guid: df0455964130f694babd3b327c2cc1e8, type: 2}
   m_StaticBatchInfo:
@@ -508,7 +508,7 @@ NavMeshAgent:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1138720915646520}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 3.5

@@ -36,24 +36,30 @@ namespace Assets.Scripts.CFGParser.Modifiers
             orgMetallic = groundMaterial.GetFloat(Metallic);
         }
 
-        public void ModifySection(ISentenceData data)
+        public IEnumerator<WaitForEndOfFrame> ModifySection(ISentenceData data)
         {
             var groundData = data as IGroundData;
             var groundColors = groundData.GroundColors();
 
-            // Change each layer color
-            for (int i = 0; i < MaxLayers; i++)
+            // Keep runing till replaced by new enumerator
+            while (true)
             {
-                var currColor = Color.Lerp(orgLayerColors[i], Helpers.FromText(groundColors[i]), Globals.speedChange * (Time.time - startTime));
-                textureData.layers[i].tint = currColor;
+                // Change each layer color
+                for (int i = 0; i < MaxLayers; i++)
+                {
+                    var currColor = Color.Lerp(orgLayerColors[i], Helpers.FromText(groundColors[i]), Globals.speedChange * (Time.time - startTime));
+                    textureData.layers[i].tint = currColor;
+                }
+
+                // Apply color changes
+                textureData.ApplyToMaterial(groundMaterial);
+
+                // Change glossiness and metallic
+                groundMaterial.SetFloat(Glossiness, Mathf.Lerp(orgGlosiness, groundData.Smoothness(), Globals.speedChange * (Time.time - startTime)));
+                groundMaterial.SetFloat(Glossiness, Mathf.Lerp(orgMetallic, groundData.Metallic(), Globals.speedChange * (Time.time - startTime)));
+
+                yield return Globals.EndOfFrame;
             }
-
-            // Apply color changes
-            textureData.ApplyToMaterial(groundMaterial);
-
-            // Change glossiness and metallic
-            groundMaterial.SetFloat(Glossiness, Mathf.Lerp(orgGlosiness, groundData.Smoothness(), Globals.speedChange * (Time.time - startTime)));
-            groundMaterial.SetFloat(Glossiness, Mathf.Lerp(orgMetallic, groundData.Metallic(), Globals.speedChange * (Time.time - startTime)));
         }
     }
 }

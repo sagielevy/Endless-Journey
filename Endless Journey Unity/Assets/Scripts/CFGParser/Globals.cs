@@ -18,5 +18,18 @@ namespace Assets.Scripts.CFGParser
         public static readonly Quaternion defaultRotation = Quaternion.Euler(-90, 0, 0);
         public readonly static string[] INTRO_TEXTS = new string[] { "Endless Journey\n\nAll content in this world is procedurally genrated.\nPress F1 for control info.\n\n\nPress G to skip",
                                                                       "Credits\n\nDevelopers: Sagie Levy & Tom Feigin\nMusic: Ori Angel\nModels: Oded Kofian\n\nPress G to skip"};
+
+        static WaitForEndOfFrame _endOfFrame = new WaitForEndOfFrame();
+        static WaitForSeconds _wait3Seconds = new WaitForSeconds(3f);
+
+        public static WaitForEndOfFrame EndOfFrame
+        {
+            get { return _endOfFrame; }
+        }
+
+        public static WaitForSeconds WaitFor3Seconds
+        {
+            get { return _wait3Seconds; }
+        }
     }
 }

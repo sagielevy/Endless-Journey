@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 namespace Assets.Scripts.Intro
@@ -65,19 +66,19 @@ namespace Assets.Scripts.Intro
                 while (text.color.a < highAlpha && !TextCutsceneComplete)
                 {
                     FadeTextIn();
-                    yield return new WaitForEndOfFrame();
+                    yield return Globals.EndOfFrame;
                 }
 
                 // Finish white
                 text.color = Color.white;
 
-                yield return new WaitForSeconds(3f);
+                yield return Globals.WaitFor3Seconds;
 
                 // Fade out (make sure not interrupted)
                 while (text.color.a > lowAlpha && !TextCutsceneComplete)
                 {
                     FadeTextOut();
-                    yield return new WaitForEndOfFrame();
+                    yield return Globals.EndOfFrame;
                 }
 
                 // Finish clear.

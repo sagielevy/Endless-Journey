@@ -17,7 +17,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
         GameObject lights;
         Color orgSkyColor, orgHorizonColor;
         float startTime;
-        
+
 
         public SkyModifier(Material skyMaterial, GameObject lights)
         {
@@ -28,46 +28,53 @@ namespace Assets.Scripts.CFGParser.Modifiers
             orgHorizonColor = skyMaterial.GetColor(HorizonColorId);
         }
 
-        public void ModifySection(ISentenceData data)
+        public IEnumerator<WaitForEndOfFrame> ModifySection(ISentenceData data)
         {
             var skyData = data as ISkyData;
 
-            // Interpolate colors!
-            // Interpolate Environment settings & directional lights as well
-            var newSkyColor = Color.Lerp(orgSkyColor, Helpers.FromText(skyData.ColorSky()), Globals.speedChange * (Time.time - startTime));
-            skyMaterial.SetColor(SkyColorId, newSkyColor);
-            RenderSettings.ambientSkyColor = newSkyColor;
-
-            // Darken color
-            float h, s, v;
-            Color.RGBToHSV(newSkyColor, out h, out s, out v);
-            v = Mathf.Clamp01(v * FogDarknessFactor);
-
-            RenderSettings.fogColor = Color.HSVToRGB(h, s, v); // TODO Color a bit darker than the actual sky color!
-
-            foreach (var light in lights.GetComponentsInChildren<Light>())
+            // Keep runing till replaced by new enumerator
+            while (true)
             {
-                // Just a touch of the new light color
-                light.color = Color.Lerp(Color.white, newSkyColor, 0.1f);
+                // Interpolate colors!
+                // Interpolate Environment settings & directional lights as well
+                var newSkyColor = Color.Lerp(orgSkyColor, Helpers.FromText(skyData.ColorSky()), Globals.speedChange * (Time.time - startTime));
+                skyMaterial.SetColor(SkyColorId, newSkyColor);
+                RenderSettings.ambientSkyColor = newSkyColor;
+
+                // Darken color
+                float h, s, v;
+                Color.RGBToHSV(newSkyColor, out h, out s, out v);
+                v = Mathf.Clamp01(v * FogDarknessFactor);
+
+                RenderSettings.fogColor = Color.HSVToRGB(h, s, v); // TODO Color a bit darker than the actual sky color!
+
+                foreach (var light in lights.GetComponentsInChildren<Light>())
+                {
+                    // Just a touch of the new light color
+                    light.color = Color.Lerp(Color.white, newSkyColor, 0.1f);
+                }
+
+                // Change horizon to new horizon color
+                if (skyData.IsSkyGradient())
+                {
+                    var newHorizonColor = Color.Lerp(orgHorizonColor, Helpers.FromText(skyData.ColorHorizon()), Globals.speedChange * (Time.time - startTime));
+                    RenderSettings.ambientEquatorColor = newHorizonColor;
+                    skyMaterial.SetColor(HorizonColorId, newHorizonColor);
+                }
+                else
+                {
+                    var newHorizonColor = Color.Lerp(orgHorizonColor, Helpers.FromText(skyData.ColorSky()), Globals.speedChange * (Time.time - startTime));
+
+                    // Change horizon to sky color
+                    RenderSettings.ambientEquatorColor = newHorizonColor;
+                    skyMaterial.SetColor(HorizonColorId, newHorizonColor);
+                }
+
+                // Change ground color to match horizon
+                RenderSettings.ambientGroundColor = RenderSettings.ambientEquatorColor;
+
+                yield return Globals.EndOfFrame;
             }
-
-            // Change horizon to new horizon color
-            if (skyData.IsSkyGradient())
-            {
-                var newHorizonColor = Color.Lerp(orgHorizonColor, Helpers.FromText(skyData.ColorHorizon()), Globals.speedChange * (Time.time - startTime));
-                RenderSettings.ambientEquatorColor = newHorizonColor;
-                skyMaterial.SetColor(HorizonColorId, newHorizonColor);
-            } else
-            {
-                var newHorizonColor = Color.Lerp(orgHorizonColor, Helpers.FromText(skyData.ColorSky()), Globals.speedChange * (Time.time - startTime));
-                
-                // Change horizon to sky color
-                RenderSettings.ambientEquatorColor = newHorizonColor;
-                skyMaterial.SetColor(HorizonColorId, newHorizonColor);
-            }
-
-            // Change ground color to match horizon
-            RenderSettings.ambientGroundColor = RenderSettings.ambientEquatorColor;
         }
     }
 }

@@ -94,6 +94,9 @@ public static class MeshGenerator
 
         meshData.ProcessMesh();
 
+        // Generate Kd Tree for this mesh as well
+        meshData.GenerateKdTree();
+
         return meshData;
     }
 
@@ -139,11 +142,20 @@ public class MeshData
 
     int triangleIndex;
     int outOfMeshTriangleIndex;
+    KdTree KdTreeVertices;
 
     EdgeConnectionVertexData[] edgeConnectionVertices;
     int edgeConnectionVertexIndex;
 
     bool useFlatShading;
+
+    public KdTree GetKdTree() { return KdTreeVertices; }
+
+    internal void GenerateKdTree()
+    {
+        KdTreeVertices = new KdTree();
+        KdTreeVertices.build(vertices, triangles);
+    }
 
     public MeshData(int numVertsPerLine, int skipIncrement, bool useFlatShading)
     {
@@ -315,6 +327,7 @@ public class MeshData
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.uv = uvs;
+
         if (useFlatShading)
         {
             mesh.RecalculateNormals();
@@ -323,6 +336,7 @@ public class MeshData
         {
             mesh.normals = bakedNormals;
         }
+
         return mesh;
     }
 }

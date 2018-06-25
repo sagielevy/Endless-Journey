@@ -19,7 +19,6 @@ namespace Assets.Scripts.CFGParser.Modifiers
         SectionAngle[] angles;
         Vector2[] points;
         int currSubPath;
-        bool hasRun;
 
         public Vector2 movement { get; private set; }
 
@@ -29,34 +28,28 @@ namespace Assets.Scripts.CFGParser.Modifiers
             this.player = player.GetComponent<Rigidbody>();
             Controller = player.GetComponent<RigidbodyFirstPersonController>();
             this.data = data;
-            hasRun = false;
             currSubPath = 0;
         }
 
-        public void ModifySection(ISentenceData data)
+        public IEnumerator<WaitForEndOfFrame> ModifySection(ISentenceData data)
         {
             var sectionData = data as ISectionData;
 
             // Get data
-            if (!hasRun)
-            {
-                hasRun = true;
-
-                angles = sectionData.SectionAngles();
-                Array.Sort(angles, new SectionAngleComp());
+            angles = sectionData.SectionAngles();
+            Array.Sort(angles, new SectionAngleComp());
 
                 
-                points = new Vector2[angles.Length + 1];
+            points = new Vector2[angles.Length + 1];
 
-                for (int i = 0; i < angles.Length; i++)
-                {
-                    points[i] = new Vector2(initialPosition.x + angles[i].pos_x * sectionData.SectionLength(),
-                                            initialPosition.z + angles[i].pos_z * sectionData.SectionLength());
+            for (int i = 0; i < angles.Length; i++)
+            {
+                points[i] = new Vector2(initialPosition.x + angles[i].pos_x * sectionData.SectionLength(),
+                                        initialPosition.z + angles[i].pos_z * sectionData.SectionLength());
 
-                }
-
-                points[angles.Length] = new Vector2(sectionData.SectionLength(), 0);
             }
+
+            points[angles.Length] = new Vector2(sectionData.SectionLength(), 0);
 
             // Move Character! Currently not working well...
             // If not done with curr sub path
@@ -73,6 +66,8 @@ namespace Assets.Scripts.CFGParser.Modifiers
             //{
             //    movement = new Vector2();
             //}
+
+            yield return null;
         }
 
         public bool IsSectionComplete()

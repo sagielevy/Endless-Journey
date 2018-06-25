@@ -12,7 +12,6 @@ namespace Assets.Scripts.CFGParser.Modifiers
     {
         private ISectionData sectionData;
         private TerrainGenerator terrainChunksParent;
-        private bool hasRun;
         private Vector3 origin;
 
         public CloudModifier(ISectionData sectionData, EZObjectPool[] pools,
@@ -22,47 +21,44 @@ namespace Assets.Scripts.CFGParser.Modifiers
             this.sectionData = sectionData;
             this.terrainChunksParent = terrainChunksParent;
             this.origin = origin;
-            hasRun = false;
         }
 
-        public void ModifySection(ISentenceData data)
+        public IEnumerator<WaitForEndOfFrame> ModifySection(ISentenceData data)
         {
-            if (!hasRun)
+            System.Random random = new System.Random();
+            var cloudData = data as ICloudsData;
+            float actualPosX, actualPosZ;
+
+            int[] maxes = new int[] { 3, 9 };
+
+            foreach (var cloud in cloudData.Clouds())
             {
-                hasRun = true;
-                System.Random random = new System.Random();
-                var cloudData = data as ICloudsData;
-                float actualPosX, actualPosZ;
+                // Origin center of section
+                actualPosX = origin.x + (cloud.pos_x_percent * sectionData.SectionLength() * Globals.cloudSeperateMul);
+                actualPosZ = origin.z + (cloud.pos_z_percent * sectionData.SectionLength() * Globals.cloudSeperateMul);
 
-                int[] maxes = new int[] { 3, 9 };
+                // FOR DEBUG
+                int subSubType = random.Next(1, maxes[cloud.subtypeIndex - 1]);
+                var cloudName = "Clouds_" + cloud.subtypeIndex + "_" + subSubType;
+                //GameObject newCloud = GameObject.Instantiate(originalModels.transform.Find(plantName));
+                GameObject newCloud;
 
-                foreach (var cloud in cloudData.Clouds())
+                if (poolsDict[cloudName].TryGetNextObject(new Vector3(), Globals.defaultRotation, out newCloud))
                 {
-                    // Origin center of section
-                    actualPosX = origin.x + (cloud.pos_x_percent * sectionData.SectionLength() * Globals.cloudSeperateMul);
-                    actualPosZ = origin.z + (cloud.pos_z_percent * sectionData.SectionLength() * Globals.cloudSeperateMul);
+                    newCloud.GetComponent<ItemComponent>().SetOrgLocalScale(newCloud.transform.localScale);
 
-                    // FOR DEBUG
-                    int subSubType = random.Next(1, maxes[cloud.subtypeIndex - 1]);
-                    var cloudName = "Clouds_" + cloud.subtypeIndex + "_" + subSubType;
-                    //GameObject newCloud = GameObject.Instantiate(originalModels.transform.Find(plantName));
-                    GameObject newCloud;
+                    // Uniform scale
+                    newCloud.transform.localScale *= cloud.scale_mul;
 
-                    if (poolsDict[cloudName].TryGetNextObject(new Vector3(), Globals.defaultRotation, out newCloud))
-                    {
-                        newCloud.GetComponent<ItemComponent>().SetOrgLocalScale(newCloud.transform.localScale);
+                    // Set chunk parent
+                    var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
+                    chunk.AddItem(newCloud.GetComponent<ItemComponent>());
 
-                        // Uniform scale
-                        newCloud.transform.localScale *= cloud.scale_mul;
-
-                        // Set chunk parent
-                        var chunk = Helpers.FindClosestTerrain(terrainChunksParent, new Vector2(actualPosX, actualPosZ));
-                        chunk.AddItem(newCloud.GetComponent<ItemComponent>());
-
-                        // Set current item position to X, Y = cloud height, Z
-                        newCloud.transform.position = new Vector3(actualPosX, cloud.height, actualPosZ);
-                    }
+                    // Set current item position to X, Y = cloud height, Z
+                    newCloud.GetComponent<ItemComponent>().UpdatePosition(new Vector3(actualPosX, cloud.height, actualPosZ));
                 }
+
+                yield return Globals.EndOfFrame;
             }
         }
     }

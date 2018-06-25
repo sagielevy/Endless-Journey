@@ -21,17 +21,23 @@ namespace Assets.Scripts.CFGParser.Modifiers
             startTime = Time.time;
         }
 
-        public void ModifySection(ISentenceData data)
+        public IEnumerator<WaitForEndOfFrame> ModifySection(ISentenceData data)
         {
             var pathData = data as IPathData;
 
-            BloomModel.Settings effectSettings = myProfile.bloom.settings;
+            // Keep runing till replaced by new enumerator
+            while (true)
+            {
+                BloomModel.Settings effectSettings = myProfile.bloom.settings;
 
-            // Lerp changes
-            effectSettings.bloom.intensity = Mathf.Lerp(orgIntensity, pathData.BloomIntensity(), Globals.speedChange * (Time.time - startTime));
-            effectSettings.bloom.threshold = Mathf.Lerp(orgThreshold, pathData.BloomThreshold(), Globals.speedChange * (Time.time - startTime));
+                // Lerp changes
+                effectSettings.bloom.intensity = Mathf.Lerp(orgIntensity, pathData.BloomIntensity(), Globals.speedChange * (Time.time - startTime));
+                effectSettings.bloom.threshold = Mathf.Lerp(orgThreshold, pathData.BloomThreshold(), Globals.speedChange * (Time.time - startTime));
 
-            myProfile.bloom.settings = effectSettings;
+                myProfile.bloom.settings = effectSettings;
+
+                yield return Globals.EndOfFrame;
+            }
         }
     }
 }

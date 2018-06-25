@@ -41,52 +41,53 @@ namespace Assets.Scripts.CFGParser
             return closetChunk;
         }
 
-        // TODO Naive! Could be done better
         public static VertexAndDist NearestVertexTo(MeshFilter chunk, KdTree meshKdTree, Vector3 point)
         {
-            point = chunk.transform.InverseTransformPoint(point);
+            var pointInLocalSpace = chunk.transform.InverseTransformPoint(point);
 
-            #region naiveSolution
-            //const float minDist = 0.35f;
-
-            //float minDistanceSqr = Mathf.Infinity;
-            //Vector3 nearestVertex = Vector3.zero;
-            //int index = 0;
-
-            //// MUST save the vertices in a temp array. Accessing them from the mesh is
-            //// apparently very costly
-            //var tmpVerts = mesh.vertices;
-
-            //         // scan all vertices to find nearest
-            //         for (int i = 0; i < tmpVerts.Length; i++)
-            //         {
-            //             Vector3 diff = pointInLocalSpace - tmpVerts[i];
-            //             float distSqr = diff.sqrMagnitude;
-
-            //             if (distSqr < minDistanceSqr)
-            //             {
-            //                 minDistanceSqr = distSqr;
-            //                 nearestVertex = tmpVerts[i];
-            //                 index = i;
-
-            //                 if (distSqr < minDist)
-            //                 {
-            //                     break; // More efficient
-            //                 }
-            //             }
-            //         }
-            #endregion
-
-
-
-            // convert nearest vertex back to world space
-            //return new VertexAndDist(chunk.transform.TransformPoint(nearestVertex), 
-            //    (minDistanceSqr == Mathf.Infinity) ? 0 : minDistanceSqr, index);
-
-            var nearestId = meshKdTree.nearest(point);
+            var nearestId = meshKdTree.nearest(pointInLocalSpace);
             var nearestVertex = meshKdTree.points[nearestId];
 
-            return new VertexAndDist(chunk.transform.TransformPoint(nearestVertex), Vector3.Distance(point, nearestVertex));//, nearestId);
+            return new VertexAndDist(chunk.transform.TransformPoint(nearestVertex), Vector3.Distance(pointInLocalSpace, nearestVertex));
+        }
+
+        // Naive Version of nearest neighbour. Use only when KD Tree not available
+        public static VertexAndDist NearestVertexTo(MeshFilter chunk, Vector3 point)
+        {
+            var pointInLocalSpace = chunk.transform.InverseTransformPoint(point);
+
+            const float minDist = 0.35f;
+
+            float minDistanceSqr = Mathf.Infinity;
+            Vector3 nearestVertex = Vector3.zero;
+            int index = 0;
+
+            // MUST save the vertices in a temp array. Accessing them from the mesh is
+            // apparently very costly
+            var tmpVerts = chunk.mesh.vertices;
+
+            // scan all vertices to find nearest
+            for (int i = 0; i < tmpVerts.Length; i++)
+            {
+                Vector3 diff = pointInLocalSpace - tmpVerts[i];
+                float distSqr = diff.sqrMagnitude;
+
+                if (distSqr < minDistanceSqr)
+                {
+                    minDistanceSqr = distSqr;
+                    nearestVertex = tmpVerts[i];
+                    index = i;
+
+                    if (distSqr < minDist)
+                    {
+                        break; // More efficient
+                    }
+                }
+            }
+
+            // Convert nearest vertex back to world space
+            return new VertexAndDist(chunk.transform.TransformPoint(nearestVertex),
+                (minDistanceSqr == Mathf.Infinity) ? 0 : minDistanceSqr);
         }
     }
 
@@ -94,13 +95,11 @@ namespace Assets.Scripts.CFGParser
     {
         public Vector3 vertex;
         public float distance;
-        //public int index;
 
-        public VertexAndDist(Vector3 vertex, float distance/*, int index*/)
+        public VertexAndDist(Vector3 vertex, float distance)
         {
             this.vertex = vertex;
             this.distance = distance;
-            //this.index = index;
         }
     }
 }
