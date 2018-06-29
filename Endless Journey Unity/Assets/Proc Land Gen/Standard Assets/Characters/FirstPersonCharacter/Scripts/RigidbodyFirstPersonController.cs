@@ -145,6 +145,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void FixedUpdate()
         {
+            FallCheck();
             GroundCheck();
             Vector2 input = GetInput(); //GetInput(parser.GetMovement());
 
@@ -192,6 +193,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_Jump = false;
         }
 
+        private void FallCheck()
+        {
+            // Don't allow player to fall out of map. This is a lazy solution
+            if (transform.position.y < 0)
+            {
+                transform.position = Vector3.up * Globals.maxHeight;
+            }
+        }
 
         private float SlopeMultiplier()
         {

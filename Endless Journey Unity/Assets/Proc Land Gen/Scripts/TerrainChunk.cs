@@ -10,7 +10,8 @@ using UnityEngine.Profiling;
 public class TerrainChunk {
 	
 	const float colliderGenerationDistanceThreshold = 5;
-    const int maxChangesPerFrame = 1;
+    const float colliderGenerationDistanceThresholdSqr = colliderGenerationDistanceThreshold * colliderGenerationDistanceThreshold;
+    const int maxChangesPerFrame = 3;
     const int maxNavMeshSurfaceCount = 3;
 
     private static int navMeshSurfacesCounter = 0;
@@ -115,19 +116,22 @@ public class TerrainChunk {
 		this.heightMap = (HeightMap)heightMapObject;
 		heightMapReceived = true;
 
-		UpdateTerrainChunk();
+		UpdateTerrainChunk(calcViewerPosition);
 	}
 
-	Vector2 viewerPosition {
-		get {
-			return new Vector2 (viewer.position.x, viewer.position.z);
-		}
-	}
+    Vector3 calcViewerPosition
+    {
+        get
+        {
+            return new Vector3(viewer.position.x, viewer.position.z, 0);
+        }
+    }
 
 
-	public void UpdateTerrainChunk() {
+    public void UpdateTerrainChunk(Vector3? viewerPosition) {
 		if (heightMapReceived) {
-			float viewerDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(viewerPosition));
+            var viewerPos = viewerPosition ?? calcViewerPosition;
+            float viewerDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(viewerPos));
 
 			bool wasVisible = IsVisible ();
 			bool visible = viewerDstFromNearestEdge <= maxViewDst;
@@ -214,13 +218,12 @@ public class TerrainChunk {
         var handledItems = new HashSet<ItemComponent>();
         var difference = chunkItems.Except(handledItems);
 
-        //foreach (var item in chunkItems)
-        // Select a single item each iteration and remove it.
-        while (difference.Count() > 0)
-        {
-            // Get the first item of the difference
-            var item = difference.First();
+        // Get the first item of the difference
+        var item = difference.FirstOrDefault();
 
+        // Select a single item each iteration and remove it.
+        while (item != null)
+        {
             // Wait this frame
             while (currentChangesPerFrame >= maxChangesPerFrame)
             {
@@ -240,6 +243,9 @@ public class TerrainChunk {
             // Add item to handled, calc difference again (note that chunkItems may have changed)
             handledItems.Add(item);
             difference = chunkItems.Except(handledItems);
+
+            // Get next item in difference
+            item = difference.FirstOrDefault();
         }
 
         chunkItems.Clear();
@@ -266,42 +272,41 @@ public class TerrainChunk {
 
     private IEnumerator<WaitForEndOfFrame> PositionItems(int levelOfDetail)
     {
+        var sharedMesh = meshFilter.sharedMesh;
+
         // Verify before placing
-        if (meshFilter.sharedMesh != null && meshFilter.sharedMesh.vertexCount > 0)
+        if (sharedMesh != null && sharedMesh.vertexCount > 0)
         {
             // Store any item that was handled by this enumerator
             var handledItems = new HashSet<ItemComponent>();
             var difference = chunkItems.Except(handledItems);
 
-            //foreach (var item in chunkItems)
-            // Select a single item each iteration and remove it.
-            while (difference.Count() > 0)
+            // Wait this frame
+            while (currentChangesPerFrame >= maxChangesPerFrame)
             {
-                // Get the first item of the difference
-                var item = difference.First();
+                yield return Globals.EndOfFrame;
+            }
 
+            // Get the first item of the difference
+            var item = difference.FirstOrDefault();
+
+            // Count item selection
+            currentChangesPerFrame++;
+
+
+            // Select a single item each iteration and remove it.
+            while (item != null)
+            {
                 // GROUNDED ITEMS
+                var groundItem = item.GetComponent<GroundItemComponent>();
+
                 // Set our items' Y position and display them
-                //foreach (var item in meshFilter.GetComponentsInChildren<GroundItemComponent>())
-                if (item.GetComponent<GroundItemComponent>() != null)
+                if (groundItem != null)
                 {
-                    var groundItem = item.GetComponent<GroundItemComponent>();
-
-                    // Enable the item. Shit.
-                    //var renderer = GetItemRenderer(item.transform.gameObject);
-
                     if (!groundItem.hasPerfectPos)
                     {
                         // Set to true if cacluating for smalled LOD
                         groundItem.hasPerfectPos = levelOfDetail == 0;
-
-                        // This is not a good solution but whatever
-                        // Skip this frame instead of calculating nearest right now, in a certain probability
-                        while (rand.Next(100) <= 25)
-                        {
-                            // 25% change to skip this frame
-                            yield return Globals.EndOfFrame;
-                        }
 
                         // Wait this frame
                         while (currentChangesPerFrame >= maxChangesPerFrame)
@@ -328,6 +333,9 @@ public class TerrainChunk {
                 // Add item to handled, calc difference again (note that chunkItems may have changed)
                 handledItems.Add(item);
                 difference = chunkItems.Except(handledItems);
+
+                // Get next item in difference
+                item = difference.FirstOrDefault();
             }
         }
 
@@ -335,9 +343,10 @@ public class TerrainChunk {
         yield return null;
     }
 
-	public void UpdateCollisionMesh() {
+	public void UpdateCollisionMesh(Vector3? viewerPosition) {
         if (!hasSetCollider) {
-			float sqrDstFromViewerToEdge = bounds.SqrDistance(viewerPosition);
+            var viewerPos = viewerPosition ?? calcViewerPosition;
+			float sqrDstFromViewerToEdge = bounds.SqrDistance(viewerPos);
 
 			if (sqrDstFromViewerToEdge < detailLevels [colliderLODIndex].sqrVisibleDstThreshold) {
 				if (!lodMeshes[colliderLODIndex].hasRequestedMesh) {
@@ -345,7 +354,7 @@ public class TerrainChunk {
 				}
 			}
 
-			if (sqrDstFromViewerToEdge < colliderGenerationDistanceThreshold * colliderGenerationDistanceThreshold) {
+			if (sqrDstFromViewerToEdge < colliderGenerationDistanceThresholdSqr) {
 				if (lodMeshes[colliderLODIndex].hasMesh) {
 					meshCollider.sharedMesh = lodMeshes[colliderLODIndex].mesh;
 					hasSetCollider = true;
@@ -371,7 +380,7 @@ class LODMesh {
 	public bool hasRequestedMesh;
 	public bool hasMesh;
 	int lod;
-	public event Action updateCallback;
+	public event Action<Vector3?> updateCallback;
     public KdTree KdTreeVertices { get; private set; }
 
     public LODMesh(int lod) {
@@ -386,7 +395,7 @@ class LODMesh {
         KdTreeVertices = meshData.GetKdTree();
         hasMesh = true;
         
-        updateCallback();
+        updateCallback(null);
 	}
 
 	public void RequestMesh(HeightMap heightMap, MeshSettings meshSettings) {
