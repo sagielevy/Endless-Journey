@@ -11,11 +11,13 @@ namespace Assets.Scripts.CFGParser.Modifiers
     {
         private WindZone wind;
         private ParticleSystem hail; // TODO add more systems
+        private ParticleSystem.MainModule main;
 
         public WeatherModifier(WindZone windZone, ParticleSystem hail)
         {
             wind = windZone;
             this.hail = hail;
+            main = hail.main;
 
             // Set relative position of weather
             this.hail.transform.localPosition += new Vector3(0, Globals.maxHeight);
@@ -28,18 +30,18 @@ namespace Assets.Scripts.CFGParser.Modifiers
             // Cancel any active weather effects
             if (!weatherData.IsWeatherActive())
             {
-                // If active - turn inactive
-                if (hail.gameObject.activeSelf)
-                    hail.gameObject.SetActive(false);
+                // If no more particles & active - turn inactive
+                if (hail.isPlaying)
+                    hail.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             }
 
             while (weatherData.IsWeatherActive())
             {
                 // Enable correct system once
-                if (hail.gameObject.activeSelf != (weatherData.WeatherType() == WeatherTypes.Hail))
+                if (!hail.isPlaying && (weatherData.WeatherType() == WeatherTypes.Hail))
                 {
                     // If type and active mismatch but weather should be active, set active/inactive according to type
-                    hail.gameObject.SetActive(weatherData.WeatherType() == WeatherTypes.Hail);
+                    hail.Play(true);
                 }
 
                 // Enable/disable wind once
@@ -49,7 +51,7 @@ namespace Assets.Scripts.CFGParser.Modifiers
                 }
 
                 // TODO make change to weather more versetile
-                hail.gravityModifier = Mathf.Lerp(hail.gravityModifier, weatherData.GravityModifier(), Globals.speedChange * Time.deltaTime);
+                main.gravityModifier = new ParticleSystem.MinMaxCurve(Mathf.Lerp(main.gravityModifier.constant, weatherData.GravityModifier(), Globals.speedChange * Time.deltaTime));
                 wind.windMain = Mathf.Lerp(wind.windMain, weatherData.WindMain(), Globals.speedChange * Time.deltaTime);
                 wind.windTurbulence = Mathf.Lerp(wind.windTurbulence, weatherData.WindTurbulence(), Globals.speedChange * Time.deltaTime);
                 wind.windPulseMagnitude = Mathf.Lerp(wind.windPulseMagnitude, weatherData.WindPulseMag(), Globals.speedChange * Time.deltaTime);
