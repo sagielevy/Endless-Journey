@@ -10,7 +10,7 @@ namespace Assets.Scripts.CFGParser
     {
         // Can turn 60 degrees to each side
         public static readonly float theta = 50;
-        public static readonly float speedChange = 0.08f;
+        public static readonly float speedChange = 0.06f;
         public static readonly float maxHeight = 35f; // TODO this is a guess!
         public static readonly float groundSeperateMul = 1.0f;
         public static readonly float cloudSeperateMul = 1.0f;

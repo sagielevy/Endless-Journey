@@ -15,6 +15,8 @@ namespace Assets.Scripts.CFGParser
     public class Parser : MonoBehaviour
     {
         public PostProcessingProfile myProfile;
+        public WindZone wind;
+        public ParticleSystem hail;
 
         SentenceDataHolder sentenceDataHolder;
         List<IWorldModifier> modifiers;
@@ -97,6 +99,7 @@ namespace Assets.Scripts.CFGParser
                             GetComponent<TerrainGenerator>().mapMaterial));
             modifiers.Add(new MusicModifier(musicAudioSources));
             modifiers.Add(new PathModifier(myProfile));
+            modifiers.Add(new WeatherModifier(wind, hail));
 
             // Item modifiers
             modifiers.Add(new PlantsModifier(sentenceDataHolder, pools,

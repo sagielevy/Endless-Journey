@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.CFGParser;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +13,9 @@ public class PlayerControl : MonoBehaviour
 {
     private string path;
     private PostProcessingProfile profile;
+    private Rigidbody playerBody;
     public CanvasRenderer panel;
+
 
     private void Start()
     {
@@ -21,12 +24,20 @@ public class PlayerControl : MonoBehaviour
         path = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + Path.DirectorySeparatorChar +
                 "Endless Journey" + Path.DirectorySeparatorChar;
 
+        playerBody = GetComponentInParent<Rigidbody>();
+
         if (!Directory.Exists(path))
         {
             Directory.CreateDirectory(path);
         }
     }
     void Update () {
+        // Don't allow player to fall out of map. This is a lazy solution
+        if (transform.position.y < 0)
+        {
+            playerBody.position = Vector3.up * Globals.maxHeight;
+        }
+
         // Take Screenshot
 		if (Input.GetKeyDown(KeyCode.E))
         {

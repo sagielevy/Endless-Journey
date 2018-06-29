@@ -21,7 +21,7 @@ namespace Assets.Scripts.CFGParser.DataHolder
 
     // Implement each section component here
     public class SentenceDataHolder : ISkyData, IAnimalsData, ICloudsData, IGroundData, IMusicData, IPathData,
-                                      IPlantsData, IRocksData, ISectionData
+                                      IPlantsData, IRocksData, ISectionData, IWeatherData
     {
         const char colorDelimiter = ' ';
         const string colon = ";;;";
@@ -54,6 +54,14 @@ namespace Assets.Scripts.CFGParser.DataHolder
         const string animalSubtypeToken = "animal_subtype";
         const string animalAngleToken = "animal_angle";
         const string sectionLengthToken = "section_length";
+        const string weatherActiveToken = "weather_active";
+        const string windTypeToken = "weather_type";
+        const string windMainToken = "wind_main";
+        const string windTurbulenceToken = "wind_turbulence";
+        const string windPulseMagToken = "wind_pulseMag";
+        const string windPulseFreqToken = "wind_pulseFreq";
+        const string windActiveToken = "wind_active";
+        const string weatherGravityToken = "weather_gravity";
 
         private string orgSentence;
         string[] colorPalettes;
@@ -222,6 +230,47 @@ namespace Assets.Scripts.CFGParser.DataHolder
         public float BloomThreshold()
         {
             return float.Parse(root[pathThresholdToken].Value);
+        }
+
+        public bool IsWeatherActive()
+        {
+            return bool.Parse(root[weatherActiveToken].Value);
+        }
+
+        public float WindMain()
+        {
+            return float.Parse(root[windMainToken].Value);
+        }
+
+        public float WindTurbulence()
+        {
+            return float.Parse(root[windTurbulenceToken].Value);
+        }
+
+        public float WindPulseMag()
+        {
+            return float.Parse(root[windPulseMagToken].Value);
+        }
+
+        public float WindPulseFreq()
+        {
+            return float.Parse(root[windPulseFreqToken].Value);
+        }
+
+        public WeatherTypes WeatherType()
+        {
+            return (WeatherTypes)int.Parse(root[windTypeToken].Value);
+        }
+
+        public bool IsWindActive()
+        {
+            // False if 0, true otherwise
+            return int.Parse(root[windActiveToken].Value) != 0;
+        }
+
+        public float GravityModifier()
+        {
+            return float.Parse(root[weatherGravityToken].Value);
         }
     }
 
