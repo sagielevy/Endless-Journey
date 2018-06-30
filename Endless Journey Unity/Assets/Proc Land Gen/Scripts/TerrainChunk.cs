@@ -17,7 +17,8 @@ public class TerrainChunk {
     private static int navMeshSurfacesCounter = 0;
     private static int currentChangesPerFrame = 0;
 
-    public event System.Action<TerrainChunk, bool> onVisibilityChanged;
+    public float maxDistTotal = 600;
+    public event Action<TerrainChunk, bool> onVisibilityChanged;
 	public Vector2 coord;
 	public Vector2 sampleCentre { get; private set; }
     public MeshFilter meshFilter { get; private set; }
@@ -127,6 +128,21 @@ public class TerrainChunk {
         }
     }
 
+    public bool AttemptDestroyMesh()
+    {
+        float viewerDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(calcViewerPosition));
+
+        var isRemoved = viewerDstFromNearestEdge > maxDistTotal && !itemHandler.IsDisableIterComplete();
+
+        if (isRemoved)
+        {
+            // Destroy chunk. 
+            // Verifiy that the disabler is complete
+            UnityEngine.Object.Destroy(meshObject.gameObject);
+        }
+
+        return isRemoved;
+    }
 
     public void UpdateTerrainChunk(Vector3? viewerPosition) {
 		if (heightMapReceived) {
@@ -170,7 +186,7 @@ public class TerrainChunk {
                 // Position and enable items once mesh is ready
                 if (lodMeshes[lodIndex] != null && lodMeshes[lodIndex].mesh != null && lodMeshes[lodIndex].mesh.vertexCount > 0)
                 {
-                    itemHandler.positionItemsIter = PositionItems(lodIndex);
+                    itemHandler.AddPositionIter(PositionItems(lodIndex));
                 }
 
                 // If CURRENT CHUNK PLAYER IS ON
@@ -196,16 +212,18 @@ public class TerrainChunk {
                 //    navMeshSurfacesCounter--;
                 //}
             }
-            else
+            else if (viewerDstFromNearestEdge < maxDistTotal)
             {
-                itemHandler.disableItemsIter = DetachItems();
+                // Hide but don't destroy
+                itemHandler.AddDisableIter(DetachItems());
             }
+            
 
             if (wasVisible != visible) {
 				
-				SetVisible (visible);
+				SetVisible(visible);
 				if (onVisibilityChanged != null) {
-                    onVisibilityChanged (this, visible);
+                    onVisibilityChanged(this, visible);
 				}
 			}
 		}
@@ -214,15 +232,11 @@ public class TerrainChunk {
     // Remove items from this chunk's list as it will no longer control them
     private IEnumerator<WaitForEndOfFrame> DetachItems()
     {
-        // Store any item that was handled by this enumerator
-        var handledItems = new HashSet<ItemComponent>();
-        var difference = chunkItems.Except(handledItems);
-
-        // Get the first item of the difference
-        var item = difference.FirstOrDefault();
+        // Copy items as they were before starting
+        var orgItems = new HashSet<ItemComponent>(chunkItems);
 
         // Select a single item each iteration and remove it.
-        while (item != null)
+        foreach (var item in orgItems)
         {
             // Wait this frame
             while (currentChangesPerFrame >= maxChangesPerFrame)
@@ -230,25 +244,25 @@ public class TerrainChunk {
                 yield return Globals.EndOfFrame;
             }
 
-            // Disable items to allow them to be returned to the pool and be reused 
-            item.GetComponent<ItemComponent>().PreDisable();
-            item.gameObject.SetActive(false);
+            if (chunkItems.Contains(item))
+            {
 
-            // Count change
-            currentChangesPerFrame++;
+                // Disable items to allow them to be returned to the pool and be reused 
+                item.GetComponent<ItemComponent>().PreDisable();
+                item.gameObject.SetActive(false);
+
+                // Count change
+                currentChangesPerFrame++;
+
+                // Clear out
+                chunkItems.Remove(item);
+            }
 
             // Wait a frame for next item
             yield return Globals.EndOfFrame;
-
-            // Add item to handled, calc difference again (note that chunkItems may have changed)
-            handledItems.Add(item);
-            difference = chunkItems.Except(handledItems);
-
-            // Get next item in difference
-            item = difference.FirstOrDefault();
         }
 
-        chunkItems.Clear();
+        yield return null;
     }
 
     // For initiating positions
@@ -277,25 +291,11 @@ public class TerrainChunk {
         // Verify before placing
         if (sharedMesh != null && sharedMesh.vertexCount > 0)
         {
-            // Store any item that was handled by this enumerator
-            var handledItems = new HashSet<ItemComponent>();
-            var difference = chunkItems.Except(handledItems);
-
-            // Wait this frame
-            while (currentChangesPerFrame >= maxChangesPerFrame)
-            {
-                yield return Globals.EndOfFrame;
-            }
-
-            // Get the first item of the difference
-            var item = difference.FirstOrDefault();
-
-            // Count item selection
-            currentChangesPerFrame++;
-
+            // Copy items as they were before starting
+            var orgItems = new HashSet<ItemComponent>(chunkItems);
 
             // Select a single item each iteration and remove it.
-            while (item != null)
+            foreach (var item in orgItems)
             {
                 // GROUNDED ITEMS
                 var groundItem = item.GetComponent<GroundItemComponent>();
@@ -314,6 +314,12 @@ public class TerrainChunk {
                             yield return Globals.EndOfFrame;
                         }
 
+                        if (!chunkItems.Contains(item))
+                        {
+                            // Skip if item was removed from list
+                            continue;
+                        }
+
                         // Find nearest vertex where height is half of max possible
                         var nearestVertex = Helpers.NearestVertexTo(meshFilter, CurrentMeshKdTree,
                             new Vector3(groundItem.ActualOriginalPos.x, heightMap.maxValue / 2, groundItem.ActualOriginalPos.y));
@@ -329,13 +335,6 @@ public class TerrainChunk {
                     // Pause after every positioning. Return false as long as not done
                     yield return Globals.EndOfFrame;
                 }
-
-                // Add item to handled, calc difference again (note that chunkItems may have changed)
-                handledItems.Add(item);
-                difference = chunkItems.Except(handledItems);
-
-                // Get next item in difference
-                item = difference.FirstOrDefault();
             }
         }
 
@@ -400,7 +399,7 @@ class LODMesh {
 
 	public void RequestMesh(HeightMap heightMap, MeshSettings meshSettings) {
 		hasRequestedMesh = true;
-		ThreadedDataRequester.RequestData (() => MeshGenerator.GenerateTerrainMesh(heightMap.values, meshSettings, lod), OnMeshDataReceived);
+		ThreadedDataRequester.RequestData(() => MeshGenerator.GenerateTerrainMesh(heightMap.values, meshSettings, lod), OnMeshDataReceived);
 	}
 
 }

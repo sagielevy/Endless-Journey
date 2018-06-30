@@ -7,6 +7,7 @@ using System.Threading;
 public class ThreadedDataRequester : MonoBehaviour {
 
     private const int maxThreads = 8;
+    private const int maxHandlePerUpdate = 3;
 	static ThreadedDataRequester instance;
 	Queue<ThreadInfo> dataQueue = new Queue<ThreadInfo>();
 
@@ -25,15 +26,16 @@ public class ThreadedDataRequester : MonoBehaviour {
 	void DataThread(Func<object> generateData, Action<object> callback) {
 		object data = generateData ();
 		lock (dataQueue) {
-			dataQueue.Enqueue (new ThreadInfo (callback, data));
+			dataQueue.Enqueue(new ThreadInfo (callback, data));
 		}
 	}
 		
 
 	void Update() {
 		if (dataQueue.Count > 0) {
-			for (int i = 0; i < dataQueue.Count; i++) {
-				ThreadInfo threadInfo = dataQueue.Dequeue ();
+            // Don't go overboard and handle too many at once
+			for (int i = 0; i < dataQueue.Count && i < maxHandlePerUpdate; i++) {
+				ThreadInfo threadInfo = dataQueue.Dequeue();
 				threadInfo.callback(threadInfo.parameter);
 			}
 		}

@@ -19,7 +19,7 @@ namespace Assets.Scripts.CFGParser
             compRenderer = GetComponentInChildren<Renderer>();
         }
 
-        //private void FixedUpdate()
+        //private void Update()
         //{
         //    var newAlpha = Mathf.Lerp(alpha, 1, Time.deltaTime);
 

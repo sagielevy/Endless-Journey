@@ -26,7 +26,7 @@ namespace Assets.Scripts.Intro
             StartCoroutine(TextCutscene(Globals.INTRO_TEXTS));
         }
 
-        void FixedUpdate()
+        void Update()
         {
             // If the scene is starting...
             if (sceneStarting)

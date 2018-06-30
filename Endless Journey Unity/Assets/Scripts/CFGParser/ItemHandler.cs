@@ -10,46 +10,58 @@ namespace Assets.Scripts.CFGParser
 {
     public class ItemHandler : MonoBehaviour
     {
-        public IEnumerator<WaitForEndOfFrame> positionItemsIter, disableItemsIter, positionItemsIterPrev, disableItemsIterPrev;
+        private IEnumerator<WaitForEndOfFrame> positionItemsIter, disableItemsIter;
+        private Queue<IEnumerator<WaitForEndOfFrame>> positionItemsIterQueue, disableItemsIterQueue;
 
-        private void FixedUpdate()
+        private void Awake()
         {
-            #region optimizedImmutableSolution
+            positionItemsIterQueue = new Queue<IEnumerator<WaitForEndOfFrame>>();
+            disableItemsIterQueue = new Queue<IEnumerator<WaitForEndOfFrame>>();
+        }
+
+        public void AddPositionIter(IEnumerator<WaitForEndOfFrame> enumerator)
+        {
+            positionItemsIterQueue.Enqueue(enumerator);
+        }
+
+        public void AddDisableIter(IEnumerator<WaitForEndOfFrame> enumerator)
+        {
+            disableItemsIterQueue.Enqueue(enumerator);
+        }
+
+        private void Update()
+        {
             // Start each coroutine once
-            if (positionItemsIter != null && positionItemsIter != positionItemsIterPrev)
+            if (positionItemsIterQueue.Count > 0 && (positionItemsIter == null || positionItemsIter.Current == null))
             {
-                // If previous isn't null it was started, so stop it
-                if (positionItemsIterPrev != null)
+                // Was running, so stop
+                if (positionItemsIter != null)
                 {
-                    StopCoroutine(positionItemsIterPrev);
+                    StopCoroutine(positionItemsIter);
                 }
 
+                // Get next and start
+                positionItemsIter = positionItemsIterQueue.Dequeue();
                 StartCoroutine(positionItemsIter);
-
-                // Save enumerator pointer so that the next update if the enumerator hasn't been replaced, don't start again
-                positionItemsIterPrev = positionItemsIter;
             }
 
-            if (disableItemsIter != null && disableItemsIter != disableItemsIterPrev)
+            if (disableItemsIterQueue.Count > 0 && (disableItemsIter == null || disableItemsIter.Current == null))
             {
                 // If previous isn't null it was started, so stop it
-                if (disableItemsIterPrev != null)
+                if (disableItemsIter != null)
                 {
-                    StopCoroutine(disableItemsIterPrev);
+                    StopCoroutine(disableItemsIter);
                 }
 
+                // Get next and start
+                disableItemsIter = disableItemsIterQueue.Dequeue();
                 StartCoroutine(disableItemsIter);
-
-                // Save enumerator pointer so that the next update if the enumerator hasn't been replaced, don't start again
-                disableItemsIterPrev = disableItemsIter;
             }
-            #endregion
+        }
 
-            //if (positionItemsIter != null)
-            //    StartCoroutine(positionItemsIter);
-
-            //if (disableItemsIter != null)
-            //    StartCoroutine(disableItemsIter);
+        internal bool IsDisableIterComplete()
+        {
+            return disableItemsIterQueue.Count == 0 && disableItemsIter != null && !disableItemsIter.MoveNext();
         }
     }
 }

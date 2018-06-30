@@ -45,9 +45,10 @@ public class TerrainGenerator : MonoBehaviour {
 		UpdateVisibleChunks(new Vector3(viewer.position.x, viewer.position.z, 0));
     }
 
-	void FixedUpdate() {
+	void Update() {
         viewerPosition = new Vector3(viewer.position.x, viewer.position.z, 0);
 
+        // TODO Turn into an enumerator
 		if (viewerPosition != viewerPositionOld) {
 			foreach (TerrainChunk chunk in visibleTerrainChunks) {
 				chunk.UpdateCollisionMesh(viewerPosition);
@@ -66,11 +67,16 @@ public class TerrainGenerator : MonoBehaviour {
         TerrainChunk.ResetCurrChangesPerFrameCount();
     }
 
+    //private IEnumerator<WaitForEndOfFrame> UpdateTerrain(Vector3 viewerPos)
+    //{
+
+    //}
+
     void UpdateVisibleChunks(Vector3 viewerPosition) {
         HashSet<Vector2> alreadyUpdatedChunkCoords = new HashSet<Vector2>();
 
 		for (int i = visibleTerrainChunks.Count-1; i >= 0; i--) {
-			alreadyUpdatedChunkCoords.Add(visibleTerrainChunks [i].coord);
+			alreadyUpdatedChunkCoords.Add(visibleTerrainChunks[i].coord);
 			visibleTerrainChunks[i].UpdateTerrainChunk(viewerPosition);
 		}
 			
@@ -82,10 +88,10 @@ public class TerrainGenerator : MonoBehaviour {
 				Vector2 viewedChunkCoord = new Vector2 (currentChunkCoordX + xOffset, currentChunkCoordY + yOffset);
 				if (!alreadyUpdatedChunkCoords.Contains(viewedChunkCoord)) {
 					if (terrainChunkDictionary.ContainsKey(viewedChunkCoord)) {
-						terrainChunkDictionary [viewedChunkCoord].UpdateTerrainChunk(viewerPosition);
+						terrainChunkDictionary[viewedChunkCoord].UpdateTerrainChunk(viewerPosition);
 					} else {
-						TerrainChunk newChunk = new TerrainChunk (viewedChunkCoord,heightMapSettings,meshSettings, detailLevels, colliderLODIndex, transform, viewer, mapMaterial);
-						terrainChunkDictionary.Add (viewedChunkCoord, newChunk);
+						TerrainChunk newChunk = new TerrainChunk(viewedChunkCoord,heightMapSettings,meshSettings, detailLevels, colliderLODIndex, transform, viewer, mapMaterial);
+						terrainChunkDictionary.Add(viewedChunkCoord, newChunk);
 						newChunk.onVisibilityChanged += OnTerrainChunkVisibilityChanged;
 						newChunk.Load();
 					}
@@ -100,6 +106,13 @@ public class TerrainGenerator : MonoBehaviour {
         }
         else {
 			visibleTerrainChunks.Remove(chunk);
+
+            // TODO Remove chunk if too far, but since it destroys an object 
+            // must not have too many on a single frame. Split this up somehow
+            //if (chunk.AttemptDestroyMesh())
+            //{
+            //    terrainChunkDictionary.Remove(chunk.coord);
+            //}
         }
 	}
 
