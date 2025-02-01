@@ -52,6 +52,7 @@ Shader "Hidden/AtmosphericScattering"
 		struct appdata
 		{
 			float4 vertex : POSITION;
+			float2 uv : TEXCOORD0;
 		};
 		
 		float _DistanceScale;
@@ -59,7 +60,7 @@ Shader "Hidden/AtmosphericScattering"
 		struct v2f
 		{
 			float4 pos : SV_POSITION;
-			float4 uv : TEXCOORD0;
+			float2 uv : TEXCOORD0;
 			float3 wpos : TEXCOORD1;
 		};
 		               
